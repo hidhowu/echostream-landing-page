@@ -8,7 +8,7 @@ EchoStream is a fictional video processing SaaS landing page prototype. It explo
 
 ## Demo
 
-![EchoStream Preview](./preview.png)
+![EchoStream Preview](https://raw.githubusercontent.com/hidhowu/echostream-landing-page/refs/heads/main/screencapture-localhost-5500-echostream-html-2026-04-10-02_27_23.png)
 
 🔗 **Live Prototype:** [echostream.joshstudios.xyz](https://echostream.joshstudios.xyz)
 

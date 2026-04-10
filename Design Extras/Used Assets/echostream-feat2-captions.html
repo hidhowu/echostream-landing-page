@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EchoStream — Feature 2: Read Without Sound</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --accent: #FF4D1C;
+    --accent-2: #FF7A3C;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0A0A0A;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    padding: 60px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+    align-items: center;
+  }
+  .variation-label {
+    color: rgba(255,255,255,0.3);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+  .variation-wrap { display: flex; flex-direction: column; align-items: center; }
+
+  /* ===== SHARED: Phone mockup ===== */
+  .phone-frame {
+    width: 160px;
+    height: 285px;
+    background: #1A1A1A;
+    border-radius: 24px;
+    border: 2px solid #2A2A2A;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+  }
+  .phone-notch {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 50px; height: 10px;
+    background: #1A1A1A;
+    border-radius: 0 0 10px 10px;
+    z-index: 10;
+  }
+  .phone-screen {
+    position: absolute;
+    inset: 0;
+    border-radius: 22px;
+    overflow: hidden;
+  }
+
+  /* CAPTION STYLES */
+  .caption-bold {
+    font-family: 'Sora', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    color: #FFD700;
+    text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+    text-align: center;
+  }
+  .caption-minimal {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    color: #FFFFFF;
+    background: rgba(0,0,0,0.6);
+    padding: 4px 10px;
+    border-radius: 4px;
+    text-align: center;
+    line-height: 1.3;
+  }
+  .caption-outlined {
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: #FFFFFF;
+    -webkit-text-stroke: 1px rgba(255,77,28,0.8);
+    text-shadow: 0 0 20px rgba(255,77,28,0.5);
+    text-align: center;
+    line-height: 1.3;
+  }
+  .caption-highlight {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    color: #FFFFFF;
+    text-align: center;
+    line-height: 1.4;
+  }
+  .caption-highlight span {
+    background: var(--accent);
+    padding: 1px 4px;
+    border-radius: 3px;
+  }
+  .word-anim { animation: wordPop 0.4s ease-out forwards; }
+  @keyframes wordPop {
+    0% { opacity: 0; transform: translateY(6px) scale(0.95); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* ===== VARIATION A: Three phone styles side-by-side ===== */
+  .varA {
+    width: 640px;
+    height: 480px;
+    background: #0D0D0D;
+    border-radius: 28px;
+    border: 1px solid rgba(255,255,255,0.08);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    padding: 32px;
+  }
+  .varA-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 80%, rgba(255,77,28,0.1) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 20%, rgba(255,122,60,0.07) 0%, transparent 60%);
+  }
+  .varA-dots {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+  .phone-wrap { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .phone-style-label { font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.35); }
+
+  /* Phone content scenes */
+  .scene-tiktok {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, #1A0A0A 0%, #0D0808 60%, #1A1A0A 100%);
+  }
+  .scene-host { position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; }
+  .sh-head { width: 40px; height: 40px; border-radius: 50%; background: #D4A876; margin-bottom: 4px; }
+  .sh-body { width: 60px; height: 80px; border-radius: 14px 14px 0 0; background: #2A2A4A; }
+  .scene-caption {
+    position: absolute;
+    bottom: 50px;
+    left: 0; right: 0;
+    display: flex;
+    justify-content: center;
+    padding: 0 12px;
+  }
+  .scene-caption-animated {
+    position: absolute;
+    bottom: 50px;
+    left: 0; right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 0 10px;
+  }
+  .cap-word {
+    display: inline-block;
+    font-family: 'Sora', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    text-transform: uppercase;
+    animation: wordReveal 3s ease-in-out infinite;
+  }
+  .cw1 { color: #FFD700; animation-delay: 0s; }
+  .cw2 { color: #FFFFFF; animation-delay: 0.3s; }
+  .cw3 { color: #FF4D1C; animation-delay: 0.6s; }
+  @keyframes wordReveal {
+    0%, 20% { opacity: 0; transform: translateY(5px); }
+    30%, 80% { opacity: 1; transform: translateY(0); }
+    90%, 100% { opacity: 0.3; }
+  }
+  .scene-phone-ui {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 48px;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 0 12px;
+  }
+  .tiktok-btn { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .tiktok-btn-icon { width: 20px; height: 20px; border-radius: 50%; background: rgba(255,255,255,0.15); }
+  .tiktok-btn-lbl { font-size: 7px; color: rgba(255,255,255,0.5); font-weight: 600; }
+  .tiktok-heart { background: #FF2D55; }
+  .tiktok-comment { background: rgba(255,255,255,0.2); }
+  .tiktok-share { background: rgba(255,255,255,0.15); }
+  .sound-off-icon {
+    position: absolute;
+    top: 14px;
+    right: 12px;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sound-off-icon svg { width: 12px; height: 12px; fill: rgba(255,255,255,0.7); }
+
+  /* ===== VARIATION B: Caption evolution demo ===== */
+  .varB {
+    width: 640px;
+    height: 480px;
+    background: #0D0D0D;
+    border-radius: 28px;
+    border: 1px solid rgba(255,255,255,0.08);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 32px;
+  }
+  .varB-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 50% at 50% 50%, rgba(255,77,28,0.06) 0%, transparent 70%);
+  }
+  .varB-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .varB-left {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .caption-sample {
+    background: #1A1A1A;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 14px 16px;
+    width: 220px;
+    position: relative;
+    animation: sampleGlow 4s ease-in-out infinite;
+  }
+  .caption-sample:nth-child(1) { animation-delay: 0s; }
+  .caption-sample:nth-child(2) { animation-delay: 1.3s; }
+  .caption-sample:nth-child(3) { animation-delay: 2.6s; }
+  @keyframes sampleGlow {
+    0%, 60%, 100% { border-color: rgba(255,255,255,0.08); }
+    30% { border-color: rgba(255,77,28,0.5); box-shadow: 0 0 20px rgba(255,77,28,0.12); }
+  }
+  .cs-style-tag { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #FF4D1C; margin-bottom: 8px; }
+  .cs-preview { display: flex; justify-content: center; align-items: center; min-height: 40px; padding: 4px 0; }
+  .cs-bold-text {
+    font-family: 'Sora', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    text-transform: uppercase;
+    color: #FFD700;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.8);
+    letter-spacing: 0.03em;
+    line-height: 1.2;
+    text-align: center;
+  }
+  .cs-minimal-text {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    color: rgba(255,255,255,0.9);
+    background: rgba(0,0,0,0.65);
+    padding: 5px 12px;
+    border-radius: 6px;
+    text-align: center;
+    line-height: 1.4;
+  }
+  .cs-glow-text {
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: #FFFFFF;
+    text-shadow: 0 0 16px rgba(255,77,28,0.9), 0 0 32px rgba(255,77,28,0.4);
+    text-align: center;
+    line-height: 1.3;
+  }
+  .varB-right {
+    position: relative;
+    z-index: 2;
+  }
+  .big-phone {
+    width: 180px;
+    height: 320px;
+    background: #1A1A1A;
+    border-radius: 28px;
+    border: 2px solid #2A2A2A;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04);
+  }
+  .bp-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 55px; height: 12px; background: #1A1A1A; border-radius: 0 0 12px 12px; z-index: 10; }
+  .bp-screen { position: absolute; inset: 0; border-radius: 26px; overflow: hidden; }
+  .bp-bg { position: absolute; inset: 0; background: linear-gradient(180deg, #1A0F0F 0%, #0D0808 70%, #201818 100%); }
+  .bp-host { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; }
+  .bp-head { width: 44px; height: 44px; border-radius: 50%; background: #C4956A; margin-bottom: 4px; }
+  .bp-body { width: 68px; height: 90px; border-radius: 16px 16px 0 0; background: #3A2A4A; }
+  .bp-captions {
+    position: absolute;
+    bottom: 56px;
+    left: 0; right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 0 10px;
+  }
+  .bp-cap-line {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .bp-word {
+    font-family: 'Sora', sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    text-transform: uppercase;
+    padding: 1px 3px;
+    border-radius: 2px;
+    animation: wordCycle 4s ease-in-out infinite;
+  }
+  .bp-word:nth-child(1) { background: #FF4D1C; color: #fff; animation-delay: 0s; }
+  .bp-word:nth-child(2) { color: #FFD700; animation-delay: 0.3s; }
+  .bp-word:nth-child(3) { color: #fff; animation-delay: 0.6s; }
+  @keyframes wordCycle {
+    0%, 15% { opacity: 0; transform: scale(0.9); }
+    25%, 75% { opacity: 1; transform: scale(1); }
+    85%, 100% { opacity: 0.3; transform: scale(1); }
+  }
+  .bp-sound-badge {
+    position: absolute;
+    top: 18px; right: 12px;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.7);
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid rgba(255,77,28,0.3);
+  }
+  .bp-sound-badge svg { width: 13px; height: 13px; fill: #FF4D1C; }
+  .bp-ui-bar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 50px;
+    background: rgba(0,0,0,0.75);
+    display: flex; align-items: center; justify-content: space-around;
+    padding: 0 8px;
+  }
+
+  /* ===== VARIATION C: Word-by-word animation on screen ===== */
+  .varC {
+    width: 640px;
+    height: 480px;
+    background: #0D0D0D;
+    border-radius: 28px;
+    border: 1px solid rgba(255,255,255,0.08);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 36px;
+    padding: 32px 40px;
+  }
+  .varC-orb {
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,77,28,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .varC-orb2 {
+    position: absolute;
+    bottom: -80px; left: -60px;
+    width: 240px; height: 240px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,122,60,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .varC-phones {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+  .vc-phone {
+    width: 130px;
+    height: 232px;
+    background: #1A1A1A;
+    border-radius: 20px;
+    border: 2px solid #222;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    flex-shrink: 0;
+  }
+  .vc-phone:nth-child(2) {
+    transform: scale(1.1);
+    border-color: rgba(255,77,28,0.4);
+    box-shadow: 0 24px 60px rgba(255,77,28,0.2), 0 0 0 1px rgba(255,77,28,0.2);
+    z-index: 2;
+  }
+  .vc-phone-screen { position: absolute; inset: 0; border-radius: 18px; overflow: hidden; }
+  .vcp-bg { position: absolute; inset: 0; }
+  .bg1 { background: linear-gradient(180deg, #0A1520 0%, #050D15 100%); }
+  .bg2 { background: linear-gradient(180deg, #1A0808 0%, #0D0505 100%); }
+  .bg3 { background: linear-gradient(180deg, #0A150A 0%, #050D05 100%); }
+  .vcp-person { position: absolute; bottom: 44px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; }
+  .vcpp-head { width: 30px; height: 30px; border-radius: 50%; margin-bottom: 3px; background: #C4956A; }
+  .vcpp-body { width: 46px; height: 56px; border-radius: 10px 10px 0 0; background: #3A2A2A; }
+  .vcp-caption {
+    position: absolute;
+    bottom: 38px;
+    left: 0; right: 0;
+    padding: 0 8px;
+    display: flex;
+    justify-content: center;
+  }
+  .vcp-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 38px; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: space-around; padding: 0 6px; }
+  .vcp-bar-btn { width: 16px; height: 16px; border-radius: 50%; background: rgba(255,255,255,0.12); }
+  .vcp-bar-btn.heart { background: rgba(255,45,85,0.5); }
+  /* caption style for each phone */
+  .cap-s1 {
+    font-family: 'Sora', sans-serif;
+    font-weight: 800;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #FFD700;
+    text-shadow: 1px 1px 0 #000;
+    text-align: center;
+    line-height: 1.2;
+    animation: capFade 3s ease-in-out infinite;
+  }
+  .cap-s2 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 10px;
+    color: #fff;
+    background: rgba(255,77,28,0.85);
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-align: center;
+    line-height: 1.3;
+    animation: capFade 3s ease-in-out infinite 0.5s;
+  }
+  .cap-s3 {
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    font-size: 10px;
+    color: #fff;
+    text-shadow: 0 0 12px rgba(255,77,28,0.8);
+    text-align: center;
+    border-bottom: 1.5px solid #FF4D1C;
+    padding-bottom: 2px;
+    line-height: 1.3;
+    animation: capFade 3s ease-in-out infinite 1s;
+  }
+  @keyframes capFade {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+  .varC-right {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 200px;
+  }
+  .style-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #1A1A1A;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px;
+    padding: 10px 14px;
+    animation: pillSlide 3s ease-in-out infinite;
+  }
+  .style-pill:nth-child(1) { animation-delay: 0s; }
+  .style-pill:nth-child(2) { animation-delay: 1s; }
+  .style-pill:nth-child(3) { animation-delay: 2s; }
+  @keyframes pillSlide {
+    0%, 60%, 100% { border-color: rgba(255,255,255,0.07); }
+    30% { border-color: rgba(255,77,28,0.4); background: rgba(255,77,28,0.05); }
+  }
+  .style-pill-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot-gold { background: #FFD700; }
+  .dot-orange { background: #FF4D1C; }
+  .dot-white { background: #FFFFFF; }
+  .style-pill-preview { flex: 1; }
+  .sp-word {
+    font-family: 'Sora', sans-serif;
+    font-weight: 800;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .sp-bold { color: #FFD700; text-shadow: 1px 1px 0 rgba(0,0,0,0.5); }
+  .sp-fire { color: #FF4D1C; }
+  .sp-clean { color: rgba(255,255,255,0.7); background: rgba(0,0,0,0.4); padding: 1px 5px; border-radius: 3px; }
+
+  /* ===== VARIATION D: Immersive dark ===== */
+  .varD {
+    width: 640px;
+    height: 480px;
+    background: #080808;
+    border-radius: 28px;
+    border: 1px solid rgba(255,255,255,0.08);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .varD-glow {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px; height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(255,77,28,0.08) 0%, transparent 70%);
+  }
+  .varD-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+  }
+  .vd-big-phone {
+    width: 180px;
+    height: 320px;
+    background: #111;
+    border-radius: 28px;
+    border: 2px solid #222;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 40px 100px rgba(0,0,0,0.8),
+      0 0 60px rgba(255,77,28,0.08),
+      inset 0 0 0 1px rgba(255,255,255,0.04);
+  }
+  .vdb-screen { position: absolute; inset: 0; border-radius: 26px; overflow: hidden; }
+  .vdb-bg { position: absolute; inset: 0; background: linear-gradient(180deg, #1A0808 0%, #0D0505 50%, #100D0D 100%); }
+  .vdb-person { position: absolute; bottom: 70px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; }
+  .vdb-head { width: 48px; height: 48px; border-radius: 50%; background: #C8906A; margin-bottom: 4px; }
+  .vdb-body { width: 72px; height: 95px; border-radius: 18px 18px 0 0; background: #2A3050; }
+  .vdb-captions {
+    position: absolute;
+    bottom: 60px;
+    left: 0; right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 0 12px;
+  }
+  .vdb-line1, .vdb-line2 {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .vdb-w {
+    font-family: 'Sora', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    text-transform: uppercase;
+    line-height: 1.2;
+    animation: wReveal 4s ease-in-out infinite;
+  }
+  .vdb-w:nth-child(1) { color: #fff; animation-delay: 0.2s; }
+  .vdb-w:nth-child(2) { color: #FF4D1C; animation-delay: 0.5s; }
+  .vdb-w:nth-child(3) { background: #FFD700; color: #000; padding: 1px 5px; border-radius: 3px; animation-delay: 0.8s; }
+  .vdb-w:nth-child(4) { color: #fff; animation-delay: 1.1s; }
+  @keyframes wReveal {
+    0%, 10% { opacity: 0; transform: translateY(8px); }
+    25%, 80% { opacity: 1; transform: translateY(0); }
+    95%, 100% { opacity: 0; transform: translateY(-4px); }
+  }
+  .vdb-mute-badge {
+    position: absolute;
+    top: 16px; right: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(0,0,0,0.7);
+    border: 1px solid rgba(255,77,28,0.3);
+    border-radius: 20px;
+    padding: 4px 9px;
+  }
+  .vdb-mute-badge svg { width: 10px; height: 10px; fill: #FF4D1C; }
+  .vdb-mute-txt { font-size: 8px; font-weight: 700; color: #FF4D1C; letter-spacing: 0.06em; text-transform: uppercase; }
+  .vdb-progress {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 50px;
+    background: rgba(0,0,0,0.8);
+    display: flex; align-items: center; padding: 0 14px; gap: 8px;
+  }
+  .vdb-prog-bar { flex: 1; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+  .vdb-prog-fill { height: 100%; width: 55%; background: linear-gradient(90deg, #FF4D1C, #FF7A3C); border-radius: 2px; animation: progAnim 4s ease-in-out infinite; }
+  @keyframes progAnim { 0% { width: 10%; } 100% { width: 90%; } }
+  .vd-floating-words {
+    position: absolute;
+    right: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    pointer-events: none;
+  }
+  .float-word {
+    font-family: 'Sora', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 8px;
+    animation: floatReveal 4s ease-in-out infinite;
+  }
+  .fw1 { background: rgba(255,77,28,0.15); border: 1px solid rgba(255,77,28,0.3); color: #FF7A3C; animation-delay: 0s; }
+  .fw2 { background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); color: #FFD700; animation-delay: 0.6s; }
+  .fw3 { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); animation-delay: 1.2s; }
+  .fw4 { background: rgba(255,77,28,0.08); border: 1px solid rgba(255,77,28,0.2); color: #FF4D1C; animation-delay: 1.8s; }
+  @keyframes floatReveal {
+    0%, 30% { opacity: 0.2; transform: translateX(8px); }
+    50%, 80% { opacity: 1; transform: translateX(0); }
+    95%, 100% { opacity: 0.2; transform: translateX(8px); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== VARIATION A ===== -->
+<div class="variation-wrap">
+  <div class="variation-label">Variation A — Three Caption Styles</div>
+  <div class="varA">
+    <div class="varA-bg"></div>
+    <div class="varA-dots"></div>
+
+    <!-- Phone 1: Bold/Yellow style -->
+    <div class="phone-wrap" style="position:relative; z-index:2;">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="scene-tiktok"></div>
+          <div class="scene-host">
+            <div class="sh-head"></div>
+            <div class="sh-body"></div>
+          </div>
+          <div class="scene-caption-animated">
+            <div style="display:flex; gap:5px;">
+              <span class="cap-word cw1">GOING</span>
+              <span class="cap-word cw2">VIRAL</span>
+            </div>
+            <div style="display:flex; gap:5px;">
+              <span class="cap-word cw3">IS A</span>
+              <span class="cap-word cw1">SKILL</span>
+            </div>
+          </div>
+          <div class="sound-off-icon">
+            <svg viewBox="0 0 24 24"><path d="M3.63 3.63a.996.996 0 000 1.41L7.29 8.7 7 9H4c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1h3l3.29 3.29c.63.63 1.71.18 1.71-.71v-4.17l4.18 4.18c-.49.37-1.02.68-1.6.91-.36.15-.58.53-.58.92 0 .72.73 1.18 1.39.91.8-.33 1.55-.77 2.22-1.31l1.34 1.34a.996.996 0 101.41-1.41L5.05 3.63c-.39-.39-1.02-.39-1.42 0zM19 12c0 .82-.15 1.61-.41 2.34l1.53 1.53c.56-1.17.88-2.48.88-3.87 0-3.83-2.4-7.11-5.78-8.4-.59-.23-1.22.23-1.22.86v.19c0 .38.25.71.61.85C17.18 6.54 19 9.06 19 12zm-8.71-6.29l-.17.17L12 7.76V6.41c0-.89-1.08-1.33-1.71-.7zM16.5 12A4.5 4.5 0 0014 7.97v1.79l2.48 2.48c.01-.08.02-.16.02-.24z"/></svg>
+          </div>
+          <div class="scene-phone-ui">
+            <div class="tiktok-btn"><div class="tiktok-btn-icon tiktok-heart"></div></div>
+            <div class="tiktok-btn"><div class="tiktok-btn-icon tiktok-comment"></div></div>
+            <div class="tiktok-btn"><div class="tiktok-btn-icon tiktok-share"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-style-label">Bold</div>
+    </div>
+
+    <!-- Phone 2: Minimal style -->
+    <div class="phone-wrap" style="position:relative; z-index:2;">
+      <div class="phone-frame" style="border-color: rgba(255,77,28,0.4); box-shadow: 0 0 30px rgba(255,77,28,0.2);">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div style="position:absolute; inset:0; background: linear-gradient(180deg, #1A0F1A 0%, #0D0808 100%);"></div>
+          <div class="scene-host" style="bottom: 55px;">
+            <div class="sh-head" style="background: #B8785A;"></div>
+            <div class="sh-body" style="background: #4A2A3A;"></div>
+          </div>
+          <div class="scene-caption">
+            <div class="caption-minimal" style="animation: capFade 3s ease-in-out infinite 0.5s;">
+              The only way to grow<br>is to ship every day
+            </div>
+          </div>
+          <div class="sound-off-icon">
+            <svg viewBox="0 0 24 24"><path d="M3.63 3.63a.996.996 0 000 1.41L7.29 8.7 7 9H4c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1h3l3.29 3.29c.63.63 1.71.18 1.71-.71v-4.17l4.18 4.18c-.49.37-1.02.68-1.6.91-.36.15-.58.53-.58.92 0 .72.73 1.18 1.39.91.8-.33 1.55-.77 2.22-1.31l1.34 1.34a.996.996 0 101.41-1.41L5.05 3.63c-.39-.39-1.02-.39-1.42 0zM19 12c0 .82-.15 1.61-.41 2.34l1.53 1.53c.56-1.17.88-2.48.88-3.87 0-3.83-2.4-7.11-5.78-8.4-.59-.23-1.22.23-1.22.86v.19c0 .38.25.71.61.85C17.18 6.54 19 9.06 19 12zm-8.71-6.29l-.17.17L12 7.76V6.41c0-.89-1.08-1.33-1.71-.7zM16.5 12A4.5 4.5 0 0014 7.97v1.79l2.48 2.48c.01-.08.02-.16.02-.24z"/></svg>
+          </div>
+          <div class="scene-phone-ui">
+            <div class="tiktok-btn"><div class="tiktok-btn-icon tiktok-heart"></div></div>
+            <div class="tiktok-btn"><div class="tiktok-btn-icon tiktok-comment"></div></div>
+            <div class="tiktok-btn"><div class="tiktok-btn-icon tiktok-share"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-style-label" style="color: #FF7A3C;">Minimal</div>
+    </div>
+
+    <!-- Phone 3: Outlined/Glow style -->
+    <div class="phone-wrap" style="position:relative; z-index:2;">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div style="position:absolute; inset:0; background: linear-gradient(180deg, #0A1A0A 0%, #050D05 100%);"></div>
+          <div class="scene-host" style="bottom: 55px;">
+            <div class="sh-head" style="background: #D4A876;"></div>
+            <div class="sh-body" style="background: #1E3A1E;"></div>
+          </div>
+          <div class="scene-caption">
+            <div class="caption-outlined" style="animation: capFade 3s ease-in-out infinite 1s;">
+              Content is<br>your currency
+            </div>
+          </div>
+          <div class="sound-off-icon">
+            <svg viewBox="0 0 24 24"><path d="M3.63 3.63a.996.996 0 000 1.41L7.29 8.7 7 9H4c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1h3l3.29 3.29c.63.63 1.71.18 1.71-.71v-4.17l4.18 4.18c-.49.37-1.02.68-1.6.91-.36.15-.58.53-.58.92 0 .72.73 1.18 1.39.91.8-.33 1.55-.77 2.22-1.31l1.34 1.34a.996.996 0 101.41-1.41L5.05 3.63c-.39-.39-1.02-.39-1.42 0zM19 12c0 .82-.15 1.61-.41 2.34l1.53 1.53c.56-1.17.88-2.48.88-3.87 0-3.83-2.4-7.11-5.78-8.4-.59-.23-1.22.23-1.22.86v.19c0 .38.25.71.61.85C17.18 6.54 19 9.06 19 12zm-8.71-6.29l-.17.17L12 7.76V6.41c0-.89-1.08-1.33-1.71-.7zM16.5 12A4.5 4.5 0 0014 7.97v1.79l2.48 2.48c.01-.08.02-.16.02-.24z"/></svg>
+          </div>
+          <div class="scene-phone-ui">
+            <div class="tiktok-btn"><div class="tiktok-btn-icon tiktok-heart"></div></div>
+            <div class="tiktok-btn"><div class="tiktok-btn-icon tiktok-comment"></div></div>
+            <div class="tiktok-btn"><div class="tiktok-btn-icon tiktok-share"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-style-label">Outlined</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== VARIATION B ===== -->
+<div class="variation-wrap">
+  <div class="variation-label">Variation B — Caption Styles Panel + Big Phone</div>
+  <div class="varB">
+    <div class="varB-bg"></div>
+    <div class="varB-grid"></div>
+    <div class="varB-left">
+      <div class="caption-sample">
+        <div class="cs-style-tag">Bold Style</div>
+        <div class="cs-preview">
+          <div class="cs-bold-text">GOING VIRAL<br>IS A SKILL</div>
+        </div>
+      </div>
+      <div class="caption-sample">
+        <div class="cs-style-tag">Minimal Style</div>
+        <div class="cs-preview">
+          <div class="cs-minimal-text">The only way to grow<br>is to ship every day</div>
+        </div>
+      </div>
+      <div class="caption-sample">
+        <div class="cs-style-tag">Glow Style</div>
+        <div class="cs-preview">
+          <div class="cs-glow-text">Content is<br>your currency</div>
+        </div>
+      </div>
+    </div>
+    <div class="varB-right">
+      <div class="big-phone">
+        <div class="bp-notch"></div>
+        <div class="bp-screen">
+          <div class="bp-bg"></div>
+          <div class="bp-host">
+            <div class="bp-head"></div>
+            <div class="bp-body"></div>
+          </div>
+          <div class="bp-captions">
+            <div class="bp-cap-line">
+              <span class="bp-word">GOING</span>
+              <span class="bp-word">VIRAL</span>
+            </div>
+            <div class="bp-cap-line">
+              <span class="bp-word">IS A</span>
+              <span class="bp-word">SKILL</span>
+            </div>
+          </div>
+          <div class="bp-sound-badge">
+            <svg viewBox="0 0 24 24"><path d="M3.63 3.63a.996.996 0 000 1.41L7.29 8.7 7 9H4c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1h3l3.29 3.29c.63.63 1.71.18 1.71-.71v-4.17l4.18 4.18c-.49.37-1.02.68-1.6.91-.36.15-.58.53-.58.92 0 .72.73 1.18 1.39.91.8-.33 1.55-.77 2.22-1.31l1.34 1.34a.996.996 0 101.41-1.41L5.05 3.63c-.39-.39-1.02-.39-1.42 0z"/></svg>
+          </div>
+          <div class="bp-ui-bar">
+            <div class="tiktok-btn-icon tiktok-heart" style="width:20px;height:20px;border-radius:50%;"></div>
+            <div class="tiktok-btn-icon tiktok-comment" style="width:20px;height:20px;border-radius:50%;"></div>
+            <div class="tiktok-btn-icon tiktok-share" style="width:20px;height:20px;border-radius:50%;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== VARIATION C ===== -->
+<div class="variation-wrap">
+  <div class="variation-label">Variation C — Three Phones + Style Selector</div>
+  <div class="varC">
+    <div class="varC-orb"></div>
+    <div class="varC-orb2"></div>
+    <div class="varC-phones">
+      <div class="vc-phone">
+        <div class="vc-phone-screen">
+          <div class="vcp-bg bg1"></div>
+          <div class="vcp-person"><div class="vcpp-head"></div><div class="vcpp-body" style="background:#2A4A3A;"></div></div>
+          <div class="vcp-caption"><div class="cap-s1">YOUR NEXT<br>BIG BREAK</div></div>
+          <div class="vcp-bar">
+            <div class="vcp-bar-btn heart"></div>
+            <div class="vcp-bar-btn"></div>
+            <div class="vcp-bar-btn"></div>
+          </div>
+        </div>
+      </div>
+      <div class="vc-phone">
+        <div class="vc-phone-screen">
+          <div class="vcp-bg bg2"></div>
+          <div class="vcp-person"><div class="vcpp-head" style="background:#D4A876;"></div><div class="vcpp-body" style="background:#3A2A5A;"></div></div>
+          <div class="vcp-caption"><div class="cap-s2">YOUR NEXT<br>BIG BREAK</div></div>
+          <div class="vcp-bar">
+            <div class="vcp-bar-btn heart"></div>
+            <div class="vcp-bar-btn"></div>
+            <div class="vcp-bar-btn"></div>
+          </div>
+        </div>
+      </div>
+      <div class="vc-phone">
+        <div class="vc-phone-screen">
+          <div class="vcp-bg bg3"></div>
+          <div class="vcp-person"><div class="vcpp-head" style="background:#B8785A;"></div><div class="vcpp-body" style="background:#4A3A2A;"></div></div>
+          <div class="vcp-caption"><div class="cap-s3">YOUR NEXT<br>BIG BREAK</div></div>
+          <div class="vcp-bar">
+            <div class="vcp-bar-btn heart"></div>
+            <div class="vcp-bar-btn"></div>
+            <div class="vcp-bar-btn"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="varC-right">
+      <div class="style-pill">
+        <div class="style-pill-dot dot-gold"></div>
+        <div class="style-pill-preview"><span class="sp-word sp-bold">BOLD</span></div>
+      </div>
+      <div class="style-pill">
+        <div class="style-pill-dot dot-orange"></div>
+        <div class="style-pill-preview"><span class="sp-word sp-fire">FIRE</span></div>
+      </div>
+      <div class="style-pill">
+        <div class="style-pill-dot dot-white"></div>
+        <div class="style-pill-preview"><span class="sp-word sp-clean">CLEAN</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== VARIATION D ===== -->
+<div class="variation-wrap">
+  <div class="variation-label">Variation D — Immersive Word-by-Word</div>
+  <div class="varD">
+    <div class="varD-glow"></div>
+    <div class="varD-content">
+      <div class="vd-big-phone">
+        <div class="vdb-screen">
+          <div class="vdb-bg"></div>
+          <div class="vdb-person">
+            <div class="vdb-head"></div>
+            <div class="vdb-body"></div>
+          </div>
+          <div class="vdb-captions">
+            <div class="vdb-line1">
+              <span class="vdb-w">YOUR</span>
+              <span class="vdb-w">CONTENT</span>
+            </div>
+            <div class="vdb-line2">
+              <span class="vdb-w">SPEAKS</span>
+              <span class="vdb-w">LOUD</span>
+            </div>
+          </div>
+          <div class="vdb-mute-badge">
+            <svg viewBox="0 0 24 24"><path d="M3.63 3.63a.996.996 0 000 1.41L7.29 8.7 7 9H4c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1h3l3.29 3.29c.63.63 1.71.18 1.71-.71v-4.17l4.18 4.18c-.49.37-1.02.68-1.6.91-.36.15-.58.53-.58.92 0 .72.73 1.18 1.39.91.8-.33 1.55-.77 2.22-1.31l1.34 1.34a.996.996 0 101.41-1.41L5.05 3.63c-.39-.39-1.02-.39-1.42 0z"/></svg>
+            <span class="vdb-mute-txt">Muted</span>
+          </div>
+          <div class="vdb-progress">
+            <div class="vdb-prog-bar"><div class="vdb-prog-fill"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="vd-floating-words">
+        <div class="float-word fw1">BOLD</div>
+        <div class="float-word fw2">VIBRANT</div>
+        <div class="float-word fw3">MINIMAL</div>
+        <div class="float-word fw4">FIRE</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

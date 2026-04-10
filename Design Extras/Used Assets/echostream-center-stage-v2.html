@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EchoStream — Always Center Stage (Variations)</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #0a0a0a;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  padding: 48px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 80px;
+}
+.variation-label {
+  color: #FF4D1C;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+/* =====================================================
+   SHARED SIZES — 4:3 aspect ratio, 680x510px
+   ===================================================== */
+.frame {
+  width: 680px;
+  height: 510px;
+  border-radius: 28px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* =====================================================
+   VARIATION 1: Video Split → Clips Cascade
+   Shows a widescreen video being "sliced" into vertical clips
+   Each clip shows a different speaker perfectly framed
+   ===================================================== */
+#v1 {
+  background: #0D0D0D;
+  border: 1px solid rgba(255,77,28,0.2);
+  box-shadow: 0 0 60px rgba(255,77,28,0.08), 0 0 120px rgba(255,77,28,0.04);
+}
+
+/* Dot-grid background */
+#v1::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255,77,28,0.12) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+
+/* Radial glow center */
+#v1::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(255,77,28,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.v1-stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+/* Source widescreen video */
+.v1-source {
+  width: 240px;
+  height: 150px;
+  background: #1a1a1a;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.1);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  animation: v1-source-pulse 3s ease-in-out infinite;
+}
+@keyframes v1-source-pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,77,28,0); }
+  50% { box-shadow: 0 0 20px rgba(255,77,28,0.2); }
+}
+
+/* Two "speaker bubbles" inside source video */
+.v1-speaker {
+  position: absolute;
+  bottom: 18px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+  border: 2px solid rgba(255,255,255,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  overflow: hidden;
+}
+.v1-speaker-1 { left: 28px; animation: v1-bob 2.4s ease-in-out infinite; }
+.v1-speaker-2 { right: 28px; animation: v1-bob 2.4s 0.5s ease-in-out infinite; }
+@keyframes v1-bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+
+/* Speaker silhouettes as SVG-ish shapes */
+.v1-silhouette {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 4px;
+}
+.v1-sil-head {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #555, #333);
+  margin-bottom: 2px;
+}
+.v1-sil-body {
+  width: 26px; height: 14px;
+  border-radius: 10px 10px 0 0;
+  background: linear-gradient(135deg, #444, #222);
+}
+
+/* Audio wave inside source */
+.v1-waveform {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.v1-bar {
+  width: 3px;
+  background: rgba(255,77,28,0.6);
+  border-radius: 2px;
+  animation: v1-wave 0.8s ease-in-out infinite alternate;
+}
+.v1-bar:nth-child(1) { height: 8px; animation-delay: 0s; }
+.v1-bar:nth-child(2) { height: 14px; animation-delay: 0.1s; }
+.v1-bar:nth-child(3) { height: 20px; animation-delay: 0.2s; }
+.v1-bar:nth-child(4) { height: 12px; animation-delay: 0.3s; }
+.v1-bar:nth-child(5) { height: 18px; animation-delay: 0.4s; }
+.v1-bar:nth-child(6) { height: 10px; animation-delay: 0.15s; }
+.v1-bar:nth-child(7) { height: 16px; animation-delay: 0.25s; }
+@keyframes v1-wave { from{transform:scaleY(0.4)} to{transform:scaleY(1)} }
+
+/* Arrow / transform indicator */
+.v1-arrow {
+  width: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.v1-arrow-line {
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(255,77,28,0.3), #FF4D1C);
+  position: relative;
+  animation: v1-arrow-pulse 1.5s ease-in-out infinite;
+}
+.v1-arrow-line::after {
+  content: '';
+  position: absolute;
+  right: -6px;
+  top: -4px;
+  border: 5px solid transparent;
+  border-left-color: #FF4D1C;
+}
+@keyframes v1-arrow-pulse {
+  0%,100%{ opacity:0.5; transform:scaleX(0.85) } 
+  50%{ opacity:1; transform:scaleX(1.05) }
+}
+.v1-ai-badge {
+  background: rgba(255,77,28,0.15);
+  border: 1px solid rgba(255,77,28,0.4);
+  color: #FF4D1C;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  border-radius: 100px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Output clips grid */
+.v1-clips {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.v1-clip {
+  width: 72px;
+  height: 128px;
+  background: #1a1a1a;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  position: relative;
+  overflow: hidden;
+  animation: v1-clip-appear 0.5s ease forwards;
+  opacity: 0;
+}
+.v1-clip:nth-child(1) { animation-delay: 0.5s; }
+.v1-clip:nth-child(2) { animation-delay: 0.9s; }
+.v1-clip:nth-child(3) { animation-delay: 1.3s; }
+@keyframes v1-clip-appear {
+  from { opacity:0; transform:scale(0.8) translateY(12px); }
+  to   { opacity:1; transform:scale(1)   translateY(0); }
+}
+
+.v1-clip-speaker {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.v1-clip-head {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #555, #333);
+  border: 1.5px solid rgba(255,255,255,0.2);
+}
+.v1-clip-body {
+  width: 34px; height: 18px;
+  border-radius: 8px 8px 0 0;
+  background: linear-gradient(135deg, #444, #222);
+}
+
+/* AI tracking box */
+.v1-track-box {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 38px;
+  height: 42px;
+  border: 1.5px solid #FF4D1C;
+  border-radius: 4px;
+  animation: v1-track-blink 2s ease-in-out infinite;
+}
+.v1-track-box::before, .v1-track-box::after {
+  content: '';
+  position: absolute;
+  width: 6px; height: 6px;
+  border-color: #FF4D1C;
+  border-style: solid;
+}
+.v1-track-box::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+.v1-track-box::after  { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+@keyframes v1-track-blink {
+  0%,100%{opacity:0.6} 50%{opacity:1; box-shadow: 0 0 8px rgba(255,77,28,0.4);}
+}
+
+/* Progress bar */
+.v1-progress {
+  position: absolute;
+  bottom: 8px;
+  left: 6px; right: 6px;
+  height: 3px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.v1-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #FF4D1C, #FF7A3C);
+  border-radius: 2px;
+  animation: v1-prog 3s ease-in-out infinite;
+}
+.v1-clip:nth-child(1) .v1-progress-fill { animation-delay: 0.5s; width: 75%; }
+.v1-clip:nth-child(2) .v1-progress-fill { animation-delay: 0.9s; width: 45%; animation: v1-prog 3s 0.4s ease-in-out infinite; }
+.v1-clip:nth-child(3) .v1-progress-fill { animation-delay: 1.3s; width: 20%; animation: v1-prog 3s 0.8s ease-in-out infinite; }
+@keyframes v1-prog { 
+  0%{width:0%} 60%{width:var(--w,70%)} 100%{width:var(--w,70%)}
+}
+
+/* Platform badges */
+.v1-platform {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  font-size: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Bottom label */
+.v1-label {
+  position: absolute;
+  bottom: 18px;
+  left: 0; right: 0;
+  text-align: center;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+}
+
+/* =====================================================
+   VARIATION 2: Bento-style reframe grid
+   Big source on left, animated reframe outputs on right in 2x2
+   ===================================================== */
+#v2 {
+  background: #0D0D0D;
+  border: 1px solid rgba(255,77,28,0.15);
+}
+
+/* Mesh gradient background */
+#v2::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse 40% 40% at 20% 30%, rgba(255,77,28,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 30% at 80% 70%, rgba(255,122,60,0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* Subtle grid lines */
+#v2::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+.v2-layout {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  padding: 32px;
+  z-index: 1;
+}
+
+/* Source panel */
+.v2-source-panel {
+  flex: 0 0 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.v2-source-screen {
+  width: 260px;
+  height: 160px;
+  background: #161616;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Widescreen video feel with two speaker zones */
+.v2-src-left, .v2-src-right {
+  position: absolute;
+  bottom: 0; top: 0;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 14px;
+  gap: 4px;
+}
+.v2-src-left { left: 0; border-right: 1px solid rgba(255,255,255,0.06); }
+.v2-src-right { right: 0; }
+
+.v2-src-head {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #484848, #2a2a2a);
+  border: 1.5px solid rgba(255,255,255,0.15);
+}
+.v2-src-body {
+  width: 46px; height: 24px;
+  border-radius: 12px 12px 0 0;
+  background: linear-gradient(135deg, #3a3a3a, #222);
+}
+
+/* "AI Analyzing" scan line */
+.v2-scanline {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #FF4D1C, transparent);
+  animation: v2-scan 2.5s linear infinite;
+}
+@keyframes v2-scan {
+  0%{top:0; opacity:0.8} 50%{opacity:1} 100%{top:100%; opacity:0.8}
+}
+
+/* Playhead */
+.v2-playhead {
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 3px;
+  width: 65%;
+  background: linear-gradient(90deg, rgba(255,77,28,0.8), rgba(255,77,28,0.3));
+  border-radius: 2px;
+}
+
+.v2-source-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 4px;
+}
+.v2-src-badge {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.5);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  border-radius: 100px;
+  text-transform: uppercase;
+}
+.v2-src-dur {
+  color: rgba(255,255,255,0.3);
+  font-size: 10px;
+  font-weight: 600;
+  margin-left: auto;
+}
+
+/* Right: 2x2 clip grid */
+.v2-clips-panel {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  align-items: center;
+}
+
+.v2-clip-card {
+  background: #161616;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  aspect-ratio: 9/16;
+  max-height: 190px;
+  position: relative;
+  overflow: hidden;
+  animation: v2-card-in 0.6s ease both;
+}
+.v2-clip-card:nth-child(1) { animation-delay: 0.2s; }
+.v2-clip-card:nth-child(2) { animation-delay: 0.5s; }
+.v2-clip-card:nth-child(3) { animation-delay: 0.8s; }
+.v2-clip-card:nth-child(4) { animation-delay: 1.1s; }
+@keyframes v2-card-in {
+  from { opacity:0; transform: scale(0.85); }
+  to   { opacity:1; transform: scale(1); }
+}
+
+.v2-clip-card:hover {
+  border-color: rgba(255,77,28,0.4);
+  box-shadow: 0 0 20px rgba(255,77,28,0.12);
+}
+
+/* Each clip: centered speaker */
+.v2-clip-figure {
+  position: absolute;
+  bottom: 20%;
+  left: 50%; 
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.v2-fig-head {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #555, #2a2a2a);
+  border: 1.5px solid rgba(255,255,255,0.2);
+}
+.v2-fig-body {
+  width: 32px; height: 18px;
+  border-radius: 8px 8px 0 0;
+  background: linear-gradient(135deg, #444, #1a1a1a);
+}
+
+/* Tracking corners on first clip (active) */
+.v2-track-tl, .v2-track-br {
+  position: absolute;
+  width: 10px; height: 10px;
+  border-color: #FF4D1C;
+  border-style: solid;
+  animation: v2-track-pulse 2s ease-in-out infinite;
+}
+.v2-track-tl { top: 20%; left: 20%; border-width: 2px 0 0 2px; }
+.v2-track-br { bottom: 30%; right: 20%; border-width: 0 2px 2px 0; }
+@keyframes v2-track-pulse {
+  0%,100%{opacity:0.5; transform:scale(1)}
+  50%{opacity:1; transform:scale(1.05)}
+}
+
+/* Bottom platform pill */
+.v2-platform-pill {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 100px;
+  padding: 3px 8px;
+  white-space: nowrap;
+}
+.v2-platform-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+}
+.v2-platform-name {
+  font-size: 8px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.05em;
+}
+
+/* Processing bar */
+.v2-proc-bar {
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #FF4D1C, #FF7A3C);
+  border-radius: 0 2px 2px 0;
+  animation: v2-proc 3s ease-in-out infinite;
+}
+.v2-clip-card:nth-child(1) .v2-proc-bar { animation-delay: 0s; }
+.v2-clip-card:nth-child(2) .v2-proc-bar { animation-delay: 0.4s; }
+.v2-clip-card:nth-child(3) .v2-proc-bar { animation-delay: 0.8s; }
+.v2-clip-card:nth-child(4) .v2-proc-bar { animation-delay: 1.2s; }
+@keyframes v2-proc {
+  0%{width:0%} 70%{width:100%} 100%{width:100%; opacity:0}
+}
+
+/* =====================================================
+   VARIATION 3: Cinematic Timeline reframe
+   Full-width timeline at bottom, clips above, one active highlight
+   ===================================================== */
+#v3 {
+  background: #0D0D0D;
+  border: 1px solid rgba(255,77,28,0.15);
+  overflow: hidden;
+}
+
+/* Orange–black diagonal mesh */
+#v3::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    conic-gradient(from 0deg at 50% 0%, rgba(255,77,28,0.05) 0%, transparent 40%),
+    radial-gradient(ellipse 80% 40% at 50% 0%, rgba(255,77,28,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.v3-layout {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 28px 24px;
+  z-index: 1;
+}
+
+/* Top row: source + clips */
+.v3-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  flex: 1;
+}
+
+/* Source video — big widescreen */
+.v3-source {
+  flex: 0 0 300px;
+  height: 188px;
+  background: #161616;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.v3-src-stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  padding: 0 24px 16px;
+}
+
+.v3-person {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  animation: v3-person-breathe 3s ease-in-out infinite;
+}
+.v3-person:nth-child(2) { animation-delay: 0.7s; }
+@keyframes v3-person-breathe {
+  0%,100%{ transform:translateY(0) } 
+  50%{ transform:translateY(-4px) }
+}
+
+.v3-p-head {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #5a5a5a, #2a2a2a);
+  border: 2px solid rgba(255,255,255,0.15);
+  position: relative;
+}
+.v3-p-head.active::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 1.5px solid #FF4D1C;
+  animation: v3-ring 2s ease-in-out infinite;
+}
+@keyframes v3-ring { 0%,100%{opacity:0.4; transform:scale(1)} 50%{opacity:1; transform:scale(1.08)} }
+
+.v3-p-body {
+  width: 48px; height: 28px;
+  border-radius: 10px 10px 0 0;
+  background: linear-gradient(135deg, #3a3a3a, #1a1a1a);
+}
+
+/* Mic indicator */
+.v3-mic {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: rgba(255,77,28,0.15);
+  border: 1px solid rgba(255,77,28,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: v3-mic-blink 1.4s ease-in-out infinite;
+}
+@keyframes v3-mic-blink { 0%,100%{opacity:0.5} 50%{opacity:1} }
+.v3-mic-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #FF4D1C;
+}
+
+/* Timestamp */
+.v3-timestamp {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(0,0,0,0.6);
+  border-radius: 4px;
+  padding: 2px 7px;
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.04em;
+  font-family: 'Plus Jakarta Sans', monospace;
+}
+
+/* Right: vertical clips stack */
+.v3-clips-stack {
+  display: flex;
+  gap: 10px;
+  flex: 1;
+  align-items: flex-start;
+}
+
+.v3-vclip {
+  flex: 1;
+  height: 188px;
+  background: #161616;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  position: relative;
+  overflow: hidden;
+  animation: v3-clip-rise 0.7s ease both;
+}
+.v3-vclip:nth-child(1) { animation-delay: 0.3s; }
+.v3-vclip:nth-child(2) { animation-delay: 0.7s; border-color: rgba(255,77,28,0.35); box-shadow: 0 0 20px rgba(255,77,28,0.1); }
+.v3-vclip:nth-child(3) { animation-delay: 1.1s; }
+@keyframes v3-clip-rise {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.v3-vclip-figure {
+  position: absolute;
+  bottom: 22%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.v3-vfig-head {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #555, #2a2a2a);
+  border: 1.5px solid rgba(255,255,255,0.2);
+}
+.v3-vfig-body {
+  width: 36px; height: 20px;
+  border-radius: 8px 8px 0 0;
+  background: linear-gradient(135deg, #444, #1a1a1a);
+}
+
+/* Active clip highlight */
+.v3-vclip.active .v3-track-frame {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 52px; height: 56px;
+  border: 1.5px solid #FF4D1C;
+  border-radius: 4px;
+  animation: v3-track 2s ease-in-out infinite;
+}
+@keyframes v3-track {
+  0%,100%{box-shadow:none;opacity:0.7}
+  50%{box-shadow:0 0 12px rgba(255,77,28,0.4);opacity:1}
+}
+
+.v3-active-badge {
+  position: absolute;
+  top: 6px; left: 6px;
+  background: #FF4D1C;
+  color: white;
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 2px 6px;
+  border-radius: 100px;
+  text-transform: uppercase;
+}
+
+/* Bottom progress bar per clip */
+.v3-bar {
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #FF4D1C, #FF7A3C);
+  border-radius: 0 2px 2px 0;
+}
+.v3-vclip:nth-child(1) .v3-bar { width: 85%; }
+.v3-vclip:nth-child(2) .v3-bar { width: 55%; animation: v3-bar-grow 2s ease-in-out infinite; }
+.v3-vclip:nth-child(3) .v3-bar { width: 20%; }
+@keyframes v3-bar-grow {
+  0%,100%{width:55%} 50%{width:65%}
+}
+
+/* Bottom: Timeline */
+.v3-timeline {
+  margin-top: 16px;
+  height: 48px;
+  background: #141414;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.07);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.v3-tl-track {
+  position: absolute;
+  top: 50%; left: 0;
+  transform: translateY(-50%);
+  width: 100%;
+  height: 4px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+}
+
+.v3-tl-progress {
+  height: 100%;
+  width: 60%;
+  background: linear-gradient(90deg, #FF4D1C, #FF7A3C);
+  border-radius: 2px;
+  animation: v3-tl-prog 5s linear infinite;
+}
+@keyframes v3-tl-prog {
+  from{width:0%} to{width:90%}
+}
+
+/* Clip markers on timeline */
+.v3-marker {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 28px;
+  background: rgba(255,77,28,0.25);
+  border: 1px solid rgba(255,77,28,0.5);
+  border-radius: 4px;
+}
+.v3-marker:nth-child(2) { left: 12%; width: 14%; }
+.v3-marker:nth-child(3) { left: 35%; width: 10%; background: rgba(255,77,28,0.4); border-color: #FF4D1C; box-shadow: 0 0 8px rgba(255,77,28,0.3); }
+.v3-marker:nth-child(4) { left: 55%; width: 12%; }
+.v3-marker:nth-child(5) { left: 75%; width: 8%; }
+
+/* Playhead */
+.v3-playhead {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 2px;
+  background: white;
+  left: 60%;
+  animation: v3-playhead-move 5s linear infinite;
+}
+.v3-playhead::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -4px;
+  border: 5px solid transparent;
+  border-top-color: white;
+}
+@keyframes v3-playhead-move {
+  from{left:0%} to{left:90%}
+}
+
+/* =====================================================
+   VARIATION 4: Floating clip bubble reframe
+   Central "source" with animated clips orbiting/flowing out
+   ===================================================== */
+#v4 {
+  background: #0D0D0D;
+  border: 1px solid rgba(255,77,28,0.15);
+  overflow: hidden;
+}
+
+/* Deep radial glow */
+#v4::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(255,77,28,0.07) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+/* Corner fade vignette */
+#v4::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse 20% 20% at 0% 0%, rgba(255,77,28,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 20% 20% at 100% 100%, rgba(255,77,28,0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.v4-layout {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 32px 40px;
+  z-index: 1;
+}
+
+/* Left block: source video */
+.v4-source-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.v4-src-video {
+  width: 256px;
+  height: 160px;
+  background: linear-gradient(135deg, #161616, #1a1a1a);
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Two-person setup */
+.v4-person-row {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  top: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  padding-bottom: 12px;
+}
+
+.v4-person-a, .v4-person-b {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.v4-pa-head, .v4-pb-head {
+  border-radius: 50%;
+  background: linear-gradient(135deg, #505050, #282828);
+  border: 2px solid rgba(255,255,255,0.12);
+}
+.v4-pa-head { width: 34px; height: 34px; animation: v4-nod-a 2.5s ease-in-out infinite; }
+.v4-pb-head { width: 30px; height: 30px; animation: v4-nod-b 3s ease-in-out infinite; }
+@keyframes v4-nod-a { 0%,100%{transform:rotate(-3deg)} 50%{transform:rotate(3deg)} }
+@keyframes v4-nod-b { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+
+.v4-pa-body, .v4-pb-body {
+  border-radius: 10px 10px 0 0;
+  background: linear-gradient(135deg, #3a3a3a, #1a1a1a);
+}
+.v4-pa-body { width: 50px; height: 28px; }
+.v4-pb-body { width: 44px; height: 24px; }
+
+/* Recording dot */
+.v4-rec {
+  position: absolute;
+  top: 10px; left: 12px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.v4-rec-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #FF4D1C;
+  animation: v4-rec-blink 1s ease-in-out infinite;
+}
+@keyframes v4-rec-blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.v4-rec-text {
+  font-size: 8px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* AI badge below source */
+.v4-ai-process {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,77,28,0.1);
+  border: 1px solid rgba(255,77,28,0.25);
+  border-radius: 100px;
+  padding: 5px 12px;
+}
+.v4-spinner {
+  width: 10px; height: 10px;
+  border: 2px solid rgba(255,77,28,0.3);
+  border-top-color: #FF4D1C;
+  border-radius: 50%;
+  animation: v4-spin 0.8s linear infinite;
+}
+@keyframes v4-spin { to{transform:rotate(360deg)} }
+.v4-ai-text {
+  font-size: 9px;
+  font-weight: 700;
+  color: #FF7A3C;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Center divider with arrows */
+.v4-divider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.v4-flow-arrow {
+  width: 2px;
+  height: 16px;
+  background: linear-gradient(180deg, transparent, rgba(255,77,28,0.5), transparent);
+  position: relative;
+}
+.v4-flow-arrow::after {
+  content: '›';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%) rotate(90deg);
+  color: #FF4D1C;
+  font-size: 14px;
+  font-weight: 800;
+}
+.v4-split-icon {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: rgba(255,77,28,0.15);
+  border: 1.5px solid rgba(255,77,28,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: v4-icon-pulse 2s ease-in-out infinite;
+}
+@keyframes v4-icon-pulse {
+  0%,100%{box-shadow:0 0 0 0 rgba(255,77,28,0)}
+  50%{box-shadow:0 0 0 6px rgba(255,77,28,0.1)}
+}
+.v4-icon-lines {
+  display: flex; gap: 3px; align-items: center;
+}
+.v4-icon-line {
+  width: 2px; background: #FF4D1C; border-radius: 1px;
+}
+.v4-icon-line:nth-child(1) { height: 10px; }
+.v4-icon-line:nth-child(2) { height: 14px; }
+.v4-icon-line:nth-child(3) { height: 10px; }
+
+/* Right: 3 vertical clips stacked with offset */
+.v4-output-block {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.v4-vcard {
+  background: #161616;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  width: 78px;
+  height: 140px;
+  position: relative;
+  overflow: hidden;
+  animation: v4-card-appear 0.6s ease both;
+}
+.v4-vcard:nth-child(1) { 
+  animation-delay: 0.4s;
+  transform: translateY(-6px);
+}
+.v4-vcard:nth-child(2) {
+  animation-delay: 0.7s;
+  height: 156px;
+  border-color: rgba(255,77,28,0.4);
+  box-shadow: 0 0 24px rgba(255,77,28,0.12);
+}
+.v4-vcard:nth-child(3) {
+  animation-delay: 1.0s;
+  transform: translateY(6px);
+}
+@keyframes v4-card-appear {
+  from { opacity:0; transform:translateX(20px) scale(0.9); }
+  to   { opacity:1; transform:translateX(0) scale(1); }
+}
+/* override transforms for nth-child after animation */
+.v4-vcard:nth-child(1).appeared { transform: translateY(-6px); }
+.v4-vcard:nth-child(3).appeared { transform: translateY(6px); }
+
+.v4-vcard-figure {
+  position: absolute;
+  bottom: 22%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.v4-vfig-h { width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(135deg, #555, #2a2a2a); border: 1.5px solid rgba(255,255,255,0.2); }
+.v4-vfig-b { width: 32px; height: 16px; border-radius: 8px 8px 0 0; background: linear-gradient(135deg, #444, #1a1a1a); }
+
+/* Center track on middle card */
+.v4-vcard:nth-child(2) .v4-track {
+  position: absolute;
+  top: 16%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 38px; height: 40px;
+  border: 1.5px solid #FF4D1C;
+  border-radius: 3px;
+  animation: v4-track-blink 2s ease-in-out infinite;
+}
+@keyframes v4-track-blink {
+  0%,100%{opacity:0.6} 50%{opacity:1; box-shadow:0 0 10px rgba(255,77,28,0.3)}
+}
+
+/* Platform tag bottom */
+.v4-ptag {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px; height: 24px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.v4-vcard:nth-child(1) .v4-ptag { background: #010101; }
+.v4-vcard:nth-child(2) .v4-ptag { background: rgba(255,0,0,0.15); }
+.v4-vcard:nth-child(3) .v4-ptag { background: rgba(228,64,95,0.15); }
+
+/* Progress bar at bottom */
+.v4-prog {
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #FF4D1C, #FF7A3C);
+  animation: v4-prog-grow 3s ease-in-out infinite;
+}
+.v4-vcard:nth-child(1) .v4-prog { width: 90%; animation-delay: 0.4s; }
+.v4-vcard:nth-child(2) .v4-prog { width: 60%; animation-delay: 0.7s; }
+.v4-vcard:nth-child(3) .v4-prog { width: 30%; animation-delay: 1.0s; }
+@keyframes v4-prog-grow {
+  0%{opacity:0.5} 50%{opacity:1} 100%{opacity:0.5}
+}
+
+</style>
+</head>
+<body>
+
+<!-- VARIATION 1 -->
+<div>
+  <p class="variation-label">Variation 1 — Video Split → Cascading Clips</p>
+  <div class="frame" id="v1">
+    <div class="v1-stage">
+      <!-- Source video -->
+      <div class="v1-source">
+        <div class="v1-waveform">
+          <div class="v1-bar"></div><div class="v1-bar"></div><div class="v1-bar"></div>
+          <div class="v1-bar"></div><div class="v1-bar"></div><div class="v1-bar"></div>
+          <div class="v1-bar"></div>
+        </div>
+        <div class="v1-speaker v1-speaker-1">
+          <div class="v1-silhouette">
+            <div class="v1-sil-head"></div>
+            <div class="v1-sil-body"></div>
+          </div>
+        </div>
+        <div class="v1-speaker v1-speaker-2">
+          <div class="v1-silhouette">
+            <div class="v1-sil-head"></div>
+            <div class="v1-sil-body"></div>
+          </div>
+        </div>
+        <div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,0.06)">
+          <div style="width:55%;height:100%;background:linear-gradient(90deg,#FF4D1C,#FF7A3C)"></div>
+        </div>
+        <div class="v1-label">Source Video</div>
+      </div>
+
+      <!-- Arrow -->
+      <div class="v1-arrow">
+        <div class="v1-arrow-line"></div>
+        <div class="v1-ai-badge">AI</div>
+      </div>
+
+      <!-- Output clips -->
+      <div class="v1-clips">
+        <div class="v1-clip">
+          <div class="v1-clip-speaker">
+            <div class="v1-clip-head"></div>
+            <div class="v1-clip-body"></div>
+          </div>
+          <div class="v1-track-box"></div>
+          <div class="v1-platform" style="background:rgba(0,0,0,0.7);border:1px solid rgba(255,255,255,0.1);font-size:8px;">🎵</div>
+          <div class="v1-progress"><div class="v1-progress-fill"></div></div>
+        </div>
+        <div class="v1-clip">
+          <div class="v1-clip-speaker">
+            <div class="v1-clip-head"></div>
+            <div class="v1-clip-body"></div>
+          </div>
+          <div class="v1-platform" style="background:rgba(255,0,0,0.1);border:1px solid rgba(255,0,0,0.2);font-size:8px;">▶</div>
+          <div class="v1-progress"><div class="v1-progress-fill"></div></div>
+        </div>
+        <div class="v1-clip">
+          <div class="v1-clip-speaker">
+            <div class="v1-clip-head"></div>
+            <div class="v1-clip-body"></div>
+          </div>
+          <div class="v1-platform" style="background:rgba(228,64,95,0.1);border:1px solid rgba(228,64,95,0.2);font-size:8px;">📷</div>
+          <div class="v1-progress"><div class="v1-progress-fill"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VARIATION 2 -->
+<div>
+  <p class="variation-label">Variation 2 — Bento Reframe Grid</p>
+  <div class="frame" id="v2">
+    <div class="v2-layout">
+      <!-- Source panel -->
+      <div class="v2-source-panel">
+        <div class="v2-source-screen">
+          <div class="v2-src-left">
+            <div class="v2-src-head"></div>
+            <div class="v2-src-body"></div>
+          </div>
+          <div class="v2-src-right">
+            <div class="v2-src-head" style="width:26px;height:26px;"></div>
+            <div class="v2-src-body" style="width:40px;height:20px;"></div>
+          </div>
+          <div class="v2-scanline"></div>
+          <div class="v2-playhead"></div>
+        </div>
+        <div class="v2-source-info">
+          <span class="v2-src-badge">Source</span>
+          <span class="v2-src-dur">54:32</span>
+        </div>
+      </div>
+
+      <!-- 2x2 clips -->
+      <div class="v2-clips-panel">
+        <!-- clip 1 -->
+        <div class="v2-clip-card">
+          <div class="v2-clip-figure">
+            <div class="v2-fig-head"></div>
+            <div class="v2-fig-body"></div>
+          </div>
+          <div class="v2-track-tl"></div>
+          <div class="v2-track-br"></div>
+          <div class="v2-platform-pill">
+            <div class="v2-platform-dot" style="background:#010101;border:1px solid #555;"></div>
+            <span class="v2-platform-name">TikTok</span>
+          </div>
+          <div class="v2-proc-bar"></div>
+        </div>
+        <!-- clip 2 -->
+        <div class="v2-clip-card">
+          <div class="v2-clip-figure">
+            <div class="v2-fig-head" style="width:20px;height:20px;"></div>
+            <div class="v2-fig-body" style="width:28px;height:15px;"></div>
+          </div>
+          <div class="v2-platform-pill">
+            <div class="v2-platform-dot" style="background:rgba(255,0,0,0.7);"></div>
+            <span class="v2-platform-name">Shorts</span>
+          </div>
+          <div class="v2-proc-bar"></div>
+        </div>
+        <!-- clip 3 -->
+        <div class="v2-clip-card">
+          <div class="v2-clip-figure">
+            <div class="v2-fig-head"></div>
+            <div class="v2-fig-body"></div>
+          </div>
+          <div class="v2-platform-pill">
+            <div class="v2-platform-dot" style="background:rgba(228,64,95,0.7);"></div>
+            <span class="v2-platform-name">Reels</span>
+          </div>
+          <div class="v2-proc-bar"></div>
+        </div>
+        <!-- clip 4 -->
+        <div class="v2-clip-card" style="opacity:0.5;">
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;">
+            <div style="width:20px;height:2px;background:rgba(255,255,255,0.2);border-radius:1px;"></div>
+            <div style="width:14px;height:2px;background:rgba(255,255,255,0.2);border-radius:1px;"></div>
+            <div style="font-size:9px;color:rgba(255,255,255,0.3);font-weight:600;letter-spacing:0.06em;text-transform:uppercase;margin-top:4px;">+17 more</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VARIATION 3 -->
+<div>
+  <p class="variation-label">Variation 3 — Cinematic Timeline Editor</p>
+  <div class="frame" id="v3">
+    <div class="v3-layout">
+      <div class="v3-top">
+        <!-- Source -->
+        <div class="v3-source">
+          <div class="v3-timestamp">00:14:32</div>
+          <div class="v3-src-stage">
+            <div class="v3-person">
+              <div class="v3-p-head active"></div>
+              <div class="v3-p-body"></div>
+            </div>
+            <div class="v3-person">
+              <div class="v3-p-head"></div>
+              <div class="v3-p-body" style="width:40px;height:22px;"></div>
+            </div>
+          </div>
+          <div class="v3-mic">
+            <div class="v3-mic-dot"></div>
+          </div>
+          <!-- Playhead line -->
+          <div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,0.06);">
+            <div style="width:42%;height:100%;background:linear-gradient(90deg,#FF4D1C,#FF7A3C);animation:v3-pl 5s linear infinite;"></div>
+          </div>
+          <style>@keyframes v3-pl{from{width:0%}to{width:100%}}</style>
+        </div>
+
+        <!-- Clips stack -->
+        <div class="v3-clips-stack">
+          <div class="v3-vclip">
+            <div class="v3-vclip-figure">
+              <div class="v3-vfig-head"></div>
+              <div class="v3-vfig-body"></div>
+            </div>
+            <div class="v3-bar"></div>
+          </div>
+          <div class="v3-vclip active">
+            <div class="v3-vclip-figure">
+              <div class="v3-vfig-head" style="border-color:rgba(255,77,28,0.4);"></div>
+              <div class="v3-vfig-body"></div>
+            </div>
+            <div class="v3-track-frame"></div>
+            <div class="v3-active-badge">AI ●</div>
+            <div class="v3-bar"></div>
+          </div>
+          <div class="v3-vclip">
+            <div class="v3-vclip-figure">
+              <div class="v3-vfig-head"></div>
+              <div class="v3-vfig-body"></div>
+            </div>
+            <div class="v3-bar"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline -->
+      <div class="v3-timeline">
+        <div class="v3-tl-track">
+          <div class="v3-tl-progress"></div>
+        </div>
+        <div class="v3-marker"></div>
+        <div class="v3-marker"></div>
+        <div class="v3-marker"></div>
+        <div class="v3-marker"></div>
+        <div class="v3-playhead"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VARIATION 4 -->
+<div>
+  <p class="variation-label">Variation 4 — Split → Framed Output Cards</p>
+  <div class="frame" id="v4">
+    <div class="v4-layout">
+      <!-- Source -->
+      <div class="v4-source-block">
+        <div class="v4-src-video">
+          <div class="v4-rec">
+            <div class="v4-rec-dot"></div>
+            <span class="v4-rec-text">Live</span>
+          </div>
+          <div class="v4-person-row">
+            <div class="v4-person-a">
+              <div class="v4-pa-head"></div>
+              <div class="v4-pa-body"></div>
+            </div>
+            <div class="v4-person-b">
+              <div class="v4-pb-head"></div>
+              <div class="v4-pb-body"></div>
+            </div>
+          </div>
+          <!-- Waveform overlay -->
+          <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:2px;">
+            <div style="width:2px;height:6px;background:rgba(255,77,28,0.5);border-radius:1px;animation:vw 0.7s ease-in-out infinite alternate;"></div>
+            <div style="width:2px;height:10px;background:rgba(255,77,28,0.5);border-radius:1px;animation:vw 0.7s 0.1s ease-in-out infinite alternate;"></div>
+            <div style="width:2px;height:14px;background:rgba(255,77,28,0.6);border-radius:1px;animation:vw 0.7s 0.2s ease-in-out infinite alternate;"></div>
+            <div style="width:2px;height:10px;background:rgba(255,77,28,0.5);border-radius:1px;animation:vw 0.7s 0.3s ease-in-out infinite alternate;"></div>
+            <div style="width:2px;height:6px;background:rgba(255,77,28,0.4);border-radius:1px;animation:vw 0.7s 0.4s ease-in-out infinite alternate;"></div>
+          </div>
+          <style>@keyframes vw{from{transform:scaleY(0.3)}to{transform:scaleY(1)}}</style>
+        </div>
+        <div class="v4-ai-process">
+          <div class="v4-spinner"></div>
+          <span class="v4-ai-text">Reframing</span>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="v4-divider">
+        <div class="v4-flow-arrow"></div>
+        <div class="v4-split-icon">
+          <div class="v4-icon-lines">
+            <div class="v4-icon-line"></div>
+            <div class="v4-icon-line"></div>
+            <div class="v4-icon-line"></div>
+          </div>
+        </div>
+        <div class="v4-flow-arrow"></div>
+      </div>
+
+      <!-- Output cards -->
+      <div class="v4-output-block">
+        <div class="v4-vcard">
+          <div class="v4-vcard-figure">
+            <div class="v4-vfig-h"></div>
+            <div class="v4-vfig-b"></div>
+          </div>
+          <div class="v4-ptag">🎵</div>
+          <div class="v4-prog"></div>
+        </div>
+        <div class="v4-vcard">
+          <div class="v4-vcard-figure">
+            <div class="v4-vfig-h" style="border-color:rgba(255,77,28,0.4);"></div>
+            <div class="v4-vfig-b"></div>
+          </div>
+          <div class="v4-track"></div>
+          <div class="v4-ptag">▶</div>
+          <div class="v4-prog"></div>
+        </div>
+        <div class="v4-vcard">
+          <div class="v4-vcard-figure">
+            <div class="v4-vfig-h"></div>
+            <div class="v4-vfig-b"></div>
+          </div>
+          <div class="v4-ptag">📷</div>
+          <div class="v4-prog"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

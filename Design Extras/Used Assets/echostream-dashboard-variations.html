@@ -1,0 +1,3359 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EchoStream — Dashboard Variations</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: #060606;
+        font-family: "Plus Jakarta Sans", sans-serif;
+        padding: 60px 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 100px;
+      }
+
+      .section-label {
+        color: #ff4d1c;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .section-desc {
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 11px;
+        text-align: center;
+        margin-bottom: 24px;
+        margin-top: 4px;
+      }
+
+      /* =========================================
+   SHARED DASHBOARD SHELL
+   ========================================= */
+      .db-shell {
+        width: 1280px;
+        height: 760px;
+        border-radius: 20px;
+        overflow: hidden;
+        position: relative;
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        box-shadow:
+          0 40px 80px rgba(0, 0, 0, 0.7),
+          0 0 80px rgba(255, 77, 28, 0.04);
+      }
+
+      /* Browser chrome top bar */
+      .db-browser-bar {
+        height: 34px;
+        background: #0a0a0a;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        display: flex;
+        align-items: center;
+        padding: 0 16px;
+        gap: 12px;
+        flex-shrink: 0;
+      }
+      .db-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+      .db-url-bar {
+        flex: 1;
+        height: 18px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 4px;
+        margin: 0 auto;
+        max-width: 320px;
+        display: flex;
+        align-items: center;
+        padding: 0 8px;
+        gap: 5px;
+      }
+      .db-url-text {
+        font-size: 9px;
+        color: rgba(255, 255, 255, 0.3);
+        letter-spacing: 0.01em;
+      }
+      .db-lock {
+        font-size: 8px;
+      }
+
+      /* Micro avatar */
+      .micro-avatar {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ff4d1c, #ff7a3c);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 9px;
+        font-weight: 800;
+        color: white;
+        flex-shrink: 0;
+      }
+
+      /* =========================================
+   REUSABLE SMALL COMPONENTS
+   ========================================= */
+      .badge-orange {
+        background: rgba(255, 77, 28, 0.15);
+        border: 1px solid rgba(255, 77, 28, 0.3);
+        color: #ff7a3c;
+        font-size: 8px;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 100px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      .badge-green {
+        background: rgba(34, 197, 94, 0.1);
+        border: 1px solid rgba(34, 197, 94, 0.2);
+        color: #4ade80;
+        font-size: 8px;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 100px;
+      }
+      .badge-gray {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 8px;
+        font-weight: 600;
+        padding: 2px 7px;
+        border-radius: 100px;
+      }
+
+      /* Sparkline */
+      .sparkline {
+        display: flex;
+        align-items: flex-end;
+        gap: 2px;
+        height: 24px;
+      }
+      .spark-bar {
+        width: 4px;
+        background: rgba(255, 77, 28, 0.5);
+        border-radius: 1px;
+        flex-shrink: 0;
+      }
+      .spark-bar.peak {
+        background: #ff4d1c;
+      }
+
+      /* Mini clip card */
+      .clip-card-v {
+        background: #1a1a1a;
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 8px;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .clip-card-thumb {
+        background: #222;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+      .clip-card-thumb .play-icon {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: rgba(255, 77, 28, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 7px;
+        color: white;
+      }
+      .clip-card-meta {
+        padding: 6px 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+      .clip-card-title {
+        font-size: 9px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.85);
+        letter-spacing: -0.01em;
+        line-height: 1.3;
+      }
+      .clip-card-stat {
+        font-size: 8px;
+        color: rgba(255, 255, 255, 0.35);
+        font-weight: 500;
+      }
+
+      /* Platform icons row */
+      .platform-row {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+      }
+      .plat-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 7px;
+        font-weight: 700;
+      }
+
+      /* Progress bar component */
+      .prog-row {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .prog-label-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .prog-label {
+        font-size: 9px;
+        color: rgba(255, 255, 255, 0.5);
+        font-weight: 600;
+      }
+      .prog-val {
+        font-size: 9px;
+        color: rgba(255, 255, 255, 0.7);
+        font-weight: 700;
+      }
+      .prog-track {
+        height: 4px;
+        background: rgba(255, 255, 255, 0.07);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      .prog-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #ff4d1c, #ff7a3c);
+        border-radius: 2px;
+      }
+
+      /* Stat box */
+      .stat-box {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .stat-num {
+        font-family: "Sora", sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: #f5f5f5;
+        letter-spacing: -0.03em;
+        line-height: 1;
+      }
+      .stat-label {
+        font-size: 9px;
+        color: rgba(255, 255, 255, 0.35);
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+      }
+      .stat-delta {
+        font-size: 9px;
+        font-weight: 700;
+        color: #4ade80;
+      }
+
+      /* mini area chart using CSS */
+      .mini-chart {
+        height: 40px;
+        display: flex;
+        align-items: flex-end;
+        gap: 2px;
+        padding: 0 0 2px;
+        position: relative;
+      }
+      .mc-bar {
+        flex: 1;
+        border-radius: 2px 2px 0 0;
+        background: rgba(255, 77, 28, 0.2);
+        min-width: 6px;
+        transition: background 0.2s;
+      }
+      .mc-bar.active {
+        background: rgba(255, 77, 28, 0.6);
+      }
+      .mc-bar.peak {
+        background: #ff4d1c;
+      }
+
+      /* ==========================================================================
+   DASHBOARD VARIATION 1
+   Structure: Classic left sidebar + main content area
+   - Sidebar: Logo, nav links, user section
+   - Top bar: search, notifications, user
+   - Main: Upload prompt, 3 stat cards, Clips grid (6 clips), Activity feed
+   ========================================================================== */
+
+      #db1 {
+        background: #0f0f0f;
+      }
+
+      .db1-inner {
+        display: flex;
+        height: calc(100% - 34px);
+      }
+
+      /* Sidebar */
+      .db1-sidebar {
+        width: 200px;
+        background: #0a0a0a;
+        border-right: 1px solid rgba(255, 255, 255, 0.06);
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+      }
+
+      .db1-logo {
+        padding: 16px 16px 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+      .db1-logo-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 800;
+        color: white;
+        flex-shrink: 0;
+      }
+      .db1-logo-name {
+        font-family: "Sora", sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        color: #f5f5f5;
+        letter-spacing: -0.02em;
+      }
+
+      .db1-nav {
+        flex: 1;
+        padding: 0 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .db1-nav-section {
+        font-size: 8px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.2);
+        padding: 8px 6px 4px;
+        margin-top: 8px;
+      }
+      .db1-nav-link {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 7px 10px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.45);
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .db1-nav-link.active {
+        background: rgba(255, 77, 28, 0.12);
+        color: #ff7a3c;
+        border: 1px solid rgba(255, 77, 28, 0.2);
+      }
+      .db1-nav-icon {
+        width: 14px;
+        text-align: center;
+        font-size: 12px;
+        flex-shrink: 0;
+      }
+      .db1-nav-link .db1-nav-count {
+        margin-left: auto;
+        font-size: 8px;
+        background: rgba(255, 77, 28, 0.2);
+        color: #ff7a3c;
+        padding: 1px 6px;
+        border-radius: 100px;
+        font-weight: 700;
+      }
+
+      .db1-sidebar-bottom {
+        padding: 14px;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      /* Plan card in sidebar */
+      .db1-plan-card {
+        background: rgba(255, 77, 28, 0.07);
+        border: 1px solid rgba(255, 77, 28, 0.2);
+        border-radius: 10px;
+        padding: 10px 12px;
+        margin-bottom: 10px;
+      }
+      .db1-plan-title {
+        font-size: 9px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.6);
+        margin-bottom: 4px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .db1-plan-name {
+        font-family: "Sora", sans-serif;
+        font-size: 12px;
+        font-weight: 700;
+        color: #ff7a3c;
+        margin-bottom: 6px;
+      }
+      .db1-plan-usage {
+        font-size: 8px;
+        color: rgba(255, 255, 255, 0.3);
+        margin-bottom: 5px;
+      }
+
+      .db1-user-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .db1-user-info {
+        flex: 1;
+        overflow: hidden;
+      }
+      .db1-user-name {
+        font-size: 10px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.8);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .db1-user-email {
+        font-size: 8px;
+        color: rgba(255, 255, 255, 0.3);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* Main area */
+      .db1-main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      /* Top bar */
+      .db1-topbar {
+        height: 48px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        gap: 12px;
+        flex-shrink: 0;
+      }
+      .db1-page-title {
+        font-family: "Sora", sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        color: #f5f5f5;
+        letter-spacing: -0.02em;
+      }
+      .db1-page-crumb {
+        font-size: 10px;
+        color: rgba(255, 255, 255, 0.25);
+      }
+      .db1-topbar-right {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .db1-search {
+        height: 28px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        padding: 0 10px;
+        gap: 6px;
+        width: 160px;
+      }
+      .db1-search-text {
+        font-size: 10px;
+        color: rgba(255, 255, 255, 0.2);
+      }
+      .db1-notif {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        position: relative;
+      }
+      .db1-notif-dot {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #ff4d1c;
+        border: 1.5px solid #0f0f0f;
+      }
+
+      /* Content area */
+      .db1-content {
+        flex: 1;
+        padding: 16px 20px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      /* Upload prompt */
+      .db1-upload-bar {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 77, 28, 0.08),
+          rgba(255, 77, 28, 0.04)
+        );
+        border: 1px dashed rgba(255, 77, 28, 0.3);
+        border-radius: 12px;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-shrink: 0;
+      }
+      .db1-upload-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: rgba(255, 77, 28, 0.15);
+        border: 1px solid rgba(255, 77, 28, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+      .db1-upload-text {
+        flex: 1;
+      }
+      .db1-upload-title {
+        font-size: 11px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.85);
+      }
+      .db1-upload-sub {
+        font-size: 9px;
+        color: rgba(255, 255, 255, 0.35);
+        margin-top: 1px;
+      }
+      .db1-upload-btn {
+        background: linear-gradient(135deg, #ff4d1c, #ff7a3c);
+        border: none;
+        border-radius: 8px;
+        padding: 7px 14px;
+        font-size: 10px;
+        font-weight: 700;
+        color: white;
+        cursor: pointer;
+        flex-shrink: 0;
+        letter-spacing: 0.01em;
+      }
+
+      /* Stats row */
+      .db1-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        flex-shrink: 0;
+      }
+      .db1-stat-card {
+        background: #161616;
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 12px;
+        padding: 12px 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .db1-stat-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+      }
+      .db1-stat-icon {
+        font-size: 14px;
+      }
+
+      /* Bottom section: clips + activity */
+      .db1-bottom {
+        display: grid;
+        grid-template-columns: 1fr 280px;
+        gap: 14px;
+        flex: 1;
+        overflow: hidden;
+        min-height: 0;
+      }
+
+      /* Clips panel */
+      .db1-clips-panel {
+        background: #161616;
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 12px;
+        padding: 12px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .db1-panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .db1-panel-title {
+        font-size: 11px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.85);
+        letter-spacing: -0.01em;
+      }
+      .db1-panel-link {
+        font-size: 9px;
+        color: rgba(255, 77, 28, 0.7);
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .db1-clips-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 8px;
+        overflow: hidden;
+      }
+
+      .db1-clip {
+        background: #1e1e1e;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 8px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .db1-clip-thumb {
+        aspect-ratio: 9/16;
+        background: linear-gradient(160deg, #222, #1a1a1a);
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .db1-clip-thumb .play {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: rgba(255, 77, 28, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 6px;
+        color: white;
+      }
+      .db1-clip-dur {
+        position: absolute;
+        bottom: 4px;
+        right: 4px;
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 3px;
+        padding: 1px 4px;
+        font-size: 7px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.7);
+      }
+      .db1-clip-info {
+        padding: 5px 6px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .db1-clip-name {
+        font-size: 8px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.75);
+        line-height: 1.3;
+      }
+      .db1-clip-views {
+        font-size: 7px;
+        color: rgba(255, 255, 255, 0.3);
+      }
+
+      /* Activity / feed panel */
+      .db1-activity {
+        background: #161616;
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 12px;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        overflow: hidden;
+      }
+      .db1-activity-list {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        overflow: hidden;
+      }
+      .db1-activity-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 7px 8px;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+      }
+      .db1-act-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 7px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        flex-shrink: 0;
+      }
+      .db1-act-body {
+        flex: 1;
+      }
+      .db1-act-title {
+        font-size: 9px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.75);
+        line-height: 1.3;
+      }
+      .db1-act-time {
+        font-size: 8px;
+        color: rgba(255, 255, 255, 0.25);
+        margin-top: 2px;
+      }
+
+      /* ==========================================================================
+   DASHBOARD VARIATION 2
+   Structure: Top navbar + three-column bento layout
+   - Top: full-width nav bar
+   - Content: Left narrow column (queue/recent) | Wide center (processing + clips bento) | Right (analytics column)
+   No traditional sidebar — navbar on top
+   ========================================================================== */
+
+      #db2 {
+        background: #0c0c0c;
+      }
+
+      .db2-inner {
+        display: flex;
+        flex-direction: column;
+        height: calc(100% - 34px);
+      }
+
+      /* Top nav bar */
+      .db2-navbar {
+        height: 48px;
+        background: #0a0a0a;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        gap: 0;
+        flex-shrink: 0;
+      }
+
+      .db2-logo {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        margin-right: 28px;
+      }
+      .db2-logo-mark {
+        width: 26px;
+        height: 26px;
+        background: linear-gradient(135deg, #ff4d1c, #ff7a3c);
+        border-radius: 7px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: 800;
+        color: white;
+      }
+      .db2-logo-text {
+        font-family: "Sora", sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        color: #f5f5f5;
+        letter-spacing: -0.02em;
+      }
+
+      .db2-nav-tabs {
+        display: flex;
+        gap: 2px;
+      }
+      .db2-nav-tab {
+        font-size: 11px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.35);
+        padding: 5px 12px;
+        border-radius: 7px;
+        cursor: pointer;
+      }
+      .db2-nav-tab.active {
+        color: rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.07);
+      }
+
+      .db2-navbar-right {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .db2-new-btn {
+        background: linear-gradient(135deg, #ff4d1c, #ff7a3c);
+        border: none;
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-size: 10px;
+        font-weight: 700;
+        color: white;
+        cursor: pointer;
+        letter-spacing: 0.01em;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      /* Three-column layout */
+      .db2-columns {
+        flex: 1;
+        display: grid;
+        grid-template-columns: 220px 1fr 260px;
+        overflow: hidden;
+      }
+
+      /* Left column: Upload queue + recent */
+      .db2-left-col {
+        background: #0a0a0a;
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 14px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        overflow: hidden;
+      }
+
+      .db2-col-title {
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.2);
+        padding-bottom: 4px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      /* Upload drop zone */
+      .db2-drop-zone {
+        border: 1.5px dashed rgba(255, 77, 28, 0.25);
+        border-radius: 10px;
+        padding: 14px 10px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+      }
+      .db2-drop-icon {
+        font-size: 18px;
+      }
+      .db2-drop-title {
+        font-size: 10px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.6);
+      }
+      .db2-drop-sub {
+        font-size: 8px;
+        color: rgba(255, 255, 255, 0.25);
+      }
+
+      /* Processing item */
+      .db2-queue-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 8px;
+        background: #141414;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 8px;
+      }
+      .db2-queue-thumb {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        background: #222;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+      }
+      .db2-queue-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .db2-queue-name {
+        font-size: 9px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.75);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .db2-queue-sub {
+        font-size: 8px;
+        color: rgba(255, 255, 255, 0.3);
+        margin-top: 1px;
+      }
+      .db2-queue-status {
+        font-size: 8px;
+        font-weight: 700;
+        padding: 1px 6px;
+        border-radius: 100px;
+      }
+      .status-proc {
+        background: rgba(255, 77, 28, 0.15);
+        color: #ff7a3c;
+      }
+      .status-done {
+        background: rgba(34, 197, 94, 0.1);
+        color: #4ade80;
+      }
+      .status-queue {
+        background: rgba(255, 255, 255, 0.05);
+        color: rgba(255, 255, 255, 0.3);
+      }
+
+      /* Center column: main workspace */
+      .db2-center-col {
+        padding: 14px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        overflow: hidden;
+      }
+
+      /* Processing banner */
+      .db2-processing-banner {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 77, 28, 0.08),
+          rgba(255, 77, 28, 0.04)
+        );
+        border: 1px solid rgba(255, 77, 28, 0.2);
+        border-radius: 12px;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-shrink: 0;
+      }
+      .db2-proc-anim {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: rgba(255, 77, 28, 0.15);
+        border: 1px solid rgba(255, 77, 28, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        position: relative;
+        overflow: hidden;
+      }
+      .db2-proc-spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255, 77, 28, 0.3);
+        border-top-color: #ff4d1c;
+        border-radius: 50%;
+        animation: spin2 0.7s linear infinite;
+      }
+      @keyframes spin2 {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .db2-proc-text {
+        flex: 1;
+      }
+      .db2-proc-title {
+        font-size: 11px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.85);
+      }
+      .db2-proc-sub {
+        font-size: 9px;
+        color: rgba(255, 255, 255, 0.35);
+        margin-top: 2px;
+      }
+      .db2-proc-progress {
+        margin-top: 5px;
+        height: 3px;
+        background: rgba(255, 255, 255, 0.07);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      .db2-proc-fill {
+        height: 100%;
+        width: 68%;
+        background: linear-gradient(90deg, #ff4d1c, #ff7a3c);
+        border-radius: 2px;
+        animation: db2-fill 3s ease-in-out infinite alternate;
+      }
+      @keyframes db2-fill {
+        from {
+          width: 40%;
+        }
+        to {
+          width: 85%;
+        }
+      }
+
+      /* Bento clips grid */
+      .db2-bento {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        grid-template-rows: auto;
+        gap: 10px;
+        flex: 1;
+        overflow: hidden;
+      }
+
+      .db2-bento-clip {
+        background: #161616;
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 10px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .db2-bento-clip:first-child {
+        grid-column: span 2;
+        border-color: rgba(255, 77, 28, 0.2);
+        box-shadow: 0 0 16px rgba(255, 77, 28, 0.06);
+      }
+
+      .db2-bento-thumb {
+        flex: 1;
+        background: linear-gradient(160deg, #222, #1a1a1a);
+        position: relative;
+        min-height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .db2-bento-thumb:first-child {
+        min-height: 120px;
+      }
+      .db2-play-btn {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: rgba(255, 77, 28, 0.85);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 8px;
+        color: white;
+      }
+      .db2-clip-badge {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        font-size: 7px;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 100px;
+        background: rgba(255, 77, 28, 0.8);
+        color: white;
+        letter-spacing: 0.04em;
+      }
+      .db2-clip-dur {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 3px;
+        padding: 1px 4px;
+        font-size: 7px;
+        color: rgba(255, 255, 255, 0.6);
+        font-weight: 600;
+      }
+      .db2-clip-footer {
+        padding: 6px 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .db2-clip-name {
+        font-size: 8px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.7);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 120px;
+      }
+
+      /* Right column: analytics */
+      .db2-right-col {
+        background: #0a0a0a;
+        border-left: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 14px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        overflow: hidden;
+      }
+
+      /* Chart card */
+      .db2-chart-card {
+        background: #141414;
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 10px;
+        padding: 10px 12px;
+      }
+      .db2-chart-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+      .db2-chart-title {
+        font-size: 10px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.75);
+      }
+      .db2-chart-val {
+        font-family: "Sora", sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        color: #f5f5f5;
+        letter-spacing: -0.03em;
+        line-height: 1;
+        margin-bottom: 6px;
+      }
+      .db2-chart-delta {
+        font-size: 9px;
+        font-weight: 700;
+        color: #4ade80;
+        display: inline;
+      }
+
+      .db2-bar-chart {
+        display: flex;
+        align-items: flex-end;
+        gap: 3px;
+        height: 48px;
+      }
+      .db2-bc-bar {
+        flex: 1;
+        border-radius: 2px 2px 0 0;
+        background: rgba(255, 77, 28, 0.2);
+        min-width: 4px;
+      }
+      .db2-bc-bar.peak {
+        background: #ff4d1c;
+      }
+      .db2-bc-bar.hi {
+        background: rgba(255, 77, 28, 0.5);
+      }
+
+      /* Platform breakdown */
+      .db2-plat-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      }
+      .db2-plat-icon {
+        width: 20px;
+        height: 20px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 9px;
+        flex-shrink: 0;
+      }
+      .db2-plat-name {
+        font-size: 9px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.6);
+        flex: 1;
+      }
+      .db2-plat-val {
+        font-size: 10px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.8);
+      }
+      .db2-plat-bar-wrap {
+        width: 60px;
+        height: 3px;
+        background: rgba(255, 255, 255, 0.07);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      .db2-plat-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #ff4d1c, #ff7a3c);
+        border-radius: 2px;
+      }
+
+      /* ==========================================================================
+   DASHBOARD VARIATION 3
+   Structure: Icon-only sidebar + wide canvas (full-feature creator workspace)
+   - Ultra-thin icon rail on far left (just icons, no text)
+   - Top bar inside content
+   - Main: hero "create" area + two-column grid: clips left, insights right
+   - Different visual density — spacious, magazine-feel
+   ========================================================================== */
+
+      #db3 {
+        background: #0d0d0d;
+      }
+
+      .db3-inner {
+        display: flex;
+        height: calc(100% - 34px);
+      }
+
+      /* Icon rail */
+      .db3-rail {
+        width: 52px;
+        background: #080808;
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 12px 0;
+        gap: 4px;
+        flex-shrink: 0;
+      }
+      .db3-rail-logo {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #ff4d1c, #ff7a3c);
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 14px;
+        flex-shrink: 0;
+      }
+      .db3-rail-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.25);
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+      .db3-rail-icon.active {
+        background: rgba(255, 77, 28, 0.12);
+        color: #ff7a3c;
+      }
+      .db3-rail-spacer {
+        flex: 1;
+      }
+      .db3-rail-bottom {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        padding-bottom: 6px;
+      }
+
+      /* Main canvas */
+      .db3-canvas {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      /* Canvas top bar */
+      .db3-topbar {
+        height: 46px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        align-items: center;
+        padding: 0 18px;
+        gap: 12px;
+        flex-shrink: 0;
+      }
+      .db3-greeting {
+        font-family: "Sora", sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        color: #f5f5f5;
+        letter-spacing: -0.02em;
+      }
+      .db3-greeting span {
+        color: #ff7a3c;
+      }
+      .db3-topbar-actions {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .db3-tab-group {
+        display: flex;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 8px;
+        padding: 2px;
+        gap: 1px;
+      }
+      .db3-tab {
+        font-size: 9px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.35);
+        padding: 4px 9px;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      .db3-tab.active {
+        background: rgba(255, 77, 28, 0.18);
+        color: #ff7a3c;
+      }
+
+      /* Two-panel layout */
+      .db3-body {
+        flex: 1;
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        overflow: hidden;
+      }
+
+      /* Left: main clips workspace */
+      .db3-workspace {
+        padding: 16px 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        overflow: hidden;
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      /* Hero upload area — large, prominent */
+      .db3-hero-upload {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 77, 28, 0.07),
+          rgba(255, 77, 28, 0.03),
+          rgba(255, 122, 60, 0.03)
+        );
+        border: 1px dashed rgba(255, 77, 28, 0.28);
+        border-radius: 14px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        flex-shrink: 0;
+        height: 86px;
+      }
+
+      .db3-hero-left {
+        padding: 16px 20px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+      .db3-hero-title {
+        font-family: "Sora", sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.85);
+        letter-spacing: -0.02em;
+      }
+      .db3-hero-sub {
+        font-size: 9px;
+        color: rgba(255, 255, 255, 0.3);
+      }
+      .db3-hero-right {
+        padding: 0 20px;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-shrink: 0;
+      }
+      .db3-btn-primary {
+        background: linear-gradient(135deg, #ff4d1c, #ff7a3c);
+        border: none;
+        border-radius: 8px;
+        padding: 8px 14px;
+        font-size: 10px;
+        font-weight: 700;
+        color: white;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .db3-btn-ghost {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 8px 14px;
+        font-size: 10px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      /* Stats row — compact horizontal */
+      .db3-stats-strip {
+        display: flex;
+        gap: 0;
+        background: #141414;
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 12px;
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+      .db3-strip-stat {
+        flex: 1;
+        padding: 10px 14px;
+        border-right: 1px solid rgba(255, 255, 255, 0.06);
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .db3-strip-stat:last-child {
+        border-right: none;
+      }
+      .db3-ss-num {
+        font-family: "Sora", sans-serif;
+        font-size: 17px;
+        font-weight: 700;
+        color: #f5f5f5;
+        letter-spacing: -0.03em;
+        line-height: 1;
+      }
+      .db3-ss-label {
+        font-size: 8px;
+        color: rgba(255, 255, 255, 0.3);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .db3-ss-delta {
+        font-size: 8px;
+        font-weight: 700;
+        margin-top: 2px;
+      }
+
+      /* Clips horizontal scroll area */
+      .db3-clips-section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        overflow: hidden;
+      }
+      .db3-clips-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .db3-clips-title {
+        font-size: 11px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.8);
+      }
+      .db3-filter-row {
+        display: flex;
+        gap: 4px;
+      }
+      .db3-filter-btn {
+        font-size: 9px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.35);
+        padding: 3px 9px;
+        border-radius: 100px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        cursor: pointer;
+      }
+      .db3-filter-btn.active {
+        color: #ff7a3c;
+        background: rgba(255, 77, 28, 0.1);
+        border-color: rgba(255, 77, 28, 0.25);
+      }
+
+      /* Clips table-style list */
+      .db3-clips-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        overflow: hidden;
+      }
+      .db3-clip-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 7px 10px;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+      }
+      .db3-clip-row:nth-child(2) {
+        border-color: rgba(255, 77, 28, 0.2);
+        background: rgba(255, 77, 28, 0.03);
+      }
+      .db3-cr-thumb {
+        width: 26px;
+        height: 46px;
+        background: #222;
+        border-radius: 5px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 8px;
+      }
+      .db3-cr-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .db3-cr-title {
+        font-size: 10px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.8);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .db3-cr-meta {
+        font-size: 8px;
+        color: rgba(255, 255, 255, 0.3);
+        margin-top: 2px;
+      }
+      .db3-cr-platforms {
+        display: flex;
+        gap: 3px;
+      }
+      .db3-cr-plat {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 8px;
+      }
+      .db3-cr-views {
+        font-size: 10px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.6);
+        min-width: 50px;
+        text-align: right;
+      }
+      .db3-cr-more {
+        font-size: 9px;
+        color: rgba(255, 255, 255, 0.2);
+      }
+
+      /* Right panel: insights */
+      .db3-insights {
+        padding: 14px 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        overflow: hidden;
+      }
+
+      /* Profile card at top */
+      .db3-profile-card {
+        background: #141414;
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 12px;
+        padding: 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-shrink: 0;
+      }
+      .db3-profile-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ff4d1c, #ff7a3c);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 800;
+        color: white;
+        flex-shrink: 0;
+      }
+      .db3-profile-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .db3-profile-name {
+        font-size: 11px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.85);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .db3-profile-plan {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 2px;
+      }
+      .db3-plan-badge {
+        font-size: 8px;
+        font-weight: 700;
+        padding: 1px 6px;
+        border-radius: 100px;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 77, 28, 0.2),
+          rgba(255, 122, 60, 0.15)
+        );
+        border: 1px solid rgba(255, 77, 28, 0.25);
+        color: #ff7a3c;
+      }
+      .db3-plan-usage {
+        font-size: 8px;
+        color: rgba(255, 255, 255, 0.3);
+      }
+
+      /* Analytics chart */
+      .db3-analytics-card {
+        background: #141414;
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 12px;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .db3-an-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+      }
+      .db3-an-title {
+        font-size: 9px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.4);
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+      }
+      .db3-an-val {
+        font-family: "Sora", sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: #f5f5f5;
+        letter-spacing: -0.04em;
+        line-height: 1;
+      }
+      .db3-an-delta {
+        font-size: 9px;
+        font-weight: 700;
+        color: #4ade80;
+        margin-top: 2px;
+      }
+
+      /* Line chart using divs */
+      .db3-line-chart {
+        height: 52px;
+        position: relative;
+        overflow: hidden;
+      }
+      .db3-lc-bg {
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(
+          rgba(255, 255, 255, 0.03) 1px,
+          transparent 1px
+        );
+        background-size: 100% 17px;
+      }
+      /* Fake SVG path via clip-path polygon */
+      .db3-lc-area {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 77, 28, 0.25) 0%,
+          rgba(255, 77, 28, 0.02) 100%
+        );
+        clip-path: polygon(
+          0% 90%,
+          8% 75%,
+          16% 80%,
+          24% 65%,
+          32% 55%,
+          40% 60%,
+          48% 40%,
+          56% 30%,
+          64% 20%,
+          72% 10%,
+          80% 15%,
+          88% 5%,
+          96% 8%,
+          100% 10%,
+          100% 100%,
+          0% 100%
+        );
+      }
+      .db3-lc-line {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, transparent 0%, transparent 100%);
+        clip-path: polygon(
+          0% 90%,
+          8% 75%,
+          16% 80%,
+          24% 65%,
+          32% 55%,
+          40% 60%,
+          48% 40%,
+          56% 30%,
+          64% 20%,
+          72% 10%,
+          80% 15%,
+          88% 5%,
+          96% 8%,
+          100% 10%
+        );
+        border-bottom: 2px solid #ff4d1c;
+        overflow: visible;
+      }
+      /* Peak dot */
+      .db3-lc-dot {
+        position: absolute;
+        top: 4%;
+        left: 88%;
+        width: 7px;
+        height: 7px;
+        background: #ff4d1c;
+        border-radius: 50%;
+        border: 1.5px solid rgba(255, 77, 28, 0.4);
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 6px rgba(255, 77, 28, 0.5);
+      }
+
+      /* Scheduled posts list */
+      .db3-schedule-card {
+        background: #141414;
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 12px;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        flex: 1;
+        overflow: hidden;
+      }
+
+      .db3-sched-title {
+        font-size: 9px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.4);
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+      }
+
+      .db3-sched-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 5px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      }
+      .db3-sched-item:last-child {
+        border-bottom: none;
+      }
+      .db3-sched-time {
+        font-size: 9px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.4);
+        width: 40px;
+        flex-shrink: 0;
+        font-variant-numeric: tabular-nums;
+      }
+      .db3-sched-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .db3-sched-name {
+        font-size: 9px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.7);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .db3-sched-plat {
+        font-size: 8px;
+        color: rgba(255, 255, 255, 0.3);
+      }
+      .db3-sched-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ========================================================
+     DASHBOARD VARIATION 1: Classic Left Sidebar Layout
+     ======================================================== -->
+    <div>
+      <p class="section-label">Dashboard Variation 1 — Classic Sidebar</p>
+      <p class="section-desc">
+        Traditional left-sidebar nav · stat cards · clip grid · activity feed
+      </p>
+      <div class="db-shell" id="db1">
+        <!-- Browser chrome -->
+        <div class="db-browser-bar">
+          <div class="db-dot" style="background: #ff5f57"></div>
+          <div class="db-dot" style="background: #febc2e"></div>
+          <div class="db-dot" style="background: #28c840"></div>
+          <div class="db-url-bar" style="margin-left: auto; margin-right: auto">
+            <span class="db-lock">🔒</span>
+            <span class="db-url-text">app.echostream.io/dashboard</span>
+          </div>
+          <div style="width: 60px"></div>
+        </div>
+
+        <div class="db1-inner">
+          <!-- SIDEBAR -->
+          <div class="db1-sidebar">
+            <div class="db1-logo">
+              <div class="db1-logo-icon">
+                <img src="./echostream.png" alt="" width="100%" />
+              </div>
+              <span class="db1-logo-name">EchoStream</span>
+            </div>
+
+            <nav class="db1-nav">
+              <span class="db1-nav-section">Main</span>
+              <div class="db1-nav-link active">
+                <span class="db1-nav-icon">⚡</span>
+                Dashboard
+              </div>
+              <div class="db1-nav-link">
+                <span class="db1-nav-icon">📹</span>
+                My Clips
+                <span class="db1-nav-count">20</span>
+              </div>
+              <div class="db1-nav-link">
+                <span class="db1-nav-icon">🔄</span>
+                Processing
+                <span class="db1-nav-count">2</span>
+              </div>
+              <div class="db1-nav-link">
+                <span class="db1-nav-icon">📅</span>
+                Scheduler
+              </div>
+              <span class="db1-nav-section">Insights</span>
+              <div class="db1-nav-link">
+                <span class="db1-nav-icon">📊</span>
+                Analytics
+              </div>
+              <div class="db1-nav-link">
+                <span class="db1-nav-icon">🔍</span>
+                SEO Tools
+              </div>
+              <span class="db1-nav-section">Account</span>
+              <div class="db1-nav-link">
+                <span class="db1-nav-icon">⚙️</span>
+                Settings
+              </div>
+            </nav>
+
+            <div class="db1-sidebar-bottom">
+              <div class="db1-plan-card">
+                <div class="db1-plan-title">Current Plan</div>
+                <div class="db1-plan-name">Pro ✦</div>
+                <div class="db1-plan-usage">18 / 50 uploads used</div>
+                <div class="prog-track">
+                  <div class="prog-fill" style="width: 36%"></div>
+                </div>
+              </div>
+              <div class="db1-user-row">
+                <div class="micro-avatar">JD</div>
+                <div class="db1-user-info">
+                  <div class="db1-user-name">James Dooku</div>
+                  <div class="db1-user-email">james@studio.co</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- MAIN -->
+          <div class="db1-main">
+            <!-- Top bar -->
+            <div class="db1-topbar">
+              <span class="db1-page-crumb">Home /</span>
+              <span class="db1-page-title">Dashboard</span>
+              <div class="db1-topbar-right">
+                <div class="db1-search">
+                  <span style="font-size: 10px; color: rgba(255, 255, 255, 0.2)"
+                    >🔍</span
+                  >
+                  <span class="db1-search-text">Search clips...</span>
+                </div>
+                <div class="db1-notif">
+                  🔔
+                  <div class="db1-notif-dot"></div>
+                </div>
+                <div class="micro-avatar">JD</div>
+              </div>
+            </div>
+
+            <!-- Content -->
+            <div class="db1-content">
+              <!-- Upload bar -->
+              <div class="db1-upload-bar">
+                <div class="db1-upload-icon">🎬</div>
+                <div class="db1-upload-text">
+                  <div class="db1-upload-title">
+                    Upload a new video to generate clips
+                  </div>
+                  <div class="db1-upload-sub">
+                    Paste a YouTube URL or drag & drop an MP4 — supports up to 3
+                    hours
+                  </div>
+                </div>
+                <button class="db1-upload-btn">+ New Upload</button>
+              </div>
+
+              <!-- Stats -->
+              <div class="db1-stats">
+                <div class="db1-stat-card">
+                  <div class="db1-stat-top">
+                    <div class="stat-box">
+                      <div class="stat-num">2,841</div>
+                      <div class="stat-label">Total Clips</div>
+                      <div class="stat-delta">↑ +127 this week</div>
+                    </div>
+                    <div class="db1-stat-icon">🎞️</div>
+                  </div>
+                  <div class="mini-chart">
+                    <div class="mc-bar" style="height: 30%"></div>
+                    <div class="mc-bar" style="height: 45%"></div>
+                    <div class="mc-bar" style="height: 38%"></div>
+                    <div class="mc-bar" style="height: 60%"></div>
+                    <div class="mc-bar hi" style="height: 70%"></div>
+                    <div class="mc-bar hi" style="height: 80%"></div>
+                    <div class="mc-bar peak" style="height: 100%"></div>
+                  </div>
+                </div>
+                <div class="db1-stat-card">
+                  <div class="db1-stat-top">
+                    <div class="stat-box">
+                      <div class="stat-num">1.2M</div>
+                      <div class="stat-label">Total Views</div>
+                      <div class="stat-delta">↑ +18% vs last month</div>
+                    </div>
+                    <div class="db1-stat-icon">👁️</div>
+                  </div>
+                  <div class="mini-chart">
+                    <div class="mc-bar" style="height: 20%"></div>
+                    <div class="mc-bar" style="height: 35%"></div>
+                    <div class="mc-bar" style="height: 50%"></div>
+                    <div class="mc-bar hi" style="height: 65%"></div>
+                    <div class="mc-bar" style="height: 55%"></div>
+                    <div class="mc-bar peak" style="height: 100%"></div>
+                    <div class="mc-bar hi" style="height: 80%"></div>
+                  </div>
+                </div>
+                <div class="db1-stat-card">
+                  <div class="db1-stat-top">
+                    <div class="stat-box">
+                      <div class="stat-num">94%</div>
+                      <div class="stat-label">Caption Accuracy</div>
+                      <div class="stat-delta">↑ +2% this month</div>
+                    </div>
+                    <div class="db1-stat-icon">💬</div>
+                  </div>
+                  <div class="mini-chart">
+                    <div class="mc-bar hi" style="height: 75%"></div>
+                    <div class="mc-bar hi" style="height: 80%"></div>
+                    <div class="mc-bar hi" style="height: 85%"></div>
+                    <div class="mc-bar hi" style="height: 88%"></div>
+                    <div class="mc-bar peak" style="height: 94%"></div>
+                    <div class="mc-bar peak" style="height: 92%"></div>
+                    <div class="mc-bar peak" style="height: 94%"></div>
+                  </div>
+                </div>
+                <div class="db1-stat-card">
+                  <div class="db1-stat-top">
+                    <div class="stat-box">
+                      <div class="stat-num">3</div>
+                      <div class="stat-label">Processing Now</div>
+                      <div
+                        style="
+                          font-size: 8px;
+                          color: rgba(255, 77, 28, 0.8);
+                          font-weight: 700;
+                          margin-top: 2px;
+                        "
+                      >
+                        ● Live
+                      </div>
+                    </div>
+                    <div class="db1-stat-icon">⚙️</div>
+                  </div>
+                  <div
+                    style="
+                      display: flex;
+                      flex-direction: column;
+                      gap: 4px;
+                      margin-top: 4px;
+                    "
+                  >
+                    <div
+                      style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                      "
+                    >
+                      <span
+                        style="font-size: 8px; color: rgba(255, 255, 255, 0.4)"
+                        >Podcast Ep.41</span
+                      >
+                      <span
+                        style="font-size: 8px; font-weight: 700; color: #ff7a3c"
+                        >68%</span
+                      >
+                    </div>
+                    <div class="prog-track">
+                      <div
+                        class="prog-fill"
+                        style="
+                          width: 68%;
+                          animation: db1-p 2s ease-in-out infinite alternate;
+                        "
+                      ></div>
+                    </div>
+                  </div>
+                  <style>
+                    @keyframes db1-p {
+                      from {
+                        width: 60%;
+                      }
+                      to {
+                        width: 80%;
+                      }
+                    }
+                  </style>
+                </div>
+              </div>
+
+              <!-- Bottom: clips + activity -->
+              <div class="db1-bottom">
+                <!-- Clips grid -->
+                <div class="db1-clips-panel">
+                  <div class="db1-panel-header">
+                    <span class="db1-panel-title">Recent Clips</span>
+                    <span class="db1-panel-link">View all →</span>
+                  </div>
+                  <div class="db1-clips-grid">
+                    <!-- 6 clip cards -->
+                    <div class="db1-clip">
+                      <div class="db1-clip-thumb">
+                        <div class="play">▶</div>
+                        <div class="db1-clip-dur">0:47</div>
+                      </div>
+                      <div class="db1-clip-info">
+                        <div class="db1-clip-name">The AI moment</div>
+                        <div class="db1-clip-views">24.3K views</div>
+                      </div>
+                    </div>
+                    <div
+                      class="db1-clip"
+                      style="border-color: rgba(255, 77, 28, 0.25)"
+                    >
+                      <div
+                        class="db1-clip-thumb"
+                        style="
+                          background: linear-gradient(160deg, #251a18, #1a1a1a);
+                        "
+                      >
+                        <div
+                          class="play"
+                          style="background: rgba(255, 77, 28, 0.9)"
+                        >
+                          ▶
+                        </div>
+                        <div class="db1-clip-dur">1:12</div>
+                        <div
+                          style="
+                            position: absolute;
+                            top: 4px;
+                            left: 4px;
+                            font-size: 7px;
+                            background: rgba(255, 77, 28, 0.8);
+                            color: white;
+                            padding: 1px 5px;
+                            border-radius: 3px;
+                            font-weight: 700;
+                          "
+                        >
+                          🔥 HOT
+                        </div>
+                      </div>
+                      <div class="db1-clip-info">
+                        <div class="db1-clip-name">3 tips no one</div>
+                        <div class="db1-clip-views" style="color: #4ade80">
+                          847K views
+                        </div>
+                      </div>
+                    </div>
+                    <div class="db1-clip">
+                      <div class="db1-clip-thumb">
+                        <div class="play">▶</div>
+                        <div class="db1-clip-dur">0:58</div>
+                      </div>
+                      <div class="db1-clip-info">
+                        <div class="db1-clip-name">Why you fail</div>
+                        <div class="db1-clip-views">12.1K views</div>
+                      </div>
+                    </div>
+                    <div class="db1-clip">
+                      <div class="db1-clip-thumb">
+                        <div class="play">▶</div>
+                        <div class="db1-clip-dur">0:33</div>
+                      </div>
+                      <div class="db1-clip-info">
+                        <div class="db1-clip-name">Morning routine</div>
+                        <div class="db1-clip-views">5.6K views</div>
+                      </div>
+                    </div>
+                    <div class="db1-clip">
+                      <div class="db1-clip-thumb" style="opacity: 0.5">
+                        <div
+                          style="
+                            width: 14px;
+                            height: 14px;
+                            border: 1.5px solid rgba(255, 255, 255, 0.2);
+                            border-radius: 50%;
+                            border-top-color: rgba(255, 255, 255, 0.6);
+                            animation: spin2 0.7s linear infinite;
+                          "
+                        ></div>
+                      </div>
+                      <div class="db1-clip-info">
+                        <div class="db1-clip-name">Processing...</div>
+                        <div class="db1-clip-views" style="color: #ff7a3c">
+                          52% done
+                        </div>
+                      </div>
+                    </div>
+                    <div class="db1-clip">
+                      <div class="db1-clip-thumb">
+                        <div class="play">▶</div>
+                        <div class="db1-clip-dur">1:04</div>
+                      </div>
+                      <div class="db1-clip-info">
+                        <div class="db1-clip-name">Deep work hack</div>
+                        <div class="db1-clip-views">9.8K views</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Activity feed -->
+                <div class="db1-activity">
+                  <div class="db1-panel-header">
+                    <span class="db1-panel-title">Recent Activity</span>
+                  </div>
+                  <div class="db1-activity-list">
+                    <div class="db1-activity-item">
+                      <div
+                        class="db1-act-icon"
+                        style="background: rgba(255, 77, 28, 0.12)"
+                      >
+                        🎬
+                      </div>
+                      <div class="db1-act-body">
+                        <div class="db1-act-title">
+                          Podcast Ep.41 generated 20 clips
+                        </div>
+                        <div class="db1-act-time">2 minutes ago</div>
+                      </div>
+                      <div class="badge-orange">New</div>
+                    </div>
+                    <div class="db1-activity-item">
+                      <div
+                        class="db1-act-icon"
+                        style="background: rgba(34, 197, 94, 0.1)"
+                      >
+                        📅
+                      </div>
+                      <div class="db1-act-body">
+                        <div class="db1-act-title">
+                          3 clips scheduled for TikTok
+                        </div>
+                        <div class="db1-act-time">18 minutes ago</div>
+                      </div>
+                      <div class="badge-green">Done</div>
+                    </div>
+                    <div class="db1-activity-item">
+                      <div
+                        class="db1-act-icon"
+                        style="background: rgba(255, 255, 255, 0.05)"
+                      >
+                        📊
+                      </div>
+                      <div class="db1-act-body">
+                        <div class="db1-act-title">"3 tips" hit 800K views</div>
+                        <div class="db1-act-time">1 hour ago</div>
+                      </div>
+                      <div class="badge-green">↑</div>
+                    </div>
+                    <div class="db1-activity-item">
+                      <div
+                        class="db1-act-icon"
+                        style="background: rgba(255, 255, 255, 0.04)"
+                      >
+                        🔍
+                      </div>
+                      <div class="db1-act-body">
+                        <div class="db1-act-title">
+                          SEO descriptions generated
+                        </div>
+                        <div class="db1-act-time">3 hours ago</div>
+                      </div>
+                      <div class="badge-gray">Done</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================
+     DASHBOARD VARIATION 2: Top Nav + Three Column Bento
+     ======================================================== -->
+    <div>
+      <p class="section-label">
+        Dashboard Variation 2 — Top Nav + Three-Column
+      </p>
+      <p class="section-desc">
+        Horizontal nav · upload queue left · bento clips center · analytics
+        right
+      </p>
+      <div class="db-shell" id="db2">
+        <div class="db-browser-bar">
+          <div class="db-dot" style="background: #ff5f57"></div>
+          <div class="db-dot" style="background: #febc2e"></div>
+          <div class="db-dot" style="background: #28c840"></div>
+          <div class="db-url-bar" style="margin-left: auto; margin-right: auto">
+            <span class="db-lock">🔒</span>
+            <span class="db-url-text">app.echostream.io/clips</span>
+          </div>
+          <div style="width: 60px"></div>
+        </div>
+
+        <div class="db2-inner">
+          <!-- Top navbar -->
+          <div class="db2-navbar">
+            <div class="db2-logo">
+              <div class="db2-logo-mark">E</div>
+              <span class="db2-logo-text">EchoStream</span>
+            </div>
+            <div class="db2-nav-tabs">
+              <div class="db2-nav-tab">Home</div>
+              <div class="db2-nav-tab active">Clips</div>
+              <div class="db2-nav-tab">Schedule</div>
+              <div class="db2-nav-tab">Analytics</div>
+              <div class="db2-nav-tab">SEO</div>
+            </div>
+            <div class="db2-navbar-right">
+              <div style="font-size: 10px; color: rgba(255, 255, 255, 0.25)">
+                🔍
+              </div>
+              <div
+                class="db1-notif"
+                style="width: 26px; height: 26px; font-size: 10px"
+              >
+                🔔
+                <div class="db1-notif-dot"></div>
+              </div>
+              <div
+                class="micro-avatar"
+                style="width: 26px; height: 26px; font-size: 9px"
+              >
+                ML
+              </div>
+              <button class="db2-new-btn">+ Upload</button>
+            </div>
+          </div>
+
+          <!-- Three columns -->
+          <div class="db2-columns">
+            <!-- LEFT: Queue -->
+            <div class="db2-left-col">
+              <span class="db2-col-title">Upload Queue</span>
+
+              <div class="db2-drop-zone">
+                <div class="db2-drop-icon">📤</div>
+                <div class="db2-drop-title">Drop video here</div>
+                <div class="db2-drop-sub">MP4, MOV or YouTube URL</div>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <div class="db2-queue-item">
+                  <div class="db2-queue-thumb">🎙️</div>
+                  <div class="db2-queue-info">
+                    <div class="db2-queue-name">Podcast Ep. 41</div>
+                    <div class="db2-queue-sub">68% · 2 min left</div>
+                  </div>
+                  <div class="db2-queue-status status-proc">●</div>
+                </div>
+                <div class="db2-queue-item">
+                  <div class="db2-queue-thumb">📹</div>
+                  <div class="db2-queue-info">
+                    <div class="db2-queue-name">Interview: Sarah M</div>
+                    <div class="db2-queue-sub">Complete · 20 clips</div>
+                  </div>
+                  <div class="db2-queue-status status-done">✓</div>
+                </div>
+                <div class="db2-queue-item">
+                  <div class="db2-queue-thumb">🎤</div>
+                  <div class="db2-queue-info">
+                    <div class="db2-queue-name">Webinar Oct 2024</div>
+                    <div class="db2-queue-sub">Queued</div>
+                  </div>
+                  <div class="db2-queue-status status-queue">·</div>
+                </div>
+                <div class="db2-queue-item">
+                  <div class="db2-queue-thumb">📺</div>
+                  <div class="db2-queue-info">
+                    <div class="db2-queue-name">YouTube Live #12</div>
+                    <div class="db2-queue-sub">Queued</div>
+                  </div>
+                  <div class="db2-queue-status status-queue">·</div>
+                </div>
+              </div>
+
+              <!-- Processing live card -->
+              <div
+                style="
+                  background: rgba(255, 77, 28, 0.07);
+                  border: 1px solid rgba(255, 77, 28, 0.2);
+                  border-radius: 10px;
+                  padding: 10px 12px;
+                  margin-top: auto;
+                "
+              >
+                <div
+                  style="
+                    font-size: 9px;
+                    font-weight: 700;
+                    color: rgba(255, 255, 255, 0.5);
+                    margin-bottom: 6px;
+                    display: flex;
+                    align-items: center;
+                    gap: 5px;
+                  "
+                >
+                  <span
+                    style="
+                      width: 6px;
+                      height: 6px;
+                      border-radius: 50%;
+                      background: #ff4d1c;
+                      animation: db1-blink 1s ease-in-out infinite;
+                    "
+                  ></span>
+                  Processing
+                </div>
+                <style>
+                  @keyframes db1-blink {
+                    0%,
+                    100% {
+                      opacity: 1;
+                    }
+                    50% {
+                      opacity: 0.3;
+                    }
+                  }
+                </style>
+                <div
+                  style="
+                    font-size: 11px;
+                    font-weight: 700;
+                    color: rgba(255, 255, 255, 0.8);
+                    margin-bottom: 4px;
+                  "
+                >
+                  Podcast Ep. 41
+                </div>
+                <div
+                  style="
+                    font-size: 9px;
+                    color: rgba(255, 255, 255, 0.3);
+                    margin-bottom: 8px;
+                  "
+                >
+                  Generating captions · AI face tracking
+                </div>
+                <div class="prog-track" style="height: 5px">
+                  <div
+                    class="prog-fill"
+                    style="
+                      width: 68%;
+                      animation: db2-fill 2s ease-in-out infinite alternate;
+                    "
+                  ></div>
+                </div>
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    margin-top: 4px;
+                  "
+                >
+                  <span style="font-size: 8px; color: rgba(255, 255, 255, 0.3)"
+                    >68% complete</span
+                  >
+                  <span style="font-size: 8px; font-weight: 700; color: #ff7a3c"
+                    >~2 min</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- CENTER: Bento clips -->
+            <div class="db2-center-col">
+              <!-- Processing banner -->
+              <div class="db2-processing-banner">
+                <div class="db2-proc-anim">
+                  <div class="db2-proc-spinner"></div>
+                </div>
+                <div class="db2-proc-text">
+                  <div class="db2-proc-title">AI is generating your clips</div>
+                  <div class="db2-proc-sub">
+                    Face tracking · Smart captions · Platform optimization
+                  </div>
+                  <div class="db2-proc-progress">
+                    <div class="db2-proc-fill"></div>
+                  </div>
+                </div>
+                <div style="text-align: right; flex-shrink: 0">
+                  <div
+                    style="
+                      font-family: &quot;Sora&quot;, sans-serif;
+                      font-size: 22px;
+                      font-weight: 700;
+                      color: #ff4d1c;
+                      line-height: 1;
+                      letter-spacing: -0.04em;
+                    "
+                  >
+                    18
+                  </div>
+                  <div
+                    style="
+                      font-size: 8px;
+                      color: rgba(255, 255, 255, 0.3);
+                      font-weight: 600;
+                      text-transform: uppercase;
+                      letter-spacing: 0.06em;
+                    "
+                  >
+                    of 20 clips
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bento grid -->
+              <div class="db2-bento">
+                <!-- Featured -->
+                <div class="db2-bento-clip" style="grid-column: span 2">
+                  <div
+                    class="db2-bento-thumb"
+                    style="
+                      min-height: 140px;
+                      background: linear-gradient(160deg, #251a18, #1a1a1a);
+                    "
+                  >
+                    <div
+                      class="db2-play-btn"
+                      style="width: 28px; height: 28px; font-size: 9px"
+                    >
+                      ▶
+                    </div>
+                    <div class="db2-clip-badge">🔥 Trending</div>
+                    <div class="db2-clip-dur">1:12</div>
+                  </div>
+                  <div class="db2-clip-footer">
+                    <span class="db2-clip-name"
+                      >"3 tips no one talks about" — Ep.38</span
+                    >
+                    <div style="display: flex; gap: 4px; align-items: center">
+                      <span
+                        style="
+                          font-size: 10px;
+                          font-weight: 700;
+                          color: #4ade80;
+                        "
+                        >847K</span
+                      >
+                      <div class="platform-row">
+                        <div
+                          class="plat-dot"
+                          style="background: #010101; border: 1px solid #444"
+                        >
+                          𝕋
+                        </div>
+                        <div
+                          class="plat-dot"
+                          style="
+                            background: rgba(255, 0, 0, 0.15);
+                            border: 1px solid rgba(255, 0, 0, 0.3);
+                          "
+                        >
+                          ▶
+                        </div>
+                        <div
+                          class="plat-dot"
+                          style="
+                            background: rgba(228, 64, 95, 0.15);
+                            border: 1px solid rgba(228, 64, 95, 0.3);
+                          "
+                        >
+                          📷
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- 4 smaller clips -->
+                <div class="db2-bento-clip">
+                  <div class="db2-bento-thumb">
+                    <div class="db2-play-btn">▶</div>
+                    <div class="db2-clip-dur">0:47</div>
+                  </div>
+                  <div class="db2-clip-footer">
+                    <span class="db2-clip-name">AI in 2025</span>
+                    <span
+                      style="font-size: 9px; color: rgba(255, 255, 255, 0.4)"
+                      >24.3K</span
+                    >
+                  </div>
+                </div>
+                <div class="db2-bento-clip">
+                  <div class="db2-bento-thumb">
+                    <div class="db2-play-btn">▶</div>
+                    <div class="db2-clip-dur">0:58</div>
+                  </div>
+                  <div class="db2-clip-footer">
+                    <span class="db2-clip-name">Why you fail</span>
+                    <span
+                      style="font-size: 9px; color: rgba(255, 255, 255, 0.4)"
+                      >12.1K</span
+                    >
+                  </div>
+                </div>
+                <div class="db2-bento-clip">
+                  <div class="db2-bento-thumb">
+                    <div class="db2-play-btn">▶</div>
+                    <div class="db2-clip-dur">0:33</div>
+                  </div>
+                  <div class="db2-clip-footer">
+                    <span class="db2-clip-name">Morning ritual</span>
+                    <span
+                      style="font-size: 9px; color: rgba(255, 255, 255, 0.4)"
+                      >5.6K</span
+                    >
+                  </div>
+                </div>
+                <div class="db2-bento-clip">
+                  <div class="db2-bento-thumb">
+                    <div class="db2-play-btn">▶</div>
+                    <div class="db2-clip-dur">1:04</div>
+                  </div>
+                  <div class="db2-clip-footer">
+                    <span class="db2-clip-name">Deep work hack</span>
+                    <span
+                      style="font-size: 9px; color: rgba(255, 255, 255, 0.4)"
+                      >9.8K</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- RIGHT: Analytics -->
+            <div class="db2-right-col">
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+                  flex-shrink: 0;
+                "
+              >
+                <div class="micro-avatar">ML</div>
+                <div>
+                  <div
+                    style="
+                      font-size: 11px;
+                      font-weight: 700;
+                      color: rgba(255, 255, 255, 0.85);
+                    "
+                  >
+                    Maya Lowe
+                  </div>
+                  <div style="font-size: 9px; color: rgba(255, 255, 255, 0.3)">
+                    Pro Plan · 32 / 50
+                  </div>
+                </div>
+                <div class="badge-orange" style="margin-left: auto">Pro</div>
+              </div>
+
+              <!-- Chart -->
+              <div class="db2-chart-card">
+                <div class="db2-chart-header">
+                  <span class="db2-chart-title">Total Views</span>
+                  <span class="badge-gray">7 days</span>
+                </div>
+                <div class="db2-chart-val">
+                  1.2M <span class="db2-chart-delta">↑ +18%</span>
+                </div>
+                <div class="db2-bar-chart">
+                  <div class="db2-bc-bar" style="height: 30%"></div>
+                  <div class="db2-bc-bar" style="height: 45%"></div>
+                  <div class="db2-bc-bar hi" style="height: 60%"></div>
+                  <div class="db2-bc-bar" style="height: 50%"></div>
+                  <div class="db2-bc-bar hi" style="height: 75%"></div>
+                  <div class="db2-bc-bar hi" style="height: 85%"></div>
+                  <div class="db2-bc-bar peak" style="height: 100%"></div>
+                </div>
+              </div>
+
+              <!-- Platform breakdown -->
+              <div class="db2-chart-card">
+                <div class="db2-chart-header">
+                  <span class="db2-chart-title">By Platform</span>
+                </div>
+                <div>
+                  <div class="db2-plat-row">
+                    <div
+                      class="db2-plat-icon"
+                      style="
+                        background: #0f0f0f;
+                        border: 1px solid #333;
+                        font-size: 9px;
+                      "
+                    >
+                      𝕋
+                    </div>
+                    <span class="db2-plat-name">TikTok</span>
+                    <div class="db2-plat-bar-wrap">
+                      <div class="db2-plat-bar-fill" style="width: 75%"></div>
+                    </div>
+                    <span class="db2-plat-val">612K</span>
+                  </div>
+                  <div class="db2-plat-row">
+                    <div
+                      class="db2-plat-icon"
+                      style="
+                        background: rgba(255, 0, 0, 0.1);
+                        border: 1px solid rgba(255, 0, 0, 0.2);
+                      "
+                    >
+                      ▶
+                    </div>
+                    <span class="db2-plat-name">Shorts</span>
+                    <div class="db2-plat-bar-wrap">
+                      <div class="db2-plat-bar-fill" style="width: 45%"></div>
+                    </div>
+                    <span class="db2-plat-val">380K</span>
+                  </div>
+                  <div class="db2-plat-row">
+                    <div
+                      class="db2-plat-icon"
+                      style="
+                        background: rgba(228, 64, 95, 0.1);
+                        border: 1px solid rgba(228, 64, 95, 0.2);
+                      "
+                    >
+                      📷
+                    </div>
+                    <span class="db2-plat-name">Reels</span>
+                    <div class="db2-plat-bar-wrap">
+                      <div class="db2-plat-bar-fill" style="width: 26%"></div>
+                    </div>
+                    <span class="db2-plat-val">208K</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Engagement -->
+              <div class="db2-chart-card" style="flex: 1">
+                <div style="margin-bottom: 8px" class="db2-chart-header">
+                  <span class="db2-chart-title">Top Clip Performance</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px">
+                  <div class="prog-row">
+                    <div class="prog-label-row">
+                      <span class="prog-label">Avg Watch Time</span>
+                      <span class="prog-val">78%</span>
+                    </div>
+                    <div class="prog-track">
+                      <div class="prog-fill" style="width: 78%"></div>
+                    </div>
+                  </div>
+                  <div class="prog-row">
+                    <div class="prog-label-row">
+                      <span class="prog-label">Click-Through</span>
+                      <span class="prog-val">12%</span>
+                    </div>
+                    <div class="prog-track">
+                      <div class="prog-fill" style="width: 12%"></div>
+                    </div>
+                  </div>
+                  <div class="prog-row">
+                    <div class="prog-label-row">
+                      <span class="prog-label">Share Rate</span>
+                      <span class="prog-val">6%</span>
+                    </div>
+                    <div class="prog-track">
+                      <div class="prog-fill" style="width: 6%"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================
+     DASHBOARD VARIATION 3: Icon Rail + Wide Canvas
+     ======================================================== -->
+    <div>
+      <p class="section-label">
+        Dashboard Variation 3 — Icon Rail + Creator Canvas
+      </p>
+      <p class="section-desc">
+        Ultra-thin icon rail · wide workspace · clip list with stats · insights
+        panel
+      </p>
+      <div class="db-shell" id="db3">
+        <div class="db-browser-bar">
+          <div class="db-dot" style="background: #ff5f57"></div>
+          <div class="db-dot" style="background: #febc2e"></div>
+          <div class="db-dot" style="background: #28c840"></div>
+          <div class="db-url-bar" style="margin-left: auto; margin-right: auto">
+            <span class="db-lock">🔒</span>
+            <span class="db-url-text">app.echostream.io/workspace</span>
+          </div>
+          <div style="width: 60px"></div>
+        </div>
+
+        <div class="db3-inner">
+          <!-- ICON RAIL -->
+          <div class="db3-rail">
+            <div class="db3-rail-logo">E</div>
+            <div class="db3-rail-icon active">⚡</div>
+            <div class="db3-rail-icon">📹</div>
+            <div class="db3-rail-icon">📅</div>
+            <div class="db3-rail-icon">📊</div>
+            <div class="db3-rail-icon">🔍</div>
+            <div class="db3-rail-icon">💬</div>
+            <div class="db3-rail-spacer"></div>
+            <div class="db3-rail-bottom">
+              <div class="db3-rail-icon">⚙️</div>
+              <div
+                class="micro-avatar"
+                style="width: 30px; height: 30px; font-size: 10px"
+              >
+                KA
+              </div>
+            </div>
+          </div>
+
+          <!-- CANVAS -->
+          <div class="db3-canvas">
+            <!-- Top bar -->
+            <div class="db3-topbar">
+              <span class="db3-greeting"
+                >Good morning, <span>Kofi</span> 👋</span
+              >
+              <span style="font-size: 9px; color: rgba(255, 255, 255, 0.2)"
+                >Monday, Oct 14 · 9:41 AM</span
+              >
+              <div class="db3-topbar-actions">
+                <div class="db3-tab-group">
+                  <div class="db3-tab active">Overview</div>
+                  <div class="db3-tab">Library</div>
+                  <div class="db3-tab">Schedule</div>
+                </div>
+                <button
+                  class="db3-btn-primary"
+                  style="font-size: 9px; padding: 6px 12px"
+                >
+                  + New Video
+                </button>
+              </div>
+            </div>
+
+            <!-- Body -->
+            <div class="db3-body">
+              <!-- Workspace -->
+              <div class="db3-workspace">
+                <!-- Hero upload -->
+                <div class="db3-hero-upload">
+                  <div class="db3-hero-left">
+                    <div class="db3-hero-title">
+                      Turn your next video into 20+ clips
+                    </div>
+                    <div class="db3-hero-sub">
+                      Paste a YouTube link, Zoom recording, or podcast URL · AI
+                      handles the rest
+                    </div>
+                  </div>
+                  <div class="db3-hero-right">
+                    <button class="db3-btn-ghost">🔗 Paste URL</button>
+                    <button class="db3-btn-primary">📤 Upload File</button>
+                  </div>
+                </div>
+
+                <!-- Stats strip -->
+                <div class="db3-stats-strip">
+                  <div class="db3-strip-stat">
+                    <div class="db3-ss-num">2,841</div>
+                    <div class="db3-ss-label">Total Clips</div>
+                    <div class="db3-ss-delta" style="color: #4ade80">
+                      ↑ +127
+                    </div>
+                  </div>
+                  <div class="db3-strip-stat">
+                    <div class="db3-ss-num">1.2M</div>
+                    <div class="db3-ss-label">Views</div>
+                    <div class="db3-ss-delta" style="color: #4ade80">
+                      ↑ +18%
+                    </div>
+                  </div>
+                  <div class="db3-strip-stat">
+                    <div class="db3-ss-num">94%</div>
+                    <div class="db3-ss-label">Caption Acc.</div>
+                    <div
+                      class="db3-ss-delta"
+                      style="color: rgba(255, 255, 255, 0.3)"
+                    >
+                      Stable
+                    </div>
+                  </div>
+                  <div class="db3-strip-stat">
+                    <div class="db3-ss-num" style="color: #ff4d1c">3</div>
+                    <div class="db3-ss-label">Processing</div>
+                    <div class="db3-ss-delta" style="color: #ff7a3c">
+                      ● Live
+                    </div>
+                  </div>
+                  <div class="db3-strip-stat">
+                    <div class="db3-ss-num">18</div>
+                    <div class="db3-ss-label">Uploads Left</div>
+                    <div
+                      class="db3-ss-delta"
+                      style="color: rgba(255, 255, 255, 0.3)"
+                    >
+                      Pro plan
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Clips list -->
+                <div class="db3-clips-section">
+                  <div class="db3-clips-header">
+                    <span class="db3-clips-title">Recent Clips</span>
+                    <div class="db3-filter-row">
+                      <div class="db3-filter-btn active">All</div>
+                      <div class="db3-filter-btn">TikTok</div>
+                      <div class="db3-filter-btn">Shorts</div>
+                      <div class="db3-filter-btn">Reels</div>
+                    </div>
+                  </div>
+
+                  <div class="db3-clips-list">
+                    <div class="db3-clip-row">
+                      <div class="db3-cr-thumb">▶</div>
+                      <div class="db3-cr-info">
+                        <div class="db3-cr-title">
+                          3 tips no one talks about — Ep.38
+                        </div>
+                        <div class="db3-cr-meta">
+                          Generated Oct 12 · 1:12 · Captions ✓
+                        </div>
+                      </div>
+                      <div class="db3-cr-platforms">
+                        <div
+                          class="db3-cr-plat"
+                          style="background: #0f0f0f; border: 1px solid #333"
+                        >
+                          𝕋
+                        </div>
+                        <div
+                          class="db3-cr-plat"
+                          style="
+                            background: rgba(255, 0, 0, 0.1);
+                            border: 1px solid rgba(255, 0, 0, 0.2);
+                          "
+                        >
+                          ▶
+                        </div>
+                        <div
+                          class="db3-cr-plat"
+                          style="
+                            background: rgba(228, 64, 95, 0.1);
+                            border: 1px solid rgba(228, 64, 95, 0.2);
+                          "
+                        >
+                          📷
+                        </div>
+                      </div>
+                      <div class="db3-cr-views" style="color: #4ade80">
+                        847K
+                      </div>
+                      <div class="db3-cr-more">⋯</div>
+                    </div>
+
+                    <div class="db3-clip-row">
+                      <div
+                        class="db3-cr-thumb"
+                        style="
+                          animation: spin2 0.7s linear infinite;
+                          border: 1.5px solid rgba(255, 77, 28, 0.4);
+                          border-top-color: transparent;
+                          border-radius: 50%;
+                          width: 26px;
+                          height: 26px;
+                          background: transparent;
+                          font-size: 0;
+                          flex-shrink: 0;
+                        "
+                      ></div>
+                      <div class="db3-cr-info">
+                        <div class="db3-cr-title">
+                          Podcast Ep.41 — Processing
+                        </div>
+                        <div class="db3-cr-meta">
+                          Generating captions · AI face tracking · 68% done
+                        </div>
+                      </div>
+                      <div class="db3-cr-platforms" style="opacity: 0.4">
+                        <div
+                          class="db3-cr-plat"
+                          style="background: #0f0f0f; border: 1px solid #333"
+                        >
+                          𝕋
+                        </div>
+                        <div
+                          class="db3-cr-plat"
+                          style="
+                            background: rgba(255, 0, 0, 0.1);
+                            border: 1px solid rgba(255, 0, 0, 0.2);
+                          "
+                        >
+                          ▶
+                        </div>
+                      </div>
+                      <div class="badge-orange">Processing</div>
+                      <div class="db3-cr-more">⋯</div>
+                    </div>
+
+                    <div class="db3-clip-row">
+                      <div class="db3-cr-thumb">▶</div>
+                      <div class="db3-cr-info">
+                        <div class="db3-cr-title">
+                          The AI moment that changed my workflow
+                        </div>
+                        <div class="db3-cr-meta">
+                          Generated Oct 10 · 0:47 · Captions ✓
+                        </div>
+                      </div>
+                      <div class="db3-cr-platforms">
+                        <div
+                          class="db3-cr-plat"
+                          style="background: #0f0f0f; border: 1px solid #333"
+                        >
+                          𝕋
+                        </div>
+                        <div
+                          class="db3-cr-plat"
+                          style="
+                            background: rgba(228, 64, 95, 0.1);
+                            border: 1px solid rgba(228, 64, 95, 0.2);
+                          "
+                        >
+                          📷
+                        </div>
+                      </div>
+                      <div class="db3-cr-views">24.3K</div>
+                      <div class="db3-cr-more">⋯</div>
+                    </div>
+
+                    <div class="db3-clip-row">
+                      <div class="db3-cr-thumb">▶</div>
+                      <div class="db3-cr-info">
+                        <div class="db3-cr-title">
+                          Deep work hack: 2 hours → 20 minutes
+                        </div>
+                        <div class="db3-cr-meta">
+                          Generated Oct 9 · 1:04 · Captions ✓
+                        </div>
+                      </div>
+                      <div class="db3-cr-platforms">
+                        <div
+                          class="db3-cr-plat"
+                          style="
+                            background: rgba(255, 0, 0, 0.1);
+                            border: 1px solid rgba(255, 0, 0, 0.2);
+                          "
+                        >
+                          ▶
+                        </div>
+                        <div
+                          class="db3-cr-plat"
+                          style="background: #0f0f0f; border: 1px solid #333"
+                        >
+                          𝕋
+                        </div>
+                      </div>
+                      <div class="db3-cr-views">9.8K</div>
+                      <div class="db3-cr-more">⋯</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- RIGHT: Insights -->
+              <div class="db3-insights">
+                <!-- Profile -->
+                <div class="db3-profile-card">
+                  <div class="db3-profile-avatar">KA</div>
+                  <div class="db3-profile-info">
+                    <div class="db3-profile-name">Kofi Asante</div>
+                    <div class="db3-profile-plan">
+                      <div class="db3-plan-badge">Pro ✦</div>
+                      <span class="db3-plan-usage">32 / 50 uploads</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Analytics chart -->
+                <div class="db3-analytics-card">
+                  <div class="db3-an-header">
+                    <span class="db3-an-title">Views (30 days)</span>
+                    <span class="badge-gray">30d</span>
+                  </div>
+                  <div class="db3-an-val">1.2M</div>
+                  <div class="db3-an-delta">↑ +18% vs last month</div>
+                  <div class="db3-line-chart">
+                    <div class="db3-lc-bg"></div>
+                    <div class="db3-lc-area"></div>
+                    <div class="db3-lc-dot"></div>
+                  </div>
+                  <div style="display: flex; justify-content: space-between">
+                    <span
+                      style="font-size: 8px; color: rgba(255, 255, 255, 0.2)"
+                      >Sep 14</span
+                    >
+                    <span
+                      style="font-size: 8px; color: rgba(255, 255, 255, 0.2)"
+                      >Oct 14</span
+                    >
+                  </div>
+                </div>
+
+                <!-- Platform split -->
+                <div
+                  style="
+                    background: #141414;
+                    border: 1px solid rgba(255, 255, 255, 0.07);
+                    border-radius: 12px;
+                    padding: 12px;
+                    flex-shrink: 0;
+                  "
+                >
+                  <div
+                    style="
+                      font-size: 9px;
+                      font-weight: 700;
+                      color: rgba(255, 255, 255, 0.4);
+                      text-transform: uppercase;
+                      letter-spacing: 0.07em;
+                      margin-bottom: 8px;
+                    "
+                  >
+                    Platform Split
+                  </div>
+                  <div
+                    style="
+                      display: flex;
+                      gap: 4px;
+                      align-items: flex-end;
+                      height: 44px;
+                      margin-bottom: 6px;
+                    "
+                  >
+                    <div
+                      style="
+                        flex: 3;
+                        height: 100%;
+                        background: rgba(255, 77, 28, 0.4);
+                        border-radius: 3px 3px 0 0;
+                        position: relative;
+                      "
+                    >
+                      <span
+                        style="
+                          position: absolute;
+                          top: -14px;
+                          left: 50%;
+                          transform: translateX(-50%);
+                          font-size: 8px;
+                          font-weight: 700;
+                          color: #ff7a3c;
+                          white-space: nowrap;
+                        "
+                        >51%</span
+                      >
+                    </div>
+                    <div
+                      style="
+                        flex: 2;
+                        height: 65%;
+                        background: rgba(255, 77, 28, 0.25);
+                        border-radius: 3px 3px 0 0;
+                        position: relative;
+                      "
+                    >
+                      <span
+                        style="
+                          position: absolute;
+                          top: -14px;
+                          left: 50%;
+                          transform: translateX(-50%);
+                          font-size: 8px;
+                          font-weight: 700;
+                          color: rgba(255, 77, 28, 0.7);
+                          white-space: nowrap;
+                        "
+                        >32%</span
+                      >
+                    </div>
+                    <div
+                      style="
+                        flex: 1;
+                        height: 35%;
+                        background: rgba(255, 77, 28, 0.15);
+                        border-radius: 3px 3px 0 0;
+                        position: relative;
+                      "
+                    >
+                      <span
+                        style="
+                          position: absolute;
+                          top: -14px;
+                          left: 50%;
+                          transform: translateX(-50%);
+                          font-size: 8px;
+                          font-weight: 700;
+                          color: rgba(255, 77, 28, 0.5);
+                          white-space: nowrap;
+                        "
+                        >17%</span
+                      >
+                    </div>
+                  </div>
+                  <div
+                    style="
+                      display: flex;
+                      gap: 0;
+                      border-top: 1px solid rgba(255, 255, 255, 0.05);
+                      padding-top: 5px;
+                    "
+                  >
+                    <div
+                      style="
+                        flex: 3;
+                        font-size: 8px;
+                        color: rgba(255, 255, 255, 0.4);
+                        font-weight: 600;
+                        text-align: center;
+                      "
+                    >
+                      TikTok
+                    </div>
+                    <div
+                      style="
+                        flex: 2;
+                        font-size: 8px;
+                        color: rgba(255, 255, 255, 0.4);
+                        font-weight: 600;
+                        text-align: center;
+                      "
+                    >
+                      Shorts
+                    </div>
+                    <div
+                      style="
+                        flex: 1;
+                        font-size: 8px;
+                        color: rgba(255, 255, 255, 0.4);
+                        font-weight: 600;
+                        text-align: center;
+                      "
+                    >
+                      Reels
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Scheduled -->
+                <div class="db3-schedule-card">
+                  <div class="db3-sched-title">Upcoming Schedule</div>
+                  <div class="db3-sched-item">
+                    <span class="db3-sched-time">9:00 AM</span>
+                    <div class="db3-sched-info">
+                      <div class="db3-sched-name">The AI moment</div>
+                      <div class="db3-sched-plat">TikTok · Today</div>
+                    </div>
+                    <div
+                      class="db3-sched-dot"
+                      style="background: #ff4d1c"
+                    ></div>
+                  </div>
+                  <div class="db3-sched-item">
+                    <span class="db3-sched-time">12:00 PM</span>
+                    <div class="db3-sched-info">
+                      <div class="db3-sched-name">Deep work hack</div>
+                      <div class="db3-sched-plat">YouTube Shorts · Today</div>
+                    </div>
+                    <div
+                      class="db3-sched-dot"
+                      style="background: rgba(255, 77, 28, 0.5)"
+                    ></div>
+                  </div>
+                  <div class="db3-sched-item">
+                    <span class="db3-sched-time">3:00 PM</span>
+                    <div class="db3-sched-info">
+                      <div class="db3-sched-name">Morning ritual</div>
+                      <div class="db3-sched-plat">Instagram Reels · Today</div>
+                    </div>
+                    <div
+                      class="db3-sched-dot"
+                      style="background: rgba(255, 255, 255, 0.2)"
+                    ></div>
+                  </div>
+                  <div class="db3-sched-item">
+                    <span class="db3-sched-time">Tmw</span>
+                    <div class="db3-sched-info">
+                      <div class="db3-sched-name">Why you fail at...</div>
+                      <div class="db3-sched-plat">TikTok · Oct 15</div>
+                    </div>
+                    <div
+                      class="db3-sched-dot"
+                      style="background: rgba(255, 255, 255, 0.1)"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

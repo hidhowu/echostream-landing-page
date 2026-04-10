@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EchoStream — Feature 3: Publish Everywhere</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --accent: #FF4D1C;
+    --accent-2: #FF7A3C;
+    --tt: #010101;
+    --ig: #E1306C;
+    --yt: #FF0000;
+    --li: #0077B5;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0A0A0A;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    padding: 60px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+    align-items: center;
+  }
+  .variation-label { color: rgba(255,255,255,0.3); font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 16px; font-weight: 600; }
+  .variation-wrap { display: flex; flex-direction: column; align-items: center; }
+
+  /* ===== Platform icons (SVG-based) ===== */
+  .plat-icon {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 14px;
+    font-weight: 900;
+    font-family: 'Sora', sans-serif;
+  }
+  .pi-tt { background: #010101; color: #fff; letter-spacing: -0.05em; font-size: 11px; font-weight: 800; }
+  .pi-ig { background: linear-gradient(135deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D, #F56040, #F77737, #FCAF45, #FFDC80); color: #fff; }
+  .pi-yt { background: #FF0000; color: #fff; }
+  .pi-li { background: #0077B5; color: #fff; font-size: 10px; font-weight: 700; }
+  .pi-fb { background: #1877F2; color: #fff; font-size: 11px; font-weight: 700; }
+
+  /* ===== VARIATION A: Calendar scheduler ===== */
+  .varA {
+    width: 640px; height: 480px;
+    background: #0D0D0D;
+    border-radius: 28px;
+    border: 1px solid rgba(255,255,255,0.08);
+    overflow: hidden;
+    position: relative;
+  }
+  .varA-topbar {
+    height: 40px; background: #161616;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex; align-items: center; padding: 0 16px; gap: 8px;
+  }
+  .tb-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .tbd-r { background: #FF5F57; } .tbd-y { background: #FFBD2E; } .tbd-g { background: #28CA41; }
+  .tb-title { margin-left: 12px; font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.35); letter-spacing: 0.06em; }
+  .tb-badge {
+    margin-left: auto;
+    background: rgba(255,77,28,0.12); border: 1px solid rgba(255,77,28,0.25);
+    color: #FF7A3C; font-size: 8px; font-weight: 700; letter-spacing: 0.08em;
+    padding: 2px 8px; border-radius: 20px; text-transform: uppercase;
+  }
+  .varA-body {
+    display: grid; grid-template-columns: 180px 1fr;
+    height: calc(100% - 40px);
+  }
+  .va-sidebar {
+    border-right: 1px solid rgba(255,255,255,0.06);
+    padding: 16px 14px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .va-sidebar-title { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 4px; }
+  .queue-item {
+    display: flex; align-items: center; gap: 8px;
+    background: #1A1A1A; border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px; padding: 8px 10px;
+    animation: queueGlow 4s ease-in-out infinite;
+  }
+  .queue-item:nth-child(3) { animation-delay: 1.3s; }
+  .queue-item:nth-child(4) { animation-delay: 2.6s; }
+  @keyframes queueGlow {
+    0%, 60%, 100% { border-color: rgba(255,255,255,0.06); }
+    30% { border-color: rgba(255,77,28,0.4); background: rgba(255,77,28,0.06); }
+  }
+  .qi-thumb { width: 32px; height: 56px; border-radius: 5px; background: #252525; flex-shrink: 0; overflow: hidden; position: relative; }
+  .qi-thumb::after { content: '▶'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 8px; color: rgba(255,255,255,0.4); }
+  .qi-info { flex: 1; min-width: 0; }
+  .qi-title { font-size: 8px; font-weight: 700; color: rgba(255,255,255,0.8); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .qi-plats { display: flex; gap: 3px; }
+  .qi-plat { width: 14px; height: 14px; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 6px; font-weight: 900; color: #fff; }
+  .qp-tt { background: #010101; }
+  .qp-ig { background: linear-gradient(135deg, #833AB4, #E1306C, #F77737); }
+  .qp-yt { background: #FF0000; }
+  .va-calendar {
+    padding: 14px 16px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .cal-header { display: flex; align-items: center; justify-content: space-between; }
+  .cal-month { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.7); letter-spacing: 0.06em; }
+  .cal-nav { display: flex; gap: 6px; }
+  .cal-nav-btn { width: 20px; height: 20px; border-radius: 4px; background: rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; font-size: 10px; color: rgba(255,255,255,0.5); cursor: pointer; }
+  .cal-days-header { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+  .cal-day-lbl { font-size: 8px; font-weight: 600; color: rgba(255,255,255,0.25); text-align: center; letter-spacing: 0.06em; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+  .cal-cell {
+    height: 44px; border-radius: 6px;
+    background: rgba(255,255,255,0.03);
+    position: relative; overflow: hidden;
+    display: flex; flex-direction: column; align-items: center; padding-top: 4px; gap: 2px;
+  }
+  .cal-cell.today { background: rgba(255,77,28,0.08); }
+  .cal-date { font-size: 8px; font-weight: 600; color: rgba(255,255,255,0.4); }
+  .cal-cell.today .cal-date { color: #FF4D1C; font-weight: 800; }
+  .cal-clip-dot { width: 20px; height: 14px; border-radius: 3px; font-size: 6px; font-weight: 700; color: #fff; display: flex; align-items: center; justify-content: center; }
+  .ccd-tt { background: rgba(1,1,1,0.9); border: 1px solid rgba(255,255,255,0.15); }
+  .ccd-ig { background: rgba(225,48,108,0.7); }
+  .ccd-yt { background: rgba(255,0,0,0.7); }
+  .ccd-all { background: rgba(255,77,28,0.8); font-size: 5px; }
+  .empty-cell { background: transparent; }
+  .cal-publish-btn {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    background: var(--accent); border-radius: 8px; padding: 10px 16px;
+    font-size: 10px; font-weight: 700; color: #fff; letter-spacing: 0.06em; text-transform: uppercase;
+    animation: btnPulse 2s ease-in-out infinite;
+  }
+  @keyframes btnPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255,77,28,0); } 50% { box-shadow: 0 0 0 6px rgba(255,77,28,0.15); } }
+  .cal-publish-indicator { width: 6px; height: 6px; border-radius: 50%; background: #fff; animation: dotBlink 1s ease-in-out infinite; }
+  @keyframes dotBlink { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+  /* ===== VARIATION B: Platform cards ===== */
+  .varB {
+    width: 640px; height: 480px;
+    background: #0D0D0D;
+    border-radius: 28px;
+    border: 1px solid rgba(255,255,255,0.08);
+    overflow: hidden;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .varB-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 50% at 50% 50%, rgba(255,77,28,0.06) 0%, transparent 70%);
+  }
+  .varB-dots {
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+  .varB-inner { position: relative; z-index: 2; padding: 32px; width: 100%; }
+  .vb-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  .platform-card {
+    background: #1A1A1A; border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px; padding: 16px 12px;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    position: relative; overflow: hidden;
+    animation: platformSlide 4s ease-in-out infinite;
+  }
+  .platform-card:nth-child(1) { animation-delay: 0s; }
+  .platform-card:nth-child(2) { animation-delay: 1s; }
+  .platform-card:nth-child(3) { animation-delay: 2s; }
+  .platform-card:nth-child(4) { animation-delay: 3s; }
+  @keyframes platformSlide {
+    0%, 50%, 100% { transform: translateY(0); border-color: rgba(255,255,255,0.07); }
+    25% { transform: translateY(-4px); border-color: rgba(255,77,28,0.5); box-shadow: 0 8px 24px rgba(255,77,28,0.15); }
+  }
+  .pc-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; color: #fff; }
+  .pc-tt { background: #010101; }
+  .pc-ig { background: linear-gradient(135deg, #405DE6, #E1306C, #F77737); }
+  .pc-yt { background: #FF0000; }
+  .pc-li { background: #0077B5; }
+  .pc-name { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.7); }
+  .pc-count { font-size: 9px; color: #FF7A3C; font-weight: 700; }
+  .pc-status {
+    position: absolute; top: 8px; right: 8px;
+    width: 8px; height: 8px; border-radius: 50%; background: #28CA41;
+    animation: statusBlink 2s ease-in-out infinite;
+  }
+  .platform-card:nth-child(3) .pc-status { animation-delay: 0.7s; }
+  @keyframes statusBlink { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; box-shadow: 0 0 6px #28CA41; } }
+  .vb-bottom {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    background: rgba(255,77,28,0.06); border: 1px solid rgba(255,77,28,0.2);
+    border-radius: 10px; padding: 14px 18px;
+  }
+  .vb-bottom-left { display: flex; align-items: center; gap: 10px; }
+  .vb-publish-ring {
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 2px solid var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    animation: ringRotate 3s linear infinite;
+  }
+  @keyframes ringRotate { 0% { box-shadow: 4px 0 0 0 rgba(255,77,28,0.4); } 25% { box-shadow: 0 4px 0 0 rgba(255,77,28,0.4); } 50% { box-shadow: -4px 0 0 0 rgba(255,77,28,0.4); } 75% { box-shadow: 0 -4px 0 0 rgba(255,77,28,0.4); } }
+  .vb-plat-dots { display: flex; gap: 4px; }
+  .vb-plat-dot { width: 8px; height: 8px; border-radius: 50%; animation: dotWave 1.5s ease-in-out infinite; }
+  .vb-plat-dot:nth-child(1) { background: #010101; border: 1px solid rgba(255,255,255,0.3); animation-delay: 0s; }
+  .vb-plat-dot:nth-child(2) { background: #E1306C; animation-delay: 0.2s; }
+  .vb-plat-dot:nth-child(3) { background: #FF0000; animation-delay: 0.4s; }
+  .vb-plat-dot:nth-child(4) { background: #0077B5; animation-delay: 0.6s; }
+  @keyframes dotWave { 0%, 100% { transform: translateY(0); opacity: 0.6; } 50% { transform: translateY(-4px); opacity: 1; } }
+  .vb-text { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.6); }
+  .vb-text strong { color: #FF7A3C; }
+  .vb-cta { background: var(--accent); color: #fff; font-size: 10px; font-weight: 700; padding: 8px 16px; border-radius: 6px; letter-spacing: 0.06em; white-space: nowrap; }
+
+  /* ===== VARIATION C: Week view calendar ===== */
+  .varC {
+    width: 640px; height: 480px;
+    background: #0D0D0D;
+    border-radius: 28px;
+    border: 1px solid rgba(255,255,255,0.08);
+    overflow: hidden;
+    position: relative;
+  }
+  .varC-bg {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 200px;
+    background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(255,77,28,0.1) 0%, transparent 60%);
+  }
+  .varC-inner { position: relative; z-index: 2; padding: 24px; height: 100%; display: flex; flex-direction: column; gap: 16px; }
+  .vc-header { display: flex; align-items: center; justify-content: space-between; }
+  .vc-header-title { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.8); }
+  .vc-header-controls { display: flex; gap: 6px; align-items: center; }
+  .vc-ctrl { font-size: 8px; font-weight: 700; padding: 4px 10px; border-radius: 5px; color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.06); }
+  .vc-ctrl.active { background: var(--accent); color: #fff; }
+  .week-view { flex: 1; display: grid; grid-template-columns: 60px repeat(7, 1fr); gap: 4px; }
+  .wv-time-col { display: flex; flex-direction: column; gap: 4px; padding-top: 28px; }
+  .wv-time { font-size: 7px; color: rgba(255,255,255,0.2); font-weight: 600; height: 52px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; }
+  .wv-day-col { display: flex; flex-direction: column; }
+  .wv-day-header { height: 28px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 4px; }
+  .wvdh-lbl { font-size: 7px; font-weight: 600; color: rgba(255,255,255,0.3); letter-spacing: 0.06em; }
+  .wvdh-num { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.6); }
+  .wv-day-col.today .wvdh-num { color: #FF4D1C; }
+  .wv-cells { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .wv-cell { height: 52px; border-radius: 6px; background: rgba(255,255,255,0.025); position: relative; overflow: hidden; }
+  .wv-event {
+    position: absolute; left: 2px; right: 2px; top: 2px;
+    border-radius: 4px; padding: 3px 5px;
+    font-size: 7px; font-weight: 700;
+    animation: eventPop 4s ease-in-out infinite;
+  }
+  @keyframes eventPop {
+    0%, 80%, 100% { opacity: 0.7; transform: none; }
+    40% { opacity: 1; transform: scale(1.02); }
+  }
+  .ev-tt { background: rgba(1,1,1,0.9); color: rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.12); }
+  .ev-ig { background: rgba(225,48,108,0.25); color: #E1306C; border: 1px solid rgba(225,48,108,0.3); }
+  .ev-yt { background: rgba(255,0,0,0.15); color: #FF5555; border: 1px solid rgba(255,0,0,0.25); }
+  .ev-all { background: rgba(255,77,28,0.2); color: #FF7A3C; border: 1px solid rgba(255,77,28,0.35); }
+  .ev-platform-dots { display: flex; gap: 2px; margin-top: 2px; }
+  .ep-dot { width: 5px; height: 5px; border-radius: 50%; }
+
+  /* ===== VARIATION D: Flow diagram ===== */
+  .varD {
+    width: 640px; height: 480px;
+    background: #0D0D0D;
+    border-radius: 28px;
+    border: 1px solid rgba(255,255,255,0.08);
+    overflow: hidden;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .varD-radial {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 50% 60% at 30% 50%, rgba(255,77,28,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 50% at 70% 60%, rgba(255,122,60,0.06) 0%, transparent 60%);
+  }
+  .varD-grid {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .varD-flow { position: relative; z-index: 2; display: flex; align-items: center; gap: 0; padding: 32px; width: 100%; }
+  .vd-source-node {
+    width: 140px; flex-shrink: 0;
+    background: #1A1A1A; border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px; padding: 16px;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+  .vds-video { width: 100%; aspect-ratio: 16/9; background: #252525; border-radius: 8px; position: relative; overflow: hidden; }
+  .vds-v-bg { position: absolute; inset: 0; background: linear-gradient(180deg, #1A1212, #0D0808); }
+  .vds-v-person { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; }
+  .vds-v-head { width: 16px; height: 16px; border-radius: 50%; background: #C8906A; margin-bottom: 2px; }
+  .vds-v-body { width: 24px; height: 30px; border-radius: 6px 6px 0 0; background: #3A3A5A; }
+  .vds-label { font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.5); }
+  .vd-flow-arrow {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 0 12px;
+  }
+  .vfa-line { height: 2px; width: 100%; background: linear-gradient(90deg, rgba(255,77,28,0.3), rgba(255,77,28,0.8)); position: relative; border-radius: 1px; }
+  .vfa-particle {
+    position: absolute; top: -2px;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #FF4D1C; box-shadow: 0 0 6px #FF4D1C;
+    animation: particleFlow 2s linear infinite;
+  }
+  .vfa-particle:nth-child(2) { animation-delay: 0.7s; }
+  .vfa-particle:nth-child(3) { animation-delay: 1.4s; }
+  @keyframes particleFlow { 0% { left: 0; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { left: calc(100% - 6px); opacity: 0; } }
+  .vd-platform-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex-shrink: 0; width: 200px;
+  }
+  .vd-plat-card {
+    background: #1A1A1A; border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px; padding: 12px 10px;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    animation: platBounce 4s ease-in-out infinite;
+  }
+  .vd-plat-card:nth-child(2) { animation-delay: 1s; }
+  .vd-plat-card:nth-child(3) { animation-delay: 2s; }
+  .vd-plat-card:nth-child(4) { animation-delay: 3s; }
+  @keyframes platBounce {
+    0%, 50%, 100% { transform: translateY(0); border-color: rgba(255,255,255,0.08); }
+    25% { transform: translateY(-5px); border-color: rgba(255,77,28,0.4); box-shadow: 0 8px 20px rgba(255,77,28,0.15); }
+  }
+  .vpc-logo { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; color: #fff; }
+  .vl-tt { background: #010101; border: 1px solid rgba(255,255,255,0.15); }
+  .vl-ig { background: linear-gradient(135deg, #833AB4, #E1306C, #F77737); }
+  .vl-yt { background: #FF0000; }
+  .vl-li { background: #0077B5; }
+  .vpc-clip-count { font-size: 8px; font-weight: 700; color: #FF7A3C; }
+  .vpc-name { font-size: 8px; color: rgba(255,255,255,0.4); }
+  .vpc-check { width: 14px; height: 14px; border-radius: 50%; background: rgba(40,202,65,0.2); border: 1px solid #28CA41; display: flex; align-items: center; justify-content: center; }
+  .vpc-check::after { content: '✓'; font-size: 8px; color: #28CA41; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- ===== VARIATION A ===== -->
+<div class="variation-wrap">
+  <div class="variation-label">Variation A — Scheduler with Calendar</div>
+  <div class="varA">
+    <div class="varA-topbar">
+      <div class="tb-dot tbd-r"></div>
+      <div class="tb-dot tbd-y"></div>
+      <div class="tb-dot tbd-g"></div>
+      <div class="tb-title">EchoStream — Publish Scheduler</div>
+      <div class="tb-badge">3 Queued</div>
+    </div>
+    <div class="varA-body">
+      <div class="va-sidebar">
+        <div class="va-sidebar-title">Upload Queue</div>
+        <div class="queue-item">
+          <div class="qi-thumb"></div>
+          <div class="qi-info">
+            <div class="qi-title">Clip #1 — 0:42</div>
+            <div class="qi-plats">
+              <div class="qi-plat qp-tt">T</div>
+              <div class="qi-plat qp-ig">I</div>
+              <div class="qi-plat qp-yt">Y</div>
+            </div>
+          </div>
+        </div>
+        <div class="queue-item">
+          <div class="qi-thumb"></div>
+          <div class="qi-info">
+            <div class="qi-title">Clip #2 — 0:58</div>
+            <div class="qi-plats">
+              <div class="qi-plat qp-tt">T</div>
+              <div class="qi-plat qp-ig">I</div>
+            </div>
+          </div>
+        </div>
+        <div class="queue-item">
+          <div class="qi-thumb"></div>
+          <div class="qi-info">
+            <div class="qi-title">Clip #3 — 1:05</div>
+            <div class="qi-plats">
+              <div class="qi-plat qp-yt">Y</div>
+              <div class="qi-plat qp-ig">I</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="va-calendar">
+        <div class="cal-header">
+          <div class="cal-month">April 2026</div>
+          <div class="cal-nav">
+            <div class="cal-nav-btn">‹</div>
+            <div class="cal-nav-btn">›</div>
+          </div>
+        </div>
+        <div class="cal-days-header">
+          <div class="cal-day-lbl">SUN</div>
+          <div class="cal-day-lbl">MON</div>
+          <div class="cal-day-lbl">TUE</div>
+          <div class="cal-day-lbl">WED</div>
+          <div class="cal-day-lbl">THU</div>
+          <div class="cal-day-lbl">FRI</div>
+          <div class="cal-day-lbl">SAT</div>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-cell empty-cell"><div class="cal-date"></div></div>
+          <div class="cal-cell"><div class="cal-date">1</div></div>
+          <div class="cal-cell"><div class="cal-date">2</div><div class="cal-clip-dot ccd-tt">T</div></div>
+          <div class="cal-cell"><div class="cal-date">3</div><div class="cal-clip-dot ccd-ig">I</div></div>
+          <div class="cal-cell"><div class="cal-date">4</div></div>
+          <div class="cal-cell"><div class="cal-date">5</div><div class="cal-clip-dot ccd-yt">Y</div></div>
+          <div class="cal-cell"><div class="cal-date">6</div></div>
+          <div class="cal-cell"><div class="cal-date">7</div><div class="cal-clip-dot ccd-all">3</div></div>
+          <div class="cal-cell"><div class="cal-date">8</div><div class="cal-clip-dot ccd-tt">T</div></div>
+          <div class="cal-cell today"><div class="cal-date">9</div><div class="cal-clip-dot ccd-ig">I</div></div>
+          <div class="cal-cell"><div class="cal-date">10</div><div class="cal-clip-dot ccd-yt">Y</div></div>
+          <div class="cal-cell"><div class="cal-date">11</div></div>
+          <div class="cal-cell"><div class="cal-date">12</div><div class="cal-clip-dot ccd-all">2</div></div>
+          <div class="cal-cell"><div class="cal-date">13</div></div>
+          <div class="cal-cell"><div class="cal-date">14</div><div class="cal-clip-dot ccd-tt">T</div></div>
+          <div class="cal-cell"><div class="cal-date">15</div><div class="cal-clip-dot ccd-ig">I</div></div>
+          <div class="cal-cell"><div class="cal-date">16</div></div>
+          <div class="cal-cell"><div class="cal-date">17</div><div class="cal-clip-dot ccd-yt">Y</div></div>
+          <div class="cal-cell"><div class="cal-date">18</div><div class="cal-clip-dot ccd-all">5</div></div>
+          <div class="cal-cell"><div class="cal-date">19</div></div>
+          <div class="cal-cell"><div class="cal-date">20</div></div>
+          <div class="cal-cell"><div class="cal-date">21</div><div class="cal-clip-dot ccd-tt">T</div></div>
+        </div>
+        <div class="cal-publish-btn">
+          <div class="cal-publish-indicator"></div>
+          Publish All
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== VARIATION B ===== -->
+<div class="variation-wrap">
+  <div class="variation-label">Variation B — Platform Cards</div>
+  <div class="varB">
+    <div class="varB-bg"></div>
+    <div class="varB-dots"></div>
+    <div class="varB-inner">
+      <div class="vb-grid">
+        <div class="platform-card">
+          <div class="pc-icon pc-tt">TT</div>
+          <div class="pc-name">TikTok</div>
+          <div class="pc-count">7 clips</div>
+          <div class="pc-status"></div>
+        </div>
+        <div class="platform-card">
+          <div class="pc-icon pc-ig">IG</div>
+          <div class="pc-name">Instagram</div>
+          <div class="pc-count">7 clips</div>
+          <div class="pc-status"></div>
+        </div>
+        <div class="platform-card">
+          <div class="pc-icon pc-yt">▶</div>
+          <div class="pc-name">YT Shorts</div>
+          <div class="pc-count">7 clips</div>
+          <div class="pc-status"></div>
+        </div>
+        <div class="platform-card">
+          <div class="pc-icon pc-li">in</div>
+          <div class="pc-name">LinkedIn</div>
+          <div class="pc-count">3 clips</div>
+          <div class="pc-status"></div>
+        </div>
+      </div>
+      <div class="vb-bottom">
+        <div class="vb-bottom-left">
+          <div class="vb-publish-ring">
+            <span style="font-size:12px; color:#FF4D1C; font-weight:900;">→</span>
+          </div>
+          <div class="vb-plat-dots">
+            <div class="vb-plat-dot"></div>
+            <div class="vb-plat-dot"></div>
+            <div class="vb-plat-dot"></div>
+            <div class="vb-plat-dot"></div>
+          </div>
+          <div class="vb-text">Publish <strong>24 clips</strong> to all platforms</div>
+        </div>
+        <div class="vb-cta">Publish Now</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== VARIATION C ===== -->
+<div class="variation-wrap">
+  <div class="variation-label">Variation C — Week View Calendar</div>
+  <div class="varC">
+    <div class="varC-bg"></div>
+    <div class="varC-inner">
+      <div class="vc-header">
+        <div class="vc-header-title">Content Schedule — Week of Apr 7</div>
+        <div class="vc-header-controls">
+          <div class="vc-ctrl">Day</div>
+          <div class="vc-ctrl active">Week</div>
+          <div class="vc-ctrl">Month</div>
+        </div>
+      </div>
+      <div class="week-view">
+        <div class="wv-time-col">
+          <div class="wv-time">9 AM</div>
+          <div class="wv-time">12 PM</div>
+          <div class="wv-time">3 PM</div>
+          <div class="wv-time">6 PM</div>
+          <div class="wv-time">9 PM</div>
+        </div>
+        <!-- Mon -->
+        <div class="wv-day-col">
+          <div class="wv-day-header"><div class="wvdh-lbl">MON</div><div class="wvdh-num">7</div></div>
+          <div class="wv-cells">
+            <div class="wv-cell"><div class="wv-event ev-tt">TikTok</div></div>
+            <div class="wv-cell"></div>
+            <div class="wv-cell"></div>
+            <div class="wv-cell"><div class="wv-event ev-ig">Reel</div></div>
+            <div class="wv-cell"></div>
+          </div>
+        </div>
+        <!-- Tue -->
+        <div class="wv-day-col">
+          <div class="wv-day-header"><div class="wvdh-lbl">TUE</div><div class="wvdh-num">8</div></div>
+          <div class="wv-cells">
+            <div class="wv-cell"></div>
+            <div class="wv-cell"><div class="wv-event ev-yt">Shorts</div></div>
+            <div class="wv-cell"></div>
+            <div class="wv-cell"></div>
+            <div class="wv-cell"><div class="wv-event ev-tt">TikTok</div></div>
+          </div>
+        </div>
+        <!-- Wed TODAY -->
+        <div class="wv-day-col today">
+          <div class="wv-day-header"><div class="wvdh-lbl">WED</div><div class="wvdh-num">9</div></div>
+          <div class="wv-cells">
+            <div class="wv-cell"><div class="wv-event ev-all">3 Platforms</div></div>
+            <div class="wv-cell"></div>
+            <div class="wv-cell"><div class="wv-event ev-ig">Reel</div></div>
+            <div class="wv-cell"></div>
+            <div class="wv-cell"><div class="wv-event ev-tt">TikTok</div></div>
+          </div>
+        </div>
+        <!-- Thu -->
+        <div class="wv-day-col">
+          <div class="wv-day-header"><div class="wvdh-lbl">THU</div><div class="wvdh-num">10</div></div>
+          <div class="wv-cells">
+            <div class="wv-cell"></div>
+            <div class="wv-cell"><div class="wv-event ev-yt">Shorts</div></div>
+            <div class="wv-cell"></div>
+            <div class="wv-cell"><div class="wv-event ev-tt">TikTok</div></div>
+            <div class="wv-cell"></div>
+          </div>
+        </div>
+        <!-- Fri -->
+        <div class="wv-day-col">
+          <div class="wv-day-header"><div class="wvdh-lbl">FRI</div><div class="wvdh-num">11</div></div>
+          <div class="wv-cells">
+            <div class="wv-cell"><div class="wv-event ev-all">All 4</div></div>
+            <div class="wv-cell"></div>
+            <div class="wv-cell"></div>
+            <div class="wv-cell"><div class="wv-event ev-ig">Reel</div></div>
+            <div class="wv-cell"></div>
+          </div>
+        </div>
+        <!-- Sat -->
+        <div class="wv-day-col">
+          <div class="wv-day-header"><div class="wvdh-lbl">SAT</div><div class="wvdh-num">12</div></div>
+          <div class="wv-cells">
+            <div class="wv-cell"></div>
+            <div class="wv-cell"><div class="wv-event ev-tt">TikTok</div></div>
+            <div class="wv-cell"></div>
+            <div class="wv-cell"><div class="wv-event ev-yt">Shorts</div></div>
+            <div class="wv-cell"></div>
+          </div>
+        </div>
+        <!-- Sun -->
+        <div class="wv-day-col">
+          <div class="wv-day-header"><div class="wvdh-lbl">SUN</div><div class="wvdh-num">13</div></div>
+          <div class="wv-cells">
+            <div class="wv-cell"><div class="wv-event ev-all">3 Platforms</div></div>
+            <div class="wv-cell"></div>
+            <div class="wv-cell"></div>
+            <div class="wv-cell"></div>
+            <div class="wv-cell"><div class="wv-event ev-ig">Reel</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== VARIATION D ===== -->
+<div class="variation-wrap">
+  <div class="variation-label">Variation D — Flow Diagram</div>
+  <div class="varD">
+    <div class="varD-radial"></div>
+    <div class="varD-grid"></div>
+    <div class="varD-flow">
+      <div class="vd-source-node">
+        <div class="vds-video">
+          <div class="vds-v-bg"></div>
+          <div class="vds-v-person"><div class="vds-v-head"></div><div class="vds-v-body"></div></div>
+        </div>
+        <div class="vds-label">Your Video</div>
+      </div>
+      <div class="vd-flow-arrow">
+        <div class="vfa-line">
+          <div class="vfa-particle"></div>
+          <div class="vfa-particle"></div>
+          <div class="vfa-particle"></div>
+        </div>
+      </div>
+      <div class="vd-platform-grid">
+        <div class="vd-plat-card">
+          <div class="vpc-logo vl-tt">TT</div>
+          <div class="vpc-clip-count">7 clips</div>
+          <div class="vpc-name">TikTok</div>
+          <div class="vpc-check"></div>
+        </div>
+        <div class="vd-plat-card">
+          <div class="vpc-logo vl-ig">IG</div>
+          <div class="vpc-clip-count">7 clips</div>
+          <div class="vpc-name">Reels</div>
+          <div class="vpc-check"></div>
+        </div>
+        <div class="vd-plat-card">
+          <div class="vpc-logo vl-yt">▶</div>
+          <div class="vpc-clip-count">7 clips</div>
+          <div class="vpc-name">Shorts</div>
+          <div class="vpc-check"></div>
+        </div>
+        <div class="vd-plat-card">
+          <div class="vpc-logo vl-li">in</div>
+          <div class="vpc-clip-count">3 clips</div>
+          <div class="vpc-name">LinkedIn</div>
+          <div class="vpc-check"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

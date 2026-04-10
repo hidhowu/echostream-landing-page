@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EchoStream — Read Without Sound (Variations)</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Sora:wght@600;700;800&family=Anton&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #0a0a0a;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  padding: 48px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 80px;
+}
+.variation-label {
+  color: #FF4D1C;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+/* All frames: 4:3 680×510 */
+.frame {
+  width: 680px;
+  height: 510px;
+  border-radius: 28px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* =====================================================
+   VARIATION 1: Three phones showing different caption styles
+   Side by side, each phone has a different caption aesthetic
+   ===================================================== */
+#v1 {
+  background: #0D0D0D;
+  border: 1px solid rgba(255,77,28,0.18);
+}
+#v1::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(255,77,28,0.06) 0%, transparent 70%);
+  pointer-events:none;
+}
+/* diagonal line pattern */
+#v1::after {
+  content:'';
+  position:absolute;
+  inset:0;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255,77,28,0.025) 0px, rgba(255,77,28,0.025) 1px,
+    transparent 1px, transparent 28px
+  );
+  pointer-events:none;
+}
+
+.v1-stage {
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:20px;
+  padding:32px;
+  z-index:1;
+}
+
+.v1-phone {
+  width: 140px;
+  height: 280px;
+  background: #111;
+  border-radius: 22px;
+  border: 1.5px solid rgba(255,255,255,0.1);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+/* Notch */
+.v1-phone::before {
+  content:'';
+  position:absolute;
+  top:8px; left:50%;
+  transform:translateX(-50%);
+  width:32px; height:5px;
+  background:#1a1a1a;
+  border-radius:3px;
+  z-index:10;
+}
+
+/* Video content area of phone */
+.v1-video-bg {
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+}
+
+/* Abstract waveform lines as "background" content */
+.v1-content-bars {
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  padding:0 16px;
+  width:100%;
+}
+.v1-content-line {
+  height:4px;
+  background:rgba(255,255,255,0.06);
+  border-radius:2px;
+}
+
+/* Caption area — bottom of each phone */
+.v1-caption-zone {
+  position:absolute;
+  bottom:28px;
+  left:10px; right:10px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+}
+
+/* Style A: Bold yellow karaoke */
+.cap-style-a .v1-caption-word {
+  display:inline-block;
+  font-family:'Sora',sans-serif;
+  font-size:14px;
+  font-weight:800;
+  color:#FFD700;
+  background:rgba(0,0,0,0.75);
+  padding:2px 7px;
+  border-radius:4px;
+  text-transform:uppercase;
+  letter-spacing:0.04em;
+}
+.cap-style-a .v1-caption-word.active {
+  background: #FF4D1C;
+  color:white;
+  animation: cap-a-highlight 0.4s ease-in-out infinite alternate;
+}
+@keyframes cap-a-highlight {
+  from{transform:scale(1)} to{transform:scale(1.04)}
+}
+.v1-cap-row { display:flex; gap:4px; flex-wrap:wrap; justify-content:center; }
+
+/* Style B: Minimal white outline */
+.cap-style-b .v1-caption-line {
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:13px;
+  font-weight:700;
+  color:white;
+  text-align:center;
+  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0 2px 8px rgba(0,0,0,0.8);
+  letter-spacing:0.02em;
+  line-height:1.4;
+  animation: cap-b-fade 3s ease-in-out infinite;
+}
+@keyframes cap-b-fade {
+  0%,30%{opacity:1} 40%,60%{opacity:0} 70%,100%{opacity:1}
+}
+.cap-style-b .v1-caption-line.line2 {
+  opacity:0;
+  animation: cap-b-fade2 3s ease-in-out infinite;
+}
+@keyframes cap-b-fade2 {
+  0%,30%{opacity:0} 40%,60%{opacity:1} 70%,100%{opacity:0}
+}
+
+/* Style C: Outlined colorful */
+.cap-style-c .v1-cap-pill {
+  background: linear-gradient(135deg, #FF4D1C, #FF7A3C);
+  padding: 5px 12px;
+  border-radius: 100px;
+  animation: cap-c-in 2.5s ease-in-out infinite;
+}
+.cap-style-c .v1-cap-pill span {
+  font-family:'Sora',sans-serif;
+  font-size:11px;
+  font-weight:800;
+  color:white;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+}
+@keyframes cap-c-in {
+  0%,100%{transform:translateY(0) scale(1);opacity:1}
+  45%{transform:translateY(-4px) scale(1.03);opacity:0.9}
+  50%{opacity:0; transform:translateY(-8px)}
+  51%{opacity:0; transform:translateY(8px)}
+  52%{opacity:1; transform:translateY(0)}
+}
+.cap-style-c .v1-cap-sub {
+  font-size:10px;
+  font-weight:600;
+  color:rgba(255,255,255,0.6);
+  text-align:center;
+  letter-spacing:0.03em;
+}
+
+/* Phone label below */
+.v1-phone-label {
+  text-align:center;
+  margin-top:8px;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+}
+
+/* Caption style labels */
+.v1-style-tag {
+  position:absolute;
+  top:14px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(0,0,0,0.7);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:100px;
+  padding:2px 8px;
+  font-size:8px;
+  font-weight:700;
+  color:rgba(255,255,255,0.5);
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  white-space:nowrap;
+  z-index:10;
+}
+
+/* animated word cycling */
+.v1-word-cycle {
+  font-family:'Sora',sans-serif;
+  font-size:14px;
+  font-weight:800;
+  color:white;
+  text-align:center;
+  min-height:20px;
+}
+.v1-word {
+  display:inline;
+  animation:word-fade 2s ease-in-out infinite;
+}
+.v1-word.w2 { animation-delay:0.5s; }
+.v1-word.w3 { animation-delay:1.0s; }
+@keyframes word-fade {
+  0%,15%{color:white}
+  20%,35%{color:#FF4D1C;text-shadow:0 0 12px rgba(255,77,28,0.6)}
+  40%,100%{color:white;text-shadow:none}
+}
+
+/* Sound-off icon overlay */
+.v1-mute-icon {
+  position:absolute;
+  top:18px; right:10px;
+  width:20px; height:20px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.15);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:10;
+}
+.v1-mute-icon svg { width:10px; height:10px; }
+
+/* Progress line */
+.v1-phone-progress {
+  position:absolute;
+  bottom:0; left:0;
+  height:2px;
+  background:linear-gradient(90deg,#FF4D1C,#FF7A3C);
+  border-radius:0 2px 2px 0;
+}
+
+
+/* =====================================================
+   VARIATION 2: Single large phone + floating style chips
+   Clean hero phone with captions active + style chips around it
+   ===================================================== */
+#v2 {
+  background: #0D0D0D;
+  border: 1px solid rgba(255,77,28,0.15);
+}
+#v2::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  background: 
+    radial-gradient(ellipse 50% 50% at 30% 50%, rgba(255,77,28,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 80% 30%, rgba(255,122,60,0.05) 0%, transparent 60%);
+  pointer-events:none;
+}
+/* Dot grid */
+#v2::after {
+  content:'';
+  position:absolute;
+  inset:0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size:24px 24px;
+  pointer-events:none;
+}
+
+.v2-layout {
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:1;
+}
+
+/* Large center phone */
+.v2-phone {
+  width:170px;
+  height:330px;
+  background: #111;
+  border-radius:28px;
+  border:2px solid rgba(255,255,255,0.12);
+  position:relative;
+  overflow:hidden;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.6), 0 0 40px rgba(255,77,28,0.08);
+  z-index:2;
+}
+/* Notch */
+.v2-phone::before {
+  content:'';
+  position:absolute;
+  top:10px; left:50%;
+  transform:translateX(-50%);
+  width:36px; height:6px;
+  background:#1a1a1a;
+  border-radius:3px;
+  z-index:10;
+}
+/* Glow border */
+.v2-phone::after {
+  content:'';
+  position:absolute;
+  inset:-1px;
+  border-radius:28px;
+  background: linear-gradient(135deg, rgba(255,77,28,0.3), transparent 50%, rgba(255,122,60,0.2));
+  z-index:0;
+  pointer-events:none;
+}
+
+/* Abstract video content inside phone */
+.v2-phone-content {
+  position:absolute;
+  inset:0;
+  background: linear-gradient(180deg, #1a1818 0%, #0f0f0f 100%);
+  z-index:1;
+}
+
+/* Abstract waveform moving visual */
+.v2-waveform-bg {
+  position:absolute;
+  top:30%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  display:flex;
+  align-items:center;
+  gap:3px;
+}
+.v2-wbar {
+  width:4px;
+  border-radius:2px;
+  background: rgba(255,77,28,0.35);
+  animation: v2-wbar-anim 0.6s ease-in-out infinite alternate;
+}
+.v2-wbar:nth-child(1){height:16px;animation-delay:0.0s}
+.v2-wbar:nth-child(2){height:28px;animation-delay:0.05s}
+.v2-wbar:nth-child(3){height:40px;animation-delay:0.10s}
+.v2-wbar:nth-child(4){height:52px;animation-delay:0.15s}
+.v2-wbar:nth-child(5){height:40px;animation-delay:0.20s}
+.v2-wbar:nth-child(6){height:28px;animation-delay:0.25s}
+.v2-wbar:nth-child(7){height:16px;animation-delay:0.30s}
+@keyframes v2-wbar-anim {
+  from{transform:scaleY(0.3);opacity:0.3}
+  to{transform:scaleY(1);opacity:0.9}
+}
+
+/* Mute icon top-right */
+.v2-mute {
+  position:absolute;
+  top:18px; right:12px;
+  width:26px; height:26px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,0.15);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:10;
+  font-size:11px;
+}
+
+/* Caption block — cycling between styles */
+.v2-caption-area {
+  position:absolute;
+  bottom:30px;
+  left:0; right:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  padding:0 10px;
+  z-index:5;
+}
+
+/* STYLE: Bold outlined caps */
+.v2-cap-bold {
+  animation:v2-cap-cycle-a 9s ease-in-out infinite;
+  text-align:center;
+}
+.v2-cap-bold span {
+  font-family:'Sora',sans-serif;
+  font-size:15px;
+  font-weight:800;
+  color:#FFD700;
+  background:rgba(0,0,0,0.8);
+  padding:3px 8px;
+  border-radius:4px;
+  text-transform:uppercase;
+  letter-spacing:0.05em;
+  display:inline-block;
+}
+@keyframes v2-cap-cycle-a {
+  0%,25%{opacity:1;transform:translateY(0)} 
+  30%,60%{opacity:0;transform:translateY(8px)} 
+  65%,100%{opacity:0}
+}
+
+.v2-cap-pill-style {
+  position:absolute;
+  bottom:30px; left:0; right:0;
+  display:flex;
+  justify-content:center;
+  animation:v2-cap-cycle-b 9s 3s ease-in-out infinite;
+  opacity:0;
+}
+.v2-cap-pill-style .pill {
+  background:linear-gradient(135deg,#FF4D1C,#FF7A3C);
+  border-radius:100px;
+  padding:6px 14px;
+}
+.v2-cap-pill-style .pill span {
+  font-family:'Sora',sans-serif;
+  font-size:13px;
+  font-weight:800;
+  color:white;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+}
+@keyframes v2-cap-cycle-b {
+  0%,5%{opacity:0;transform:translateY(8px)}
+  10%,35%{opacity:1;transform:translateY(0)}
+  40%,100%{opacity:0;transform:translateY(-8px)}
+}
+
+.v2-cap-outline-style {
+  position:absolute;
+  bottom:30px; left:0; right:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
+  animation:v2-cap-cycle-c 9s 6s ease-in-out infinite;
+  opacity:0;
+}
+.v2-cap-outline-style span {
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:13px;
+  font-weight:700;
+  color:white;
+  text-align:center;
+  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+}
+@keyframes v2-cap-cycle-c {
+  0%,5%{opacity:0;transform:translateY(8px)}
+  10%,35%{opacity:1;transform:translateY(0)}
+  40%,100%{opacity:0;transform:translateY(-8px)}
+}
+
+/* Progress bar */
+.v2-progress {
+  position:absolute;
+  bottom:0; left:0;
+  height:3px;
+  background:linear-gradient(90deg,#FF4D1C,#FF7A3C);
+  border-radius:0 2px 2px 0;
+  animation:v2-prog 6s linear infinite;
+}
+@keyframes v2-prog { from{width:0%} to{width:100%} }
+
+/* Floating style chips around the phone */
+.v2-chip {
+  position:absolute;
+  background:#1a1a1a;
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:12px;
+  padding:10px 14px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  z-index:3;
+  animation:v2-chip-float 3s ease-in-out infinite;
+}
+.v2-chip:nth-child(2){animation-delay:0.5s}
+.v2-chip:nth-child(3){animation-delay:1.0s}
+.v2-chip:nth-child(4){animation-delay:1.5s}
+@keyframes v2-chip-float {
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-4px)}
+}
+
+.v2-chip-dot {
+  width:8px; height:8px;
+  border-radius:50%;
+  flex-shrink:0;
+}
+.v2-chip-text {
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.v2-chip-title {
+  font-size:11px;
+  font-weight:700;
+  color:rgba(255,255,255,0.85);
+  letter-spacing:-0.01em;
+}
+.v2-chip-sub {
+  font-size:9px;
+  font-weight:500;
+  color:rgba(255,255,255,0.4);
+}
+
+/* =====================================================
+   VARIATION 3: Caption Showcase — split screen comparison
+   Left = no captions (muted, unreadable), Right = captions on (readable, engaging)
+   ===================================================== */
+#v3 {
+  background: #0D0D0D;
+  border: 1px solid rgba(255,77,28,0.15);
+}
+#v3::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  background: 
+    linear-gradient(90deg, rgba(255,77,28,0.04) 0%, transparent 50%, rgba(255,77,28,0.04) 100%);
+  pointer-events:none;
+}
+
+.v3-layout {
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:0;
+  padding:36px;
+  z-index:1;
+}
+
+/* Divider in center */
+.v3-divider {
+  width:2px;
+  height:280px;
+  background:linear-gradient(180deg, transparent, rgba(255,77,28,0.4), rgba(255,77,28,0.6), rgba(255,77,28,0.4), transparent);
+  position:relative;
+  flex-shrink:0;
+  margin:0 24px;
+  z-index:10;
+}
+.v3-divider::before {
+  content:'VS';
+  position:absolute;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  background:#1a1a1a;
+  border:1px solid rgba(255,77,28,0.4);
+  border-radius:100px;
+  padding:3px 8px;
+  font-size:9px;
+  font-weight:800;
+  color:#FF4D1C;
+  letter-spacing:0.06em;
+  white-space:nowrap;
+}
+
+/* Left side: muted/dead */
+.v3-side {
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+}
+
+.v3-phone {
+  width:130px;
+  height:252px;
+  border-radius:20px;
+  border:1.5px solid rgba(255,255,255,0.08);
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 16px 32px rgba(0,0,0,0.5);
+}
+/* Notch */
+.v3-phone::before {
+  content:'';
+  position:absolute;
+  top:7px; left:50%;
+  transform:translateX(-50%);
+  width:28px; height:4px;
+  background:#1a1a1a;
+  border-radius:2px;
+  z-index:10;
+}
+
+.v3-phone-left {
+  background:#141414;
+}
+.v3-phone-right {
+  background:#141414;
+  border-color:rgba(255,77,28,0.3);
+  box-shadow:0 16px 32px rgba(0,0,0,0.5), 0 0 30px rgba(255,77,28,0.1);
+}
+
+/* Left phone: blurry/muted content */
+.v3-muted-content {
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-end;
+  padding-bottom:24px;
+  gap:4px;
+  filter:brightness(0.4);
+}
+.v3-blur-line {
+  height:8px;
+  background:rgba(255,255,255,0.12);
+  border-radius:4px;
+  filter:blur(2px);
+}
+.v3-sound-off {
+  position:absolute;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  width:36px; height:36px;
+  border-radius:50%;
+  background:rgba(0,0,0,0.7);
+  border:1.5px solid rgba(255,255,255,0.15);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:16px;
+}
+/* X through sound icon */
+.v3-no-sound {
+  width:18px; height:18px;
+  position:relative;
+}
+.v3-no-sound::before {
+  content:'';
+  position:absolute;
+  top:50%; left:0; right:0;
+  height:2px;
+  background:#FF4D1C;
+  transform:rotate(-45deg);
+  border-radius:1px;
+}
+.v3-sound-waves {
+  position:absolute;
+  right:4px; top:50%;
+  transform:translateY(-50%);
+  display:flex;
+  flex-direction:column;
+  gap:1px;
+}
+.v3-sw {
+  height:1.5px;
+  background:rgba(255,255,255,0.3);
+  border-radius:1px;
+}
+
+/* Right phone: vibrant captions */
+.v3-captioned-content {
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-end;
+  padding-bottom:22px;
+  gap:4px;
+}
+
+/* Animated karaoke caption */
+.v3-cap-row {
+  display:flex;
+  gap:3px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.v3-cap-word {
+  font-family:'Sora',sans-serif;
+  font-size:11px;
+  font-weight:800;
+  color:#FFD700;
+  background:rgba(0,0,0,0.8);
+  padding:2px 5px;
+  border-radius:3px;
+  text-transform:uppercase;
+}
+.v3-cap-word.hot {
+  background:#FF4D1C;
+  color:white;
+  animation:v3-word-hot 1.2s ease-in-out infinite;
+}
+@keyframes v3-word-hot {
+  0%,100%{transform:scale(1)} 50%{transform:scale(1.06); box-shadow:0 0 8px rgba(255,77,28,0.5)}
+}
+
+/* Progress */
+.v3-progress {
+  position:absolute;
+  bottom:0; left:0;
+  height:2px;
+  background:linear-gradient(90deg,#FF4D1C,#FF7A3C);
+  border-radius:0 2px 2px 0;
+  animation:v3-prog 4s linear infinite;
+}
+@keyframes v3-prog { from{width:0%} to{width:100%} }
+
+/* Side labels */
+.v3-side-label {
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+}
+.v3-label-dot {
+  width:8px; height:8px;
+  border-radius:50%;
+  flex-shrink:0;
+}
+
+/* View count difference */
+.v3-stat {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:1px;
+}
+.v3-stat-num {
+  font-family:'Sora',sans-serif;
+  font-size:16px;
+  font-weight:800;
+  letter-spacing:-0.02em;
+}
+.v3-stat-label {
+  font-size:9px;
+  font-weight:600;
+  color:rgba(255,255,255,0.4);
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+}
+
+/* =====================================================
+   VARIATION 4: Caption style cards on one phone
+   Single phone with caption "cards" floating to the side
+   ===================================================== */
+#v4 {
+  background: #0D0D0D;
+  border: 1px solid rgba(255,77,28,0.15);
+  overflow:hidden;
+}
+#v4::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 70% 50%, rgba(255,77,28,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 30% 30% at 20% 80%, rgba(255,122,60,0.05) 0%, transparent 60%);
+  pointer-events:none;
+}
+/* Fine dot grid */
+#v4::after {
+  content:'';
+  position:absolute;
+  inset:0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size:20px 20px;
+  pointer-events:none;
+}
+
+.v4-layout {
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:32px;
+  padding:32px 40px;
+  z-index:1;
+}
+
+/* Central phone */
+.v4-phone {
+  width:155px;
+  height:310px;
+  background:#111;
+  border-radius:26px;
+  border:2px solid rgba(255,255,255,0.1);
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 24px 48px rgba(0,0,0,0.6), 0 0 50px rgba(255,77,28,0.06);
+  flex-shrink:0;
+}
+.v4-phone::before {
+  content:'';
+  position:absolute;
+  top:9px; left:50%;
+  transform:translateX(-50%);
+  width:32px; height:5px;
+  background:#1a1a1a;
+  border-radius:3px;
+  z-index:10;
+}
+
+/* Waveform animation inside phone as "video content" */
+.v4-phone-inner {
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+
+.v4-waveform {
+  display:flex;
+  align-items:center;
+  gap:3px;
+}
+.v4-wb {
+  width:4px;
+  background:linear-gradient(180deg, rgba(255,77,28,0.5), rgba(255,77,28,0.2));
+  border-radius:2px;
+  animation:v4-wb-anim 0.5s ease-in-out infinite alternate;
+}
+.v4-wb:nth-child(1){height:12px;animation-delay:0.00s}
+.v4-wb:nth-child(2){height:22px;animation-delay:0.05s}
+.v4-wb:nth-child(3){height:34px;animation-delay:0.10s}
+.v4-wb:nth-child(4){height:44px;animation-delay:0.15s}
+.v4-wb:nth-child(5){height:34px;animation-delay:0.20s}
+.v4-wb:nth-child(6){height:22px;animation-delay:0.25s}
+.v4-wb:nth-child(7){height:12px;animation-delay:0.30s}
+@keyframes v4-wb-anim {
+  from{transform:scaleY(0.3);opacity:0.4}
+  to{transform:scaleY(1);opacity:1}
+}
+
+/* Caption rotating display inside phone */
+.v4-cap-display {
+  position:absolute;
+  bottom:24px;
+  left:0; right:0;
+  display:flex;
+  justify-content:center;
+  padding:0 10px;
+}
+
+.v4-cap-a {
+  animation:v4-cap-rotate 12s ease-in-out infinite;
+  text-align:center;
+}
+.v4-cap-a span {
+  font-family:'Sora',sans-serif;
+  font-size:12px;
+  font-weight:800;
+  color:#FFD700;
+  background:rgba(0,0,0,0.85);
+  padding:3px 7px;
+  border-radius:4px;
+  text-transform:uppercase;
+  letter-spacing:0.04em;
+}
+@keyframes v4-cap-rotate {
+  0%,20%{opacity:1} 25%,45%{opacity:0} 50%,100%{opacity:0}
+}
+
+.v4-cap-b {
+  position:absolute;
+  bottom:24px;
+  left:0; right:0;
+  display:flex;
+  justify-content:center;
+  padding:0 10px;
+  animation:v4-cap-rotate-b 12s ease-in-out infinite;
+  opacity:0;
+}
+.v4-cap-b span {
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:11px;
+  font-weight:700;
+  color:white;
+  text-align:center;
+  text-shadow:1px 1px 0 #000,-1px -1px 0 #000;
+}
+@keyframes v4-cap-rotate-b {
+  0%,20%{opacity:0} 25%,45%{opacity:1} 50%,100%{opacity:0}
+}
+
+.v4-cap-c {
+  position:absolute;
+  bottom:22px;
+  left:0; right:0;
+  display:flex;
+  justify-content:center;
+  padding:0 10px;
+  animation:v4-cap-rotate-c 12s ease-in-out infinite;
+  opacity:0;
+}
+.v4-cap-c .cpill {
+  background:linear-gradient(135deg,#FF4D1C,#FF7A3C);
+  border-radius:100px;
+  padding:5px 12px;
+}
+.v4-cap-c .cpill span {
+  font-family:'Sora',sans-serif;
+  font-size:11px;
+  font-weight:800;
+  color:white;
+  text-transform:uppercase;
+  letter-spacing:0.05em;
+}
+@keyframes v4-cap-rotate-c {
+  0%,45%{opacity:0} 50%,70%{opacity:1} 75%,100%{opacity:0}
+}
+
+/* Right side: style cards list */
+.v4-styles-list {
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.v4-style-card {
+  width:200px;
+  background:#161616;
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:12px;
+  padding:12px 14px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  animation:v4-card-in 0.5s ease both;
+  transition:border-color 0.3s, box-shadow 0.3s;
+}
+.v4-style-card:nth-child(1){animation-delay:0.1s}
+.v4-style-card:nth-child(2){animation-delay:0.3s; border-color:rgba(255,77,28,0.3); box-shadow:0 0 14px rgba(255,77,28,0.08);}
+.v4-style-card:nth-child(3){animation-delay:0.5s}
+@keyframes v4-card-in {
+  from{opacity:0;transform:translateX(16px)} to{opacity:1;transform:translateX(0)}
+}
+
+.v4-card-preview {
+  width:40px; height:24px;
+  border-radius:6px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+.v4-card-info {
+  flex:1;
+}
+.v4-card-name {
+  font-size:11px;
+  font-weight:700;
+  color:rgba(255,255,255,0.85);
+  letter-spacing:-0.01em;
+}
+.v4-card-desc {
+  font-size:9px;
+  font-weight:500;
+  color:rgba(255,255,255,0.35);
+  margin-top:1px;
+}
+.v4-active-dot {
+  width:6px; height:6px;
+  border-radius:50%;
+  background:#FF4D1C;
+  flex-shrink:0;
+  animation:v4-dot-blink 1.2s ease-in-out infinite;
+}
+@keyframes v4-dot-blink { 0%,100%{opacity:0.5} 50%{opacity:1} }
+
+/* Check mark for completed */
+.v4-check {
+  width:16px; height:16px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.12);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  font-size:8px;
+  color:rgba(255,255,255,0.3);
+}
+
+</style>
+</head>
+<body>
+
+<!-- VARIATION 1 -->
+<div>
+  <p class="variation-label">Variation 1 — Three Caption Style Phones</p>
+  <div class="frame" id="v1">
+    <div class="v1-stage">
+      <!-- Phone A: Bold karaoke yellow -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+        <div class="v1-phone">
+          <div class="v1-video-bg">
+            <div class="v1-content-bars">
+              <div class="v1-content-line" style="width:80%"></div>
+              <div class="v1-content-line" style="width:60%"></div>
+              <div class="v1-content-line" style="width:70%"></div>
+            </div>
+          </div>
+          <div class="v1-mute-icon">
+            <svg viewBox="0 0 12 12" fill="none">
+              <path d="M1 1l10 10M3 9.5A5 5 0 009.5 3" stroke="#FF4D1C" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="v1-style-tag">Bold</div>
+          <div class="v1-caption-zone cap-style-a">
+            <div class="v1-cap-row">
+              <span class="v1-caption-word">Your</span>
+              <span class="v1-caption-word active">Best</span>
+              <span class="v1-caption-word">Clips</span>
+            </div>
+            <div class="v1-cap-row">
+              <span class="v1-caption-word">Are</span>
+              <span class="v1-caption-word">Going</span>
+              <span class="v1-caption-word active">Viral</span>
+            </div>
+          </div>
+          <div class="v1-phone-progress" style="width:45%"></div>
+        </div>
+        <span class="v1-phone-label" style="color:#FFD700;">Karaoke</span>
+      </div>
+
+      <!-- Phone B: Clean white outline -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+        <div class="v1-phone" style="transform:translateY(-12px);border-color:rgba(255,77,28,0.35);box-shadow:0 0 30px rgba(255,77,28,0.1);">
+          <div class="v1-video-bg">
+            <div class="v1-content-bars">
+              <div class="v1-content-line" style="width:75%"></div>
+              <div class="v1-content-line" style="width:55%"></div>
+              <div class="v1-content-line" style="width:65%"></div>
+            </div>
+          </div>
+          <div class="v1-mute-icon">
+            <svg viewBox="0 0 12 12" fill="none">
+              <path d="M1 1l10 10M3 9.5A5 5 0 009.5 3" stroke="#FF4D1C" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="v1-style-tag" style="color:rgba(255,77,28,0.9);border-color:rgba(255,77,28,0.3);">Minimal</div>
+          <div class="v1-caption-zone cap-style-b">
+            <span class="v1-caption-line">This is the moment</span>
+            <span class="v1-caption-line">that changed</span>
+            <span class="v1-caption-line line2">everything for me</span>
+          </div>
+          <div class="v1-phone-progress" style="animation:v1-p2 4s linear infinite;"></div>
+          <style>
+            @keyframes v1-p2{from{width:0%}to{width:100%}}
+          </style>
+        </div>
+        <span class="v1-phone-label" style="color:#FF7A3C;">Minimal</span>
+      </div>
+
+      <!-- Phone C: Pill badge style -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+        <div class="v1-phone">
+          <div class="v1-video-bg">
+            <div class="v1-content-bars">
+              <div class="v1-content-line" style="width:70%"></div>
+              <div class="v1-content-line" style="width:85%"></div>
+              <div class="v1-content-line" style="width:60%"></div>
+            </div>
+          </div>
+          <div class="v1-mute-icon">
+            <svg viewBox="0 0 12 12" fill="none">
+              <path d="M1 1l10 10M3 9.5A5 5 0 009.5 3" stroke="#FF4D1C" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="v1-style-tag">Pill</div>
+          <div class="v1-caption-zone cap-style-c">
+            <div class="v1-cap-pill"><span>Watch This 🔥</span></div>
+            <span class="v1-cap-sub">AI-styled captions</span>
+          </div>
+          <div class="v1-phone-progress" style="width:70%;animation:v1-p3 3.5s linear infinite;"></div>
+          <style>@keyframes v1-p3{from{width:0%}to{width:100%}}</style>
+        </div>
+        <span class="v1-phone-label" style="color:#FF4D1C;">Pill</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VARIATION 2 -->
+<div>
+  <p class="variation-label">Variation 2 — Single Phone + Floating Style Chips</p>
+  <div class="frame" id="v2">
+    <div class="v2-layout">
+      <!-- Floating chips: positioned around the center phone using absolute -->
+      <div class="v2-chip" style="left:68px; top:80px;">
+        <div class="v2-chip-dot" style="background:#FFD700;"></div>
+        <div class="v2-chip-text">
+          <span class="v2-chip-title">Bold Karaoke</span>
+          <span class="v2-chip-sub">High retention</span>
+        </div>
+      </div>
+
+      <div class="v2-chip" style="left:68px; bottom:80px; animation-delay:0.7s;">
+        <div class="v2-chip-dot" style="background:rgba(255,255,255,0.7);"></div>
+        <div class="v2-chip-text">
+          <span class="v2-chip-title">Clean Outline</span>
+          <span class="v2-chip-sub">Clear & readable</span>
+        </div>
+      </div>
+
+      <div class="v2-chip" style="right:68px; top:80px; animation-delay:1.0s;">
+        <div class="v2-chip-dot" style="background:#FF4D1C;"></div>
+        <div class="v2-chip-text">
+          <span class="v2-chip-title">Pill Badge</span>
+          <span class="v2-chip-sub">Eye-catching</span>
+        </div>
+      </div>
+
+      <div class="v2-chip" style="right:68px; bottom:80px; animation-delay:1.4s;">
+        <div class="v2-chip-dot" style="background:rgba(255,122,60,0.8);"></div>
+        <div class="v2-chip-text">
+          <span class="v2-chip-title">Auto-Sync</span>
+          <span class="v2-chip-sub">Word-perfect</span>
+        </div>
+      </div>
+
+      <!-- Center phone -->
+      <div class="v2-phone" style="z-index:5;">
+        <div class="v2-mute">🔇</div>
+        <div class="v2-phone-content">
+          <div class="v2-waveform-bg">
+            <div class="v2-wbar"></div><div class="v2-wbar"></div><div class="v2-wbar"></div>
+            <div class="v2-wbar"></div><div class="v2-wbar"></div><div class="v2-wbar"></div>
+            <div class="v2-wbar"></div>
+          </div>
+        </div>
+        <!-- Cycling captions -->
+        <div class="v2-cap-bold"><span>This Changed</span><br><span style="color:white;background:rgba(0,0,0,0.8);">Everything</span></div>
+        <div class="v2-cap-pill-style"><div class="pill"><span>Going Viral 🔥</span></div></div>
+        <div class="v2-cap-outline-style"><span>The secret no one</span><span>talks about</span></div>
+        <div class="v2-progress"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VARIATION 3 -->
+<div>
+  <p class="variation-label">Variation 3 — Without Captions vs With Captions</p>
+  <div class="frame" id="v3">
+    <div class="v3-layout">
+      <!-- Left: no captions -->
+      <div class="v3-side">
+        <div class="v3-phone v3-phone-left">
+          <div class="v3-muted-content">
+            <div class="v3-blur-line" style="width:80px;"></div>
+            <div class="v3-blur-line" style="width:60px;"></div>
+          </div>
+          <div class="v3-sound-off">
+            <!-- mute lines -->
+            <div style="display:flex;gap:2px;align-items:center;">
+              <div style="width:6px;height:8px;background:rgba(255,255,255,0.4);border-radius:1px;border-radius:1px 1px 0 0;"></div>
+              <div style="display:flex;flex-direction:column;gap:1.5px;">
+                <div style="width:4px;height:1.5px;background:rgba(255,255,255,0.3);border-radius:1px;"></div>
+                <div style="width:6px;height:1.5px;background:rgba(255,255,255,0.3);border-radius:1px;"></div>
+                <div style="width:4px;height:1.5px;background:rgba(255,255,255,0.3);border-radius:1px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="v3-side-label">
+          <div class="v3-label-dot" style="background:rgba(255,255,255,0.2);"></div>
+          <span style="color:rgba(255,255,255,0.35);">No Captions</span>
+        </div>
+        <div class="v3-stat">
+          <span class="v3-stat-num" style="color:rgba(255,255,255,0.3);">2.1K</span>
+          <span class="v3-stat-label">avg views</span>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="v3-divider"></div>
+
+      <!-- Right: with captions -->
+      <div class="v3-side">
+        <div class="v3-phone v3-phone-right">
+          <div class="v3-captioned-content">
+            <!-- animated caption lines -->
+            <div class="v3-cap-row" style="animation:v3-cr 3s ease-in-out infinite;opacity:1;">
+              <span class="v3-cap-word">You</span>
+              <span class="v3-cap-word hot">Won't</span>
+              <span class="v3-cap-word">Believe</span>
+            </div>
+            <div class="v3-cap-row" style="animation:v3-cr2 3s ease-in-out infinite;opacity:0;position:absolute;bottom:22px;">
+              <span class="v3-cap-word hot">This</span>
+              <span class="v3-cap-word">Actually</span>
+              <span class="v3-cap-word">Works</span>
+            </div>
+            <style>
+              @keyframes v3-cr{0%,45%{opacity:1}55%,100%{opacity:0}}
+              @keyframes v3-cr2{0%,45%{opacity:0}55%,100%{opacity:1}}
+            </style>
+          </div>
+          <div class="v3-progress"></div>
+        </div>
+        <div class="v3-side-label">
+          <div class="v3-label-dot" style="background:#FF4D1C;"></div>
+          <span style="color:rgba(255,255,255,0.85);">With Captions</span>
+        </div>
+        <div class="v3-stat">
+          <span class="v3-stat-num" style="color:#FF4D1C;">847K</span>
+          <span class="v3-stat-label">avg views</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VARIATION 4 -->
+<div>
+  <p class="variation-label">Variation 4 — Phone + Caption Style Cards</p>
+  <div class="frame" id="v4">
+    <div class="v4-layout">
+      <!-- Central phone -->
+      <div class="v4-phone">
+        <div class="v4-phone-inner">
+          <div class="v4-waveform">
+            <div class="v4-wb"></div><div class="v4-wb"></div><div class="v4-wb"></div>
+            <div class="v4-wb"></div><div class="v4-wb"></div><div class="v4-wb"></div>
+            <div class="v4-wb"></div>
+          </div>
+        </div>
+        <!-- Cycling captions -->
+        <div class="v4-cap-a"><span>THIS IS HUGE 🔥</span></div>
+        <div class="v4-cap-b"><span>You need to see this right now</span></div>
+        <div class="v4-cap-c"><div class="cpill"><span>Going Viral</span></div></div>
+        <!-- Mute icon -->
+        <div style="position:absolute;top:18px;right:12px;width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:10px;z-index:10;">🔇</div>
+        <!-- Progress -->
+        <div style="position:absolute;bottom:0;left:0;height:2px;background:linear-gradient(90deg,#FF4D1C,#FF7A3C);border-radius:0 2px 2px 0;animation:v4p 6s linear infinite;"></div>
+        <style>@keyframes v4p{from{width:0%}to{width:100%}}</style>
+      </div>
+
+      <!-- Style cards -->
+      <div class="v4-styles-list">
+        <div class="v4-style-card">
+          <div class="v4-card-preview" style="background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.2);">
+            <span style="font-family:'Sora',sans-serif;font-size:9px;font-weight:800;color:#FFD700;background:rgba(0,0,0,0.8);padding:1px 4px;border-radius:2px;text-transform:uppercase;">Bold</span>
+          </div>
+          <div class="v4-card-info">
+            <div class="v4-card-name">Bold Karaoke</div>
+            <div class="v4-card-desc">High-impact word highlight</div>
+          </div>
+          <div class="v4-check">✓</div>
+        </div>
+
+        <div class="v4-style-card">
+          <div class="v4-card-preview" style="background:rgba(255,77,28,0.1);border:1px solid rgba(255,77,28,0.25);">
+            <div style="background:linear-gradient(135deg,#FF4D1C,#FF7A3C);border-radius:8px;padding:2px 6px;"><span style="font-size:8px;font-weight:800;color:white;text-transform:uppercase;letter-spacing:0.04em;">Pill</span></div>
+          </div>
+          <div class="v4-card-info">
+            <div class="v4-card-name">Pill Badge</div>
+            <div class="v4-card-desc">Gradient rounded style</div>
+          </div>
+          <div class="v4-active-dot"></div>
+        </div>
+
+        <div class="v4-style-card">
+          <div class="v4-card-preview" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);">
+            <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:9px;font-weight:700;color:white;text-shadow:1px 1px 0 #000;-1px -1px 0 #000;">Clean</span>
+          </div>
+          <div class="v4-card-info">
+            <div class="v4-card-name">Clean Outline</div>
+            <div class="v4-card-desc">Minimal shadowed text</div>
+          </div>
+          <div class="v4-check" style="color:rgba(255,255,255,0.15);">○</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

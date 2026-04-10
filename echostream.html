@@ -1,0 +1,4257 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="EchoStream turns long-form video into 20+ viral short clips with AI. Platform-ready for TikTok, Reels, and Shorts. Start free in 2 minutes."
+    />
+    <title>EchoStream — Turn One Video into 20+ Viral Clips</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600;1,700&family=Sora:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* ========================================================
+   ROOT TOKENS — extracted from design samples
+   ======================================================== */
+      :root {
+        /* Brand core — content creator warmth (YouTube red DNA, IG orange warmth) */
+        --accent: #ff4d1c;
+        --accent-2: #ff7a3c;
+        --accent-glow: rgba(255, 77, 28, 0.18);
+        --accent-subtle: rgba(255, 77, 28, 0.1);
+
+        /* Dark mode (default) */
+        --bg-hero: #0d0d0d;
+        --bg-primary: #111111;
+        --bg-secondary: #1a1a1a;
+        --bg-card: #1e1e1e;
+        --bg-card-border: #2a2a2a;
+        --text-primary: #f5f5f5;
+        --text-secondary: #a0a0a0;
+        --text-muted: #666666;
+        --border: rgba(255, 255, 255, 0.08);
+        --border-strong: rgba(255, 255, 255, 0.14);
+
+        /* Spacing */
+        --sp-4: 4px;
+        --sp-8: 8px;
+        --sp-12: 12px;
+        --sp-16: 16px;
+        --sp-24: 24px;
+        --sp-32: 32px;
+        --sp-48: 48px;
+        --sp-64: 64px;
+        --sp-80: 80px;
+        --sp-96: 96px;
+        --sp-120: 120px;
+
+        /* Type scale */
+        --t-display: clamp(2.8rem, 6.5vw, 5.5rem);
+        --t-h1: clamp(2.2rem, 4.5vw, 3.8rem);
+        --t-h2: clamp(1.75rem, 3vw, 2.8rem);
+        --t-h3: clamp(1.25rem, 2vw, 1.6rem);
+        --t-body-lg: clamp(1rem, 1.4vw, 1.15rem);
+        --t-body: 1rem;
+        --t-sm: 0.875rem;
+        --t-xs: 0.75rem;
+
+        --radius-sm: 8px;
+        --radius: 14px;
+        --radius-lg: 20px;
+        --radius-xl: 28px;
+      }
+
+      /* Light mode overrides */
+      [data-theme="light"] {
+        --bg-hero: #fafaf8;
+        --bg-primary: #ffffff;
+        --bg-secondary: #f4f4f2;
+        --bg-card: #ffffff;
+        --bg-card-border: #e8e8e6;
+        --text-primary: #111111;
+        --text-secondary: #555555;
+        --text-muted: #999999;
+        --border: rgba(0, 0, 0, 0.07);
+        --border-strong: rgba(0, 0, 0, 0.12);
+      }
+
+      /* ========================================================
+   RESET & BASE
+   ======================================================== */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        line-height: 1.65;
+        overflow-x: hidden;
+        transition:
+          background 0.3s ease,
+          color 0.3s ease;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      img {
+        display: block;
+        max-width: 100%;
+      }
+      button {
+        cursor: pointer;
+        font-family: inherit;
+        border: none;
+        outline: none;
+      }
+
+      /* ========================================================
+   UTILITY CLASSES
+   ======================================================== */
+      .container {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0 var(--sp-24);
+      }
+      .label-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-size: var(--t-xs);
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--accent);
+        background: var(--accent-subtle);
+        border: 1px solid rgba(255, 77, 28, 0.22);
+        padding: 5px 12px;
+        border-radius: 100px;
+        margin-bottom: var(--sp-16);
+      }
+      .section-eyebrow {
+        font-size: var(--t-sm);
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: var(--sp-12);
+      }
+
+      /* ========================================================
+   NAVIGATION — inspired by Domins + Synapse
+   ======================================================== */
+      .nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        padding: 0 var(--sp-24);
+        transition:
+          background 0.3s ease,
+          backdrop-filter 0.3s ease,
+          box-shadow 0.3s ease;
+      }
+      .nav.scrolled {
+        background: rgba(13, 13, 13, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        box-shadow: 0 1px 0 var(--border);
+      }
+      [data-theme="light"] .nav.scrolled {
+        background: rgba(255, 255, 255, 0.88);
+      }
+      .nav-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 68px;
+        max-width: 1240px;
+        margin: 0 auto;
+      }
+      .nav-logo {
+        height: max-content;
+        justify-content: center;
+        align-items: end;
+        display: flex;
+        gap: 10px;
+        font-family: "Sora", sans-serif;
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: var(--text-primary);
+        letter-spacing: -0.02em;
+      }
+      .nav-logo-icon {
+        width: 34px;
+        height: 34px;
+        /* background: linear-gradient(135deg, var(--accent), var(--accent-2)); */
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        font-weight: 800;
+        color: white;
+        font-family: "Sora", sans-serif;
+      }
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: var(--sp-32);
+        list-style: none;
+      }
+      .nav-links a {
+        font-size: var(--t-sm);
+        font-weight: 500;
+        color: var(--text-secondary);
+        transition: color 0.2s;
+      }
+      .nav-links a:hover {
+        color: var(--text-primary);
+      }
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--sp-16);
+      }
+      .nav-signin {
+        font-size: var(--t-sm);
+        font-weight: 500;
+        color: var(--text-secondary);
+        transition: color 0.2s;
+      }
+      .nav-signin:hover {
+        color: var(--text-primary);
+      }
+      .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--accent);
+        color: #fff;
+        font-size: var(--t-sm);
+        font-weight: 600;
+        padding: 10px 22px;
+        border-radius: 100px;
+        border: none;
+        transition:
+          background 0.2s,
+          transform 0.2s,
+          box-shadow 0.2s;
+        letter-spacing: -0.01em;
+      }
+      .btn-primary:hover {
+        background: var(--accent-2);
+        transform: translateY(-1px);
+        box-shadow: 0 8px 24px rgba(255, 77, 28, 0.35);
+      }
+      .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: transparent;
+        color: var(--text-primary);
+        font-size: var(--t-sm);
+        font-weight: 600;
+        padding: 10px 22px;
+        border-radius: 100px;
+        border: 1px solid var(--border-strong);
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+      }
+      .btn-secondary:hover {
+        border-color: var(--accent);
+        background: var(--accent-subtle);
+      }
+      /* Theme toggle */
+      .theme-toggle {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--bg-card);
+        border: 1px solid var(--border-strong);
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .theme-toggle:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      /* Mobile hamburger */
+      .nav-mobile-toggle {
+        display: none;
+        flex-direction: column;
+        gap: 5px;
+        cursor: pointer;
+        padding: 4px;
+      }
+      .nav-mobile-toggle span {
+        display: block;
+        width: 24px;
+        height: 2px;
+        background: var(--text-primary);
+        border-radius: 2px;
+        transition: all 0.3s;
+      }
+      @media (max-width: 900px) {
+        .nav-links,
+        .nav-signin {
+          display: none;
+        }
+        .nav-mobile-toggle {
+          display: flex;
+        }
+        .nav-actions .theme-toggle,
+        .nav-actions .nav-signin,
+        .nav-actions .btn-primary {
+          display: none;
+        }
+        .nav-actions {
+          gap: var(--sp-8);
+        }
+      }
+
+      /* ========================================================
+   HERO SECTION — Dark, split layout (Domins + Payvis style)
+   ======================================================== */
+      .hero {
+        min-height: 100vh;
+        background: var(--bg-hero);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        padding-top: 68px;
+      }
+
+      /* Subtle radial glow — top left like Domins aurora */
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: -10%;
+        left: -5%;
+        width: 55%;
+        height: 65%;
+        background: radial-gradient(
+          ellipse at center,
+          rgba(255, 77, 28, 0.13) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      /* bottom right secondary glow */
+      .hero::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 50%;
+        height: 50%;
+        background: radial-gradient(
+          ellipse at bottom right,
+          rgba(255, 122, 60, 0.08) 0%,
+          transparent 65%
+        );
+        pointer-events: none;
+      }
+
+      .hero-inner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--sp-48);
+        min-height: calc(100vh - 68px);
+        padding: var(--sp-64) var(--sp-24) var(--sp-80);
+        max-width: 1240px;
+        margin: 0 auto;
+        width: 100%;
+      }
+      .hero-left {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        width: 100%;
+      }
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-size: var(--t-xs);
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--accent);
+        background: var(--accent-subtle);
+        border: 1px solid rgba(255, 77, 28, 0.2);
+        padding: 6px 14px;
+        border-radius: 100px;
+        margin-bottom: var(--sp-24);
+      }
+      .hero-badge .dot {
+        width: 6px;
+        height: 6px;
+        background: var(--accent);
+        border-radius: 50%;
+        animation: pulseDot 2s ease-in-out infinite;
+      }
+      @keyframes pulseDot {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.5;
+          transform: scale(0.8);
+        }
+      }
+      .hero-headline {
+        font-family: "Sora", sans-serif;
+        font-size: clamp(2.2rem, 5vw, 4rem);
+        font-weight: 800;
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+        color: var(--text-primary);
+        margin-bottom: var(--sp-24);
+      }
+      .hero-headline .accent-word {
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .hero-sub {
+        font-size: var(--t-body-lg);
+        color: var(--text-secondary);
+        line-height: 1.7;
+        max-width: 920px;
+        margin: 0 auto var(--sp-36, 36px);
+      }
+      .hero-cta-group {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--sp-16);
+        flex-wrap: wrap;
+        margin-bottom: var(--sp-24);
+      }
+      .btn-hero {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--accent);
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 700;
+        padding: 14px 30px;
+        border-radius: 100px;
+        border: none;
+        transition: all 0.25s;
+        letter-spacing: -0.01em;
+        position: relative;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+      @media (max-width: 480px) {
+        .btn-hero {
+          font-size: 0.85rem;
+          padding: 12px 20px;
+        }
+        .btn-hero-outline {
+          font-size: 0.85rem;
+          padding: 11px 18px;
+        }
+      }
+      .btn-hero::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.12) 0%,
+          transparent 100%
+        );
+      }
+      .btn-hero:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 16px 40px rgba(255, 77, 28, 0.4);
+      }
+      .btn-hero-outline {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: transparent;
+        color: var(--text-primary);
+        font-size: 1rem;
+        font-weight: 600;
+        padding: 13px 28px;
+        border-radius: 100px;
+        border: 1px solid var(--border-strong);
+        transition: all 0.25s;
+      }
+      .btn-hero-outline:hover {
+        border-color: rgba(255, 77, 28, 0.4);
+        color: var(--accent);
+      }
+      .hero-friction {
+        font-size: var(--t-sm);
+        color: var(--text-muted);
+        text-align: center;
+      }
+      .hero-friction span {
+        color: var(--text-secondary);
+      }
+
+      /* Hero right — image placeholder (Payvis style: large UI mockup) */
+      .hero-visual {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        max-width: 1100px;
+      }
+      .hero-img-wrap {
+        position: relative;
+        border-radius: var(--radius);
+        overflow: hidden;
+        background: var(--bg-card);
+        border: 1px solid var(--border-strong);
+        aspect-ratio: 16/10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+      }
+      /* Glow ring around hero image */
+      .hero-img-wrap::before {
+        content: "";
+        position: absolute;
+        inset: -1px;
+        border-radius: calc(var(--radius-xl) + 1px);
+        background: linear-gradient(
+          135deg,
+          rgba(255, 77, 28, 0.4),
+          transparent 50%,
+          rgba(255, 122, 60, 0.2)
+        );
+        z-index: -1;
+      }
+      .img-placeholder {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          145deg,
+          var(--bg-secondary) 0%,
+          var(--bg-card) 100%
+        );
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        color: var(--text-muted);
+        font-size: var(--t-sm);
+        text-align: center;
+        padding: var(--sp-32);
+      }
+      .img-placeholder .placeholder-icon {
+        font-size: 2.5rem;
+        opacity: 0.4;
+      }
+      .img-placeholder .placeholder-label {
+        font-size: var(--t-xs);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        opacity: 0.5;
+      }
+
+      /* floating stat chips — like Domins floating elements */
+      .hero-stat-chip {
+        position: absolute;
+        background: var(--bg-card);
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius);
+        padding: 12px 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        backdrop-filter: blur(12px);
+        z-index: 100;
+      }
+      .hero-stat-chip .chip-num {
+        font-family: "Sora", sans-serif;
+        font-weight: 800;
+        font-size: 1.1rem;
+        color: var(--accent);
+      }
+      .hero-stat-chip .chip-label {
+        font-size: var(--t-xs);
+        color: var(--text-secondary);
+        line-height: 1.3;
+      }
+      .chip-top-left {
+        bottom: -18px;
+        left: -18px;
+        animation: floatA 4s ease-in-out infinite;
+      }
+      .chip-bottom-right {
+        top: -18px;
+        right: -18px;
+        animation: floatB 4s ease-in-out infinite 1.5s;
+      }
+      @keyframes floatA {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-8px);
+        }
+      }
+      @keyframes floatB {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(6px);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .hero-inner {
+          padding: var(--sp-48) var(--sp-16);
+          gap: var(--sp-32);
+        }
+        .hero-sub {
+          max-width: 100%;
+        }
+        .chip-top-left,
+        .chip-bottom-right {
+          display: none;
+        }
+        .hero-img-wrap {
+          aspect-ratio: 16/9;
+          max-width: 360px;
+          margin: 0 auto;
+        }
+      }
+
+      /* ========================================================
+   TRUST BAR — Synapse style, faded logos marquee
+   ======================================================== */
+      .trust-bar {
+        background: var(--bg-primary);
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        padding: var(--sp-32) 0;
+      }
+      .trust-bar-inner {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0 var(--sp-24);
+      }
+      .trust-text {
+        text-align: center;
+        font-size: var(--t-sm);
+        color: var(--text-muted);
+        font-weight: 500;
+        letter-spacing: 0.03em;
+        margin-bottom: var(--sp-24);
+      }
+      .trust-logos {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--sp-48);
+        flex-wrap: wrap;
+        opacity: 0.45;
+        filter: grayscale(1);
+      }
+      .trust-logo-item {
+        font-family: "Sora", sans-serif;
+        font-weight: 800;
+        font-size: 1.1rem;
+        letter-spacing: -0.02em;
+        color: var(--text-primary);
+      }
+
+      /* ========================================================
+   HOW IT WORKS — Finivio step layout, centered
+   ======================================================== */
+      .section {
+        padding: var(--sp-120) 0;
+      }
+      .section-light {
+        background: var(--bg-secondary);
+      }
+      .section-dark {
+        background: #0d0d0d;
+      }
+      [data-theme="light"] .section-dark {
+        background: #f0f0ee;
+      }
+      .section-center {
+        text-align: center;
+      }
+      .section-heading {
+        font-family: "Sora", sans-serif;
+        font-size: var(--t-h1);
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+        color: var(--text-primary);
+        margin-bottom: var(--sp-16);
+      }
+      .section-heading .italic-word {
+        font-style: italic;
+        color: var(--accent);
+      }
+      .section-sub {
+        font-size: var(--t-body-lg);
+        color: var(--text-secondary);
+        line-height: 1.7;
+        max-width: 560px;
+        margin: 0 auto var(--sp-64);
+      }
+
+      /* Steps */
+      .steps-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--sp-24);
+        position: relative;
+      }
+      /* connecting line between steps */
+      .steps-grid::before {
+        content: "";
+        position: absolute;
+        top: 52px;
+        left: calc(16.66% + 24px);
+        right: calc(16.66% + 24px);
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--border-strong),
+          transparent
+        );
+      }
+      .step-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: var(--sp-32);
+        text-align: center;
+        position: relative;
+        transition:
+          border-color 0.3s,
+          transform 0.3s;
+      }
+      .step-card:hover {
+        border-color: rgba(255, 77, 28, 0.35);
+        transform: translateY(-4px);
+      }
+      .step-num {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: var(--accent-subtle);
+        border: 2px solid rgba(255, 77, 28, 0.3);
+        color: var(--accent);
+        font-family: "Sora", sans-serif;
+        font-weight: 800;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto var(--sp-24);
+      }
+      .step-title {
+        font-family: "Sora", sans-serif;
+        font-size: var(--t-h3);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: var(--text-primary);
+        margin-bottom: var(--sp-12);
+      }
+      .step-desc {
+        font-size: var(--t-sm);
+        color: var(--text-secondary);
+        line-height: 1.65;
+      }
+      @media (max-width: 768px) {
+        .steps-grid {
+          grid-template-columns: 1fr;
+        }
+        .steps-grid::before {
+          display: none;
+        }
+      }
+
+      /* ========================================================
+   FEATURES — Alternating rows (Synapse + Lightbox style)
+   ======================================================== */
+      .feature-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--sp-64);
+        align-items: center;
+        padding: var(--sp-80) var(--sp-24);
+        max-width: 1240px;
+        margin: 0 auto;
+      }
+      .feature-row.reverse {
+        direction: rtl;
+      }
+      .feature-row.reverse > * {
+        direction: ltr;
+      }
+
+      .feature-text {
+      }
+      .feature-text .feat-num {
+        font-size: var(--t-xs);
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        margin-bottom: var(--sp-12);
+      }
+      .feature-text h3 {
+        font-family: "Sora", sans-serif;
+        font-size: var(--t-h2);
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        line-height: 1.15;
+        color: var(--text-primary);
+        margin-bottom: var(--sp-16);
+      }
+      .feature-text h3 em {
+        font-style: italic;
+        color: var(--accent);
+      }
+      .feature-text p {
+        font-size: var(--t-body-lg);
+        color: var(--text-secondary);
+        line-height: 1.7;
+        margin-bottom: var(--sp-24);
+      }
+      .feature-checklist {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .feature-checklist li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: var(--t-sm);
+        color: var(--text-secondary);
+      }
+      .feature-checklist li::before {
+        content: "";
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--accent-subtle);
+        border: 1px solid rgba(255, 77, 28, 0.3);
+        flex-shrink: 0;
+        background-image: url("data:image/svg+xml,%3Csvg width='10' height='8' viewBox='0 0 10 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 4L3.5 6.5L9 1.5' stroke='%23FF4D1C' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: center;
+      }
+
+      /* Feature image placeholder — rounded, styled */
+      .feat-img-wrap {
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        aspect-ratio: 4/3;
+        background: var(--bg-card);
+        border: 1px solid var(--border-strong);
+        position: relative;
+      }
+
+      /* ── Responsive uniform scaling for HTML feature frames ──
+         At desktop (1240px) the frames look perfect.
+         As viewport shrinks we scale-down the INNER content
+         proportionally so it looks like the image is zoomed out,
+         never wrapping or breaking layout.
+      */
+      .frame,
+      .seoD,
+      .varB {
+        transform-origin: center center;
+      }
+
+      /* Scale content inside feat-img-wrap at smaller breakpoints */
+      @media (max-width: 1100px) {
+        .frame {
+          transform: scale(1);
+        }
+        .seoD {
+          transform: scale(1);
+        }
+        .v2-layout {
+          transform: scale(0.8);
+        }
+
+        .varB-inner {
+          transform: scale(1);
+          transform-origin: center center;
+        }
+        .seoD-panel {
+          transform: scaleX(0.8) scaleY(0.8);
+        }
+      }
+      @media (max-width: 900px) {
+        .frame {
+          transform: scale(1);
+        }
+        .seoD {
+          transform: scale(1);
+        }
+        .seoD-panel {
+          transform: scaleY(0.5) scaleX(0.5);
+        }
+        .varB-inner {
+          transform: scale(1);
+          transform-origin: center center;
+        }
+      }
+      @media (max-width: 768px) {
+        .frame {
+          transform: scale(1);
+        }
+        .v2-layout {
+          transform: scale(1);
+        }
+
+        .seoD {
+          min-width: 100%;
+          transform: scale(1);
+        }
+        .seoD-panel {
+          transform: scale(1);
+        }
+        .varB-inner {
+          transform: scale(1);
+          transform-origin: center center;
+        }
+      }
+      @media (max-width: 480px) {
+        .frame {
+          transform: scale(1);
+        }
+        .seoD-panel {
+          transform: scale(0.5);
+        }
+        .seoD {
+          transform: scale(1);
+        }
+        .v2-layout {
+          transform: scale(0.9);
+        }
+
+        .varB-inner {
+          transform: scale(0.8);
+          transform-origin: center center;
+        }
+      }
+      .feat-img-wrap::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: var(--radius-xl);
+        box-shadow: inset 0 0 0 1px rgba(255, 77, 28, 0.08);
+      }
+      .feat-img-wrap .img-placeholder {
+        border-radius: 0;
+      }
+
+      /* Ensure HTML frame mockups fill their wrapper */
+      .feat-img-wrap .frame,
+      .feat-img-wrap .seoD,
+      .feat-img-wrap .varB {
+        width: 100%;
+        height: 100%;
+      }
+
+      /* section separators */
+      .section-sep {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 0;
+      }
+
+      @media (max-width: 768px) {
+        .feature-row {
+          grid-template-columns: 1fr;
+          direction: ltr !important;
+          gap: var(--sp-32);
+        }
+      }
+
+      /* ========================================================
+   STATS BAND — Dark, numbers big (GrowMate style)
+   ======================================================== */
+      .stats-band {
+        background: #0d0d0d;
+        padding: var(--sp-80) 0;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+      }
+      [data-theme="light"] .stats-band {
+        background: #111;
+      }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--sp-32);
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0 var(--sp-24);
+      }
+      .stat-item {
+        text-align: center;
+        padding: var(--sp-32) var(--sp-16);
+        border-right: 1px solid var(--border);
+      }
+      .stat-item:last-child {
+        border-right: none;
+      }
+      .stat-num {
+        font-family: "Sora", sans-serif;
+        font-size: clamp(2.4rem, 4vw, 3.5rem);
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        background: linear-gradient(135deg, #fff 30%, var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 8px;
+      }
+      .stat-label {
+        font-size: var(--t-sm);
+        color: #666;
+        font-weight: 500;
+      }
+      @media (max-width: 768px) {
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .stat-item {
+          border-right: none;
+          border-bottom: 1px solid var(--border);
+        }
+        .stat-item:last-child {
+          border-bottom: none;
+        }
+      }
+
+      /* ========================================================
+   TESTIMONIALS — Finivio large quote style
+   ======================================================== */
+      .testimonial-section {
+        background: var(--bg-primary);
+        padding: var(--sp-120) 0;
+      }
+      .testimonial-inner {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0 var(--sp-24);
+      }
+      .testimonial-main {
+        background: var(--bg-card);
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius-xl);
+        padding: var(--sp-64);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--sp-64);
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .testimonial-main::before {
+        content: '"';
+        position: absolute;
+        top: -20px;
+        left: 40px;
+        font-family: "Sora", sans-serif;
+        font-size: 18rem;
+        font-weight: 800;
+        color: var(--accent);
+        opacity: 0.04;
+        line-height: 1;
+        pointer-events: none;
+      }
+      .testimonial-quote {
+        font-family: "Sora", sans-serif;
+        font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        line-height: 1.5;
+        color: var(--text-primary);
+        margin-bottom: var(--sp-32);
+      }
+      .testimonial-attr {
+        display: flex;
+        align-items: center;
+        gap: var(--sp-16);
+      }
+      .testimonial-avatar {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: var(--bg-secondary);
+        border: 2px solid var(--border-strong);
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+      .testimonial-avatar .img-placeholder {
+        border-radius: 0;
+      }
+      .testimonial-name {
+        font-weight: 700;
+        color: var(--text-primary);
+        font-size: 1rem;
+      }
+      .testimonial-role {
+        font-size: var(--t-sm);
+        color: var(--text-secondary);
+      }
+      /* right side — result card */
+      .testimonial-result {
+        background: var(--bg-secondary);
+        border-radius: var(--radius-lg);
+        padding: var(--sp-32);
+        text-align: center;
+        border: 1px solid var(--border);
+      }
+      .result-num {
+        font-family: "Sora", sans-serif;
+        font-size: 4rem;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        color: var(--accent);
+        line-height: 1;
+        margin-bottom: 12px;
+      }
+      .result-label {
+        font-size: var(--t-body-lg);
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+      @media (max-width: 768px) {
+        .testimonial-main {
+          grid-template-columns: 1fr;
+          padding: var(--sp-32);
+        }
+        .testimonial-quote {
+          font-size: clamp(1rem, 4vw, 1.3rem);
+        }
+        .growth-chart {
+          width: 100%;
+          max-width: 100%;
+        }
+        .result-num {
+          font-size: 2.5rem;
+        }
+      }
+
+      /* ========================================================
+   PRICING — Synapse 3-tier, center highlight (like Payvis)
+   ======================================================== */
+      .pricing-section {
+        background: var(--bg-secondary);
+        padding: var(--sp-120) 0;
+      }
+      .pricing-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--sp-24);
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 var(--sp-24);
+        align-items: start;
+      }
+      .pricing-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xl);
+        padding: var(--sp-32);
+        position: relative;
+        transition:
+          transform 0.3s,
+          border-color 0.3s;
+      }
+      .pricing-card:hover {
+        transform: translateY(-4px);
+      }
+      .pricing-card.featured {
+        border-color: var(--accent);
+        background: var(--bg-card);
+        transform: scale(1.04);
+      }
+      .pricing-card.featured::before {
+        content: "MOST POPULAR";
+        position: absolute;
+        top: -1px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--accent);
+        color: #fff;
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        padding: 5px 14px;
+        border-radius: 0 0 8px 8px;
+      }
+      .pricing-card.featured:hover {
+        transform: scale(1.04) translateY(-4px);
+      }
+      .pricing-tier {
+        font-size: var(--t-sm);
+        font-weight: 700;
+        color: var(--text-secondary);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: var(--sp-16);
+      }
+      .pricing-price {
+        display: flex;
+        align-items: flex-end;
+        gap: 4px;
+        margin-bottom: var(--sp-8);
+      }
+      .price-num {
+        font-family: "Sora", sans-serif;
+        font-size: 3rem;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        color: var(--text-primary);
+        line-height: 1;
+      }
+      .price-denom {
+        font-size: var(--t-sm);
+        color: var(--text-secondary);
+        margin-bottom: 8px;
+      }
+      .pricing-desc {
+        font-size: var(--t-sm);
+        color: var(--text-secondary);
+        line-height: 1.6;
+        margin-bottom: var(--sp-24);
+        padding-bottom: var(--sp-24);
+        border-bottom: 1px solid var(--border);
+      }
+      .pricing-features {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: var(--sp-32);
+      }
+      .pricing-features li {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: var(--t-sm);
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+      .pricing-features li::before {
+        content: "✓";
+        color: var(--accent);
+        font-weight: 700;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+      .btn-pricing {
+        width: 100%;
+        padding: 13px;
+        border-radius: 100px;
+        font-size: var(--t-sm);
+        font-weight: 700;
+        transition: all 0.25s;
+        text-align: center;
+        display: block;
+      }
+      .btn-pricing-outline {
+        background: transparent;
+        border: 1px solid var(--border-strong);
+        color: var(--text-primary);
+      }
+      .btn-pricing-outline:hover {
+        border-color: var(--accent);
+        background: var(--accent-subtle);
+      }
+      .btn-pricing-fill {
+        background: var(--accent);
+        border: none;
+        color: #fff;
+      }
+      .btn-pricing-fill:hover {
+        background: var(--accent-2);
+        box-shadow: 0 8px 24px rgba(255, 77, 28, 0.35);
+      }
+
+      @media (max-width: 768px) {
+        .pricing-grid {
+          grid-template-columns: 1fr;
+        }
+        .pricing-card.featured {
+          transform: none;
+        }
+        .pricing-card.featured:hover {
+          transform: translateY(-4px);
+        }
+      }
+
+      /* ========================================================
+   FAQ — Paymark/Payvis accordion style
+   ======================================================== */
+      .faq-section {
+        background: var(--bg-primary);
+        padding: var(--sp-120) 0;
+      }
+      .faq-inner {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 var(--sp-24);
+      }
+      .faq-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+      }
+      .faq-item {
+        border-bottom: 1px solid var(--border);
+      }
+      .faq-item:last-child {
+        border-bottom: none;
+      }
+      .faq-question {
+        width: 100%;
+        background: none;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--sp-24);
+        padding: var(--sp-24) var(--sp-24);
+        text-align: left;
+        cursor: pointer;
+        color: var(--text-primary);
+        font-size: 1rem;
+        font-weight: 600;
+        font-family: "Plus Jakarta Sans", sans-serif;
+        transition: background 0.2s;
+      }
+      .faq-question:hover {
+        background: var(--bg-card);
+      }
+      .faq-icon {
+        padding-bottom: 4px;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-strong);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 1.1rem;
+        color: var(--text-secondary);
+        transition: all 0.3s;
+      }
+      .faq-item.open .faq-icon {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+        transform: rotate(45deg);
+      }
+      .faq-answer {
+        max-height: 0;
+        overflow: hidden;
+        transition:
+          max-height 0.4s ease,
+          padding 0.3s ease;
+      }
+      .faq-answer-inner {
+        padding: 0 var(--sp-24) var(--sp-24);
+        font-size: var(--t-sm);
+        color: var(--text-secondary);
+        line-height: 1.7;
+      }
+      .faq-item.open .faq-answer {
+        max-height: 200px;
+      }
+
+      /* ========================================================
+   FINAL CTA — Domins dark band style
+   ======================================================== */
+      .cta-section {
+        background: #0d0d0d;
+        padding: var(--sp-120) 0;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .cta-section::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 600px;
+        height: 400px;
+        background: radial-gradient(
+          ellipse at center,
+          rgba(255, 77, 28, 0.15) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      .cta-inner {
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 0 var(--sp-24);
+        position: relative;
+        z-index: 2;
+      }
+      .cta-heading {
+        font-family: "Sora", sans-serif;
+        font-size: var(--t-h1);
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        line-height: 1.1;
+        color: #fff;
+        margin-bottom: var(--sp-16);
+      }
+      .cta-heading .accent-word {
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .cta-sub {
+        font-size: var(--t-body-lg);
+        color: #888;
+        margin-bottom: var(--sp-48);
+      }
+      .cta-actions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--sp-16);
+        flex-wrap: wrap;
+      }
+      @media (max-width: 480px) {
+        .cta-actions .btn-hero,
+        .cta-actions .btn-hero-outline {
+          font-size: 0.82rem;
+          padding: 11px 18px;
+        }
+        .testimonial-result {
+          padding: var(--sp-16);
+        }
+        .cta-actions {
+          gap: var(--sp-8);
+          flex-wrap: nowrap;
+        }
+      }
+
+      /* ========================================================
+   FOOTER — Synapse 4-col footer style
+   ======================================================== */
+      .footer {
+        background: var(--bg-hero);
+        border-top: 1px solid var(--border);
+        padding: var(--sp-80) 0 var(--sp-48);
+      }
+      [data-theme="light"] .footer {
+        background: #f0f0ee;
+      }
+      .footer-inner {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0 var(--sp-24);
+      }
+      .footer-top {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr 1fr 1fr;
+        gap: var(--sp-48);
+        padding-bottom: var(--sp-48);
+        border-bottom: 1px solid var(--border);
+        margin-bottom: var(--sp-32);
+      }
+      .footer-brand p {
+        font-size: var(--t-sm);
+        color: var(--text-muted);
+        line-height: 1.7;
+        margin-top: var(--sp-12);
+        max-width: 260px;
+      }
+      .newsletter-wrap {
+        display: flex;
+        gap: 8px;
+        margin-top: var(--sp-16);
+      }
+      .newsletter-input {
+        flex: 1;
+        background: var(--bg-card);
+        border: 1px solid var(--border-strong);
+        border-radius: 100px;
+        padding: 10px 16px;
+        font-size: var(--t-sm);
+        color: var(--text-primary);
+        font-family: inherit;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .newsletter-input::placeholder {
+        color: var(--text-muted);
+      }
+      .newsletter-input:focus {
+        border-color: rgba(255, 77, 28, 0.4);
+      }
+      .newsletter-btn {
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        border-radius: 100px;
+        padding: 10px 18px;
+        font-size: var(--t-sm);
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background 0.2s;
+      }
+      .newsletter-btn:hover {
+        background: var(--accent-2);
+      }
+      .footer-col-title {
+        font-size: var(--t-sm);
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: var(--sp-16);
+        letter-spacing: -0.01em;
+      }
+      .footer-col ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .footer-col a {
+        font-size: var(--t-sm);
+        color: var(--text-muted);
+        transition: color 0.2s;
+      }
+      .footer-col a:hover {
+        color: var(--text-primary);
+      }
+      .footer-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: var(--sp-16);
+      }
+      .footer-copy {
+        font-size: var(--t-xs);
+        color: var(--text-muted);
+      }
+      .footer-socials {
+        display: flex;
+        gap: var(--sp-12);
+      }
+      .social-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--bg-card);
+        border: 1px solid var(--border-strong);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        transition: all 0.2s;
+      }
+      .social-icon:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      @media (max-width: 768px) {
+        .footer-top {
+          grid-template-columns: 1fr 1fr;
+        }
+        .footer-brand {
+          grid-column: 1 / -1;
+        }
+      }
+      @media (max-width: 480px) {
+        .footer-top {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ========================================================
+   SCROLL REVEAL ANIMATIONS — extracted from skill animation
+   ======================================================== */
+      .reveal {
+        opacity: 0;
+        transform: translateY(28px);
+        transition:
+          opacity 0.6s ease,
+          transform 0.6s ease;
+      }
+      .reveal.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .reveal-delay-1 {
+        transition-delay: 0.1s;
+      }
+      .reveal-delay-2 {
+        transition-delay: 0.2s;
+      }
+      .reveal-delay-3 {
+        transition-delay: 0.3s;
+      }
+
+      /* hero animations */
+      .hero-left > * {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      .hero-animate .hero-left > * {
+        animation: heroFadeUp 0.7s ease forwards;
+      }
+      .hero-animate .hero-badge {
+        animation-delay: 0.05s;
+      }
+      .hero-animate .hero-headline {
+        animation-delay: 0.15s;
+      }
+      .hero-animate .hero-sub {
+        animation-delay: 0.25s;
+      }
+      .hero-animate .hero-cta-group {
+        animation-delay: 0.35s;
+      }
+      .hero-animate .hero-friction {
+        animation-delay: 0.42s;
+      }
+      @keyframes heroFadeUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .hero-visual {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+      .hero-animate .hero-visual {
+        animation: heroFadeUp 0.8s 0.3s ease forwards;
+      }
+      @keyframes heroSlideIn {
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      /* ========================================================
+   FEATURES SECTION WRAPPER
+   ======================================================== */
+      .features-wrapper {
+        background: var(--bg-primary);
+      }
+      .features-intro {
+        padding: var(--sp-120) var(--sp-24) var(--sp-48);
+        max-width: 1240px;
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      /* feature divider */
+      .feature-divider {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 0 var(--sp-24);
+        max-width: 1240px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      /* ===== SEO Var D: Typing animation panel ===== */
+      .seoD {
+        width: 100%;
+        max-width: 640px;
+        height: 480px;
+        background: #0d0d0d;
+        border-radius: 28px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px;
+      }
+      .seoD-grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+          linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.025) 1px,
+            transparent 1px
+          );
+        background-size: 36px 36px;
+      }
+      .seoD-orb {
+        position: absolute;
+        top: -100px;
+        left: -100px;
+        width: 400px;
+        height: 400px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(255, 77, 28, 0.07) 0%,
+          transparent 60%
+        );
+      }
+      .seoD-panel {
+        position: relative;
+        z-index: 2;
+        width: min(100%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+      .sdp-header {
+        height: 44px;
+        background: #1c1c1c;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        display: flex;
+        align-items: center;
+        padding: 0 16px;
+        gap: 8px;
+      }
+      .sdp-dots {
+        display: flex;
+        gap: 5px;
+      }
+      .sdp-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+      }
+      .sdp-input-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 6px;
+        height: 24px;
+        padding: 0 10px;
+        margin: 0 12px;
+      }
+      .sdp-url {
+        font-size: 9px;
+        color: rgba(255, 255, 255, 0.35);
+        font-family: monospace;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      .sdp-go {
+        font-size: 8px;
+        font-weight: 700;
+        color: #ff4d1c;
+        white-space: nowrap;
+      }
+      .sdp-body {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .sdp-row {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .sdp-label {
+        font-size: 8px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(255, 77, 28, 0.8);
+      }
+      .sdp-content {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.75);
+        line-height: 1.5;
+        min-height: 20px;
+      }
+      .sdp-content .typed-word {
+        display: inline-block;
+        animation: typeIn 3s ease-in-out infinite;
+      }
+      .sdp-content .typed-word:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .sdp-content .typed-word:nth-child(2) {
+        animation-delay: 0.3s;
+      }
+      .sdp-content .typed-word:nth-child(3) {
+        animation-delay: 0.5s;
+      }
+      .sdp-content .typed-word:nth-child(4) {
+        animation-delay: 0.7s;
+      }
+      .sdp-content .typed-word:nth-child(5) {
+        animation-delay: 0.9s;
+      }
+      .sdp-content .typed-word:nth-child(6) {
+        animation-delay: 1.1s;
+      }
+      .sdp-content .typed-word:nth-child(7) {
+        animation-delay: 1.3s;
+      }
+      @keyframes typeIn {
+        0%,
+        10% {
+          opacity: 0;
+          transform: translateY(4px);
+        }
+        25%,
+        90% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        95%,
+        100% {
+          opacity: 0.7;
+        }
+      }
+      .sdp-content .kw {
+        color: #ff7a3c;
+        font-weight: 700;
+      }
+      .sdp-hashtag-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+      }
+      .sdp-hashtag {
+        font-size: 10px;
+        color: #ff7a3c;
+        font-weight: 600;
+        background: rgba(255, 77, 28, 0.08);
+        border: 1px solid rgba(255, 77, 28, 0.18);
+        border-radius: 20px;
+        padding: 3px 9px;
+        animation: hashPop 4s ease-in-out infinite;
+      }
+      .sdp-hashtag:nth-child(1) {
+        animation-delay: 0.2s;
+      }
+      .sdp-hashtag:nth-child(2) {
+        animation-delay: 0.5s;
+      }
+      .sdp-hashtag:nth-child(3) {
+        animation-delay: 0.8s;
+      }
+      .sdp-hashtag:nth-child(4) {
+        animation-delay: 1.1s;
+      }
+      .sdp-hashtag:nth-child(5) {
+        animation-delay: 1.4s;
+      }
+      @keyframes hashPop {
+        0%,
+        60%,
+        100% {
+          opacity: 0.6;
+        }
+        30% {
+          opacity: 1;
+          transform: scale(1.05);
+        }
+      }
+      .sdp-divider {
+        height: 1px;
+        background: rgba(255, 255, 255, 0.06);
+      }
+      .sdp-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+      }
+      .sdp-stats {
+        display: flex;
+        gap: 16px;
+      }
+      .sdp-stat {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .sdp-stat-lbl {
+        font-size: 8px;
+        color: rgba(255, 255, 255, 0.3);
+        font-weight: 600;
+        letter-spacing: 0.06em;
+      }
+      .sdp-stat-val {
+        font-size: 12px;
+        font-weight: 800;
+        color: rgba(255, 255, 255, 0.7);
+      }
+      .sdp-copy-btn {
+        background: var(--accent);
+        color: #fff;
+        font-size: 9px;
+        font-weight: 700;
+        padding: 7px 14px;
+        border-radius: 6px;
+        letter-spacing: 0.06em;
+      }
+
+      /* ==============================
+     GROWTH CHART (Testimonial)
+  ============================== */
+      .chart-section-title {
+        color: rgba(255, 255, 255, 0.15);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        padding: 12px 20px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        margin-top: 20px;
+        margin-bottom: 40px;
+      }
+
+      .growth-chart {
+        width: 100%;
+        max-width: 440px;
+        height: 160px;
+        background: #1a1a1a;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        overflow: hidden;
+        position: relative;
+      }
+      .gc-bg {
+        position: absolute;
+        inset: 0;
+      }
+      .gc-grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 80px 40px;
+      }
+      .gc-inner {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        height: 100%;
+        padding: 14px 16px 10px;
+      }
+      .gc-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+      .gc-title {
+        font-size: 9px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.5);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .gc-badge {
+        font-size: 9px;
+        font-weight: 700;
+        color: #28ca41;
+        background: rgba(40, 202, 65, 0.12);
+        border: 1px solid rgba(40, 202, 65, 0.25);
+        padding: 2px 7px;
+        border-radius: 20px;
+      }
+      .gc-chart {
+        flex: 1;
+        position: relative;
+        height: 80px;
+      }
+      svg.gc-svg {
+        width: 100%;
+        height: 100%;
+      }
+      .gc-axis-labels {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 4px;
+      }
+      .gc-axis-lbl {
+        font-size: 8px;
+        color: rgba(255, 255, 255, 0.25);
+        font-weight: 600;
+      }
+      .gc-peak-dot {
+        animation: peakPulse 2s ease-in-out infinite;
+      }
+      @keyframes peakPulse {
+        0%,
+        100% {
+          r: 4;
+          opacity: 0.7;
+        }
+        50% {
+          r: 6;
+          opacity: 1;
+        }
+      }
+      .gc-line {
+        stroke-dasharray: 300;
+        stroke-dashoffset: 300;
+        animation: drawLine 2s ease-out forwards;
+      }
+      @keyframes drawLine {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+      .gc-area {
+        opacity: 0;
+        animation: fadeArea 2s ease-out 0.5s forwards;
+      }
+      @keyframes fadeArea {
+        to {
+          opacity: 1;
+        }
+      }
+
+      /* ===== VARIATION B: Platform cards ===== */
+
+      /* ===== Platform icons (SVG-based) ===== */
+      .plat-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 14px;
+        font-weight: 900;
+        font-family: "Sora", sans-serif;
+      }
+      .pi-tt {
+        background: #010101;
+        color: #fff;
+        letter-spacing: -0.05em;
+        font-size: 11px;
+        font-weight: 800;
+      }
+      .pi-ig {
+        background: linear-gradient(
+          135deg,
+          #405de6,
+          #5851db,
+          #833ab4,
+          #c13584,
+          #e1306c,
+          #fd1d1d,
+          #f56040,
+          #f77737,
+          #fcaf45,
+          #ffdc80
+        );
+        color: #fff;
+      }
+      .pi-yt {
+        background: #ff0000;
+        color: #fff;
+      }
+      .pi-li {
+        background: #0077b5;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+      }
+      .pi-fb {
+        background: #1877f2;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .varB {
+        width: 100%;
+        height: 100%;
+        background: #0d0d0d;
+        border-radius: 28px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .varB-bg {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          ellipse 70% 50% at 50% 50%,
+          rgba(255, 77, 28, 0.06) 0%,
+          transparent 70%
+        );
+      }
+      .varB-dots {
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.05) 1px,
+          transparent 1px
+        );
+        background-size: 28px 28px;
+      }
+      .varB-inner {
+        position: relative;
+        z-index: 2;
+        padding: 32px;
+        width: 100%;
+      }
+      .vb-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      @media (max-width: 600px) {
+        .vb-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      .platform-card {
+        background: #1a1a1a;
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 12px;
+        padding: 16px 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        position: relative;
+        overflow: hidden;
+        animation: platformSlide 4s ease-in-out infinite;
+      }
+      .platform-card:nth-child(1) {
+        animation-delay: 0s;
+      }
+      .platform-card:nth-child(2) {
+        animation-delay: 1s;
+      }
+      .platform-card:nth-child(3) {
+        animation-delay: 2s;
+      }
+      .platform-card:nth-child(4) {
+        animation-delay: 3s;
+      }
+      @keyframes platformSlide {
+        0%,
+        50%,
+        100% {
+          transform: translateY(0);
+          border-color: rgba(255, 255, 255, 0.07);
+        }
+        25% {
+          transform: translateY(-4px);
+          border-color: rgba(255, 77, 28, 0.5);
+          box-shadow: 0 8px 24px rgba(255, 77, 28, 0.15);
+        }
+      }
+      .pc-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 900;
+        color: #fff;
+      }
+      .pc-tt {
+        background: #010101;
+      }
+      .pc-ig {
+        background: linear-gradient(135deg, #405de6, #e1306c, #f77737);
+      }
+      .pc-yt {
+        background: #ff0000;
+      }
+      .pc-li {
+        background: #0077b5;
+      }
+      .pc-name {
+        font-size: 10px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.7);
+      }
+      .pc-count {
+        font-size: 9px;
+        color: #ff7a3c;
+        font-weight: 700;
+      }
+      .pc-status {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #28ca41;
+        animation: statusBlink 2s ease-in-out infinite;
+      }
+      .platform-card:nth-child(3) .pc-status {
+        animation-delay: 0.7s;
+      }
+      @keyframes statusBlink {
+        0%,
+        100% {
+          opacity: 0.5;
+        }
+        50% {
+          opacity: 1;
+          box-shadow: 0 0 6px #28ca41;
+        }
+      }
+      .vb-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        background: rgba(255, 77, 28, 0.06);
+        border: 1px solid rgba(255, 77, 28, 0.2);
+        border-radius: 10px;
+        padding: 14px 18px;
+        flex-wrap: nowrap;
+        min-width: 0;
+      }
+      .vb-bottom-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+        flex: 1;
+      }
+      .vb-publish-ring {
+        width: 30px;
+        height: 30px;
+        min-width: 30px;
+        min-height: 30px;
+        border-radius: 50%;
+        border: 2px solid var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        flex-shrink: 0;
+        animation: ringRotate 3s linear infinite;
+      }
+      @keyframes ringRotate {
+        0% {
+          box-shadow: 4px 0 0 0 rgba(255, 77, 28, 0.4);
+        }
+        25% {
+          box-shadow: 0 4px 0 0 rgba(255, 77, 28, 0.4);
+        }
+        50% {
+          box-shadow: -4px 0 0 0 rgba(255, 77, 28, 0.4);
+        }
+        75% {
+          box-shadow: 0 -4px 0 0 rgba(255, 77, 28, 0.4);
+        }
+      }
+      .vb-plat-dots {
+        display: flex;
+        gap: 4px;
+      }
+      .vb-plat-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        animation: dotWave 1.5s ease-in-out infinite;
+      }
+      .vb-plat-dot:nth-child(1) {
+        background: #010101;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        animation-delay: 0s;
+      }
+      .vb-plat-dot:nth-child(2) {
+        background: #e1306c;
+        animation-delay: 0.2s;
+      }
+      .vb-plat-dot:nth-child(3) {
+        background: #ff0000;
+        animation-delay: 0.4s;
+      }
+      .vb-plat-dot:nth-child(4) {
+        background: #0077b5;
+        animation-delay: 0.6s;
+      }
+      @keyframes dotWave {
+        0%,
+        100% {
+          transform: translateY(0);
+          opacity: 0.6;
+        }
+        50% {
+          transform: translateY(-4px);
+          opacity: 1;
+        }
+      }
+      .vb-text {
+        font-size: 11px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.6);
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .vb-text strong {
+        color: #ff7a3c;
+      }
+      .vb-cta {
+        background: var(--accent);
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 8px 16px;
+        border-radius: 6px;
+        letter-spacing: 0.06em;
+        white-space: nowrap;
+      }
+
+      /* =====================================================
+   VARIATION 3: Caption Showcase — split screen comparison
+   Left = no captions (muted, unreadable), Right = captions on (readable, engaging)
+   ===================================================== */
+      #v3 {
+        background: #0d0d0d;
+        border: 1px solid rgba(255, 77, 28, 0.15);
+      }
+
+      #v3::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(
+            ellipse 50% 50% at 30% 50%,
+            rgba(255, 77, 28, 0.07) 0%,
+            transparent 60%
+          ),
+          radial-gradient(
+            ellipse 40% 40% at 80% 30%,
+            rgba(255, 122, 60, 0.05) 0%,
+            transparent 60%
+          );
+        pointer-events: none;
+      }
+      /* Dot grid */
+      #v3::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.06) 1px,
+          transparent 1px
+        );
+        background-size: 24px 24px;
+        pointer-events: none;
+      }
+      .v3-layout {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+        padding: 36px;
+        z-index: 1;
+      }
+
+      /* Divider in center */
+      .v3-divider {
+        width: 2px;
+        height: min(280px, 70%);
+        background: linear-gradient(
+          180deg,
+          transparent,
+          rgba(255, 77, 28, 0.4),
+          rgba(255, 77, 28, 0.6),
+          rgba(255, 77, 28, 0.4),
+          transparent
+        );
+        position: relative;
+        flex-shrink: 0;
+        margin: 0 24px;
+        z-index: 10;
+      }
+      .v3-divider::before {
+        content: "VS";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #1a1a1a;
+        border: 1px solid rgba(255, 77, 28, 0.4);
+        border-radius: 100px;
+        padding: 3px 8px;
+        font-size: 9px;
+        font-weight: 800;
+        color: #ff4d1c;
+        letter-spacing: 0.06em;
+        white-space: nowrap;
+      }
+
+      /* Left side: muted/dead */
+      .v3-side {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .v3-phone {
+        width: min(130px, 65%);
+        aspect-ratio: 130/252;
+        border-radius: 20px;
+        border: 1.5px solid rgba(255, 255, 255, 0.08);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);
+      }
+      /* Notch */
+      .v3-phone::before {
+        content: "";
+        position: absolute;
+        top: 7px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 28px;
+        height: 4px;
+        background: #1a1a1a;
+        border-radius: 2px;
+        z-index: 10;
+      }
+
+      .v3-phone-left {
+        background: #141414;
+      }
+      .v3-phone-right {
+        background: #141414;
+        border-color: rgba(255, 77, 28, 0.3);
+        box-shadow:
+          0 16px 32px rgba(0, 0, 0, 0.5),
+          0 0 30px rgba(255, 77, 28, 0.1);
+      }
+
+      /* Left phone: blurry/muted content */
+      .v3-muted-content {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        padding-bottom: 24px;
+        gap: 4px;
+        filter: brightness(0.4);
+      }
+      .v3-blur-line {
+        height: 8px;
+        background: rgba(255, 255, 255, 0.12);
+        border-radius: 4px;
+        filter: blur(2px);
+      }
+      .v3-sound-off {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.7);
+        border: 1.5px solid rgba(255, 255, 255, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+      }
+      /* X through sound icon */
+      .v3-no-sound {
+        width: 18px;
+        height: 18px;
+        position: relative;
+      }
+      .v3-no-sound::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #ff4d1c;
+        transform: rotate(-45deg);
+        border-radius: 1px;
+      }
+      .v3-sound-waves {
+        position: absolute;
+        right: 4px;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+      }
+      .v3-sw {
+        height: 1.5px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 1px;
+      }
+
+      /* Right phone: vibrant captions */
+      .v3-captioned-content {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        padding-bottom: 22px;
+        gap: 4px;
+      }
+
+      /* Animated karaoke caption */
+      .v3-cap-row {
+        display: flex;
+        gap: 3px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .v3-cap-word {
+        font-family: "Sora", sans-serif;
+        font-size: 11px;
+        font-weight: 800;
+        color: #ffd700;
+        background: rgba(0, 0, 0, 0.8);
+        padding: 2px 5px;
+        border-radius: 3px;
+        text-transform: uppercase;
+      }
+      .v3-cap-word.hot {
+        background: #ff4d1c;
+        color: white;
+        animation: v3-word-hot 1.2s ease-in-out infinite;
+      }
+      @keyframes v3-word-hot {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.06);
+          box-shadow: 0 0 8px rgba(255, 77, 28, 0.5);
+        }
+      }
+
+      /* Progress */
+      .v3-progress {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #ff4d1c, #ff7a3c);
+        border-radius: 0 2px 2px 0;
+        animation: v3-prog 4s linear infinite;
+      }
+      @keyframes v3-prog {
+        from {
+          width: 0%;
+        }
+        to {
+          width: 100%;
+        }
+      }
+
+      /* Side labels */
+      .v3-side-label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+      .v3-label-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      /* View count difference */
+      .v3-stat {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1px;
+      }
+      .v3-stat-num {
+        font-family: "Sora", sans-serif;
+        font-size: 16px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+      .v3-stat-label {
+        font-size: 9px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.4);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      /* Always center */
+      /* =====================================================
+   VARIATION 2: Bento-style reframe grid
+   Big source on left, animated reframe outputs on right in 2x2
+   ===================================================== */
+      #v2 {
+        background: #0d0d0d;
+        border: 1px solid rgba(255, 77, 28, 0.15);
+      }
+
+      /* Mesh gradient background */
+      #v2::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(
+            ellipse 40% 40% at 20% 30%,
+            rgba(255, 77, 28, 0.08) 0%,
+            transparent 60%
+          ),
+          radial-gradient(
+            ellipse 30% 30% at 80% 70%,
+            rgba(255, 122, 60, 0.06) 0%,
+            transparent 60%
+          );
+        pointer-events: none;
+      }
+
+      /* Subtle grid lines */
+      #v2::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+          linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.025) 1px,
+            transparent 1px
+          );
+        background-size: 40px 40px;
+        pointer-events: none;
+      }
+
+      .v2-layout {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 28px;
+        padding: 32px;
+        z-index: 1;
+      }
+
+      /* Source panel */
+      /* Source panel */
+      .v2-source-panel {
+        flex: 0 0 min(250px, 40%);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .v2-source-screen {
+        width: 100%;
+        height: 160px;
+        background: #161616;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Widescreen video feel with two speaker zones */
+      .v2-src-left,
+      .v2-src-right {
+        position: absolute;
+        bottom: 0;
+        top: 0;
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        padding-bottom: 14px;
+        gap: 4px;
+      }
+      .v2-src-left {
+        left: 0;
+        border-right: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      .v2-src-right {
+        right: 0;
+      }
+
+      .v2-src-head {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #484848, #2a2a2a);
+        border: 1.5px solid rgba(255, 255, 255, 0.15);
+      }
+      .v2-src-body {
+        width: 46px;
+        height: 24px;
+        border-radius: 12px 12px 0 0;
+        background: linear-gradient(135deg, #3a3a3a, #222);
+      }
+
+      /* "AI Analyzing" scan line */
+      .v2-scanline {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #ff4d1c, transparent);
+        animation: v2-scan 2.5s linear infinite;
+      }
+      @keyframes v2-scan {
+        0% {
+          top: 0;
+          opacity: 0.8;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          top: 100%;
+          opacity: 0.8;
+        }
+      }
+
+      /* Playhead */
+      .v2-playhead {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 3px;
+        width: 65%;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 77, 28, 0.8),
+          rgba(255, 77, 28, 0.3)
+        );
+        border-radius: 2px;
+      }
+
+      .v2-source-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 4px;
+      }
+      .v2-src-badge {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        padding: 3px 8px;
+        border-radius: 100px;
+        text-transform: uppercase;
+      }
+      .v2-src-dur {
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 10px;
+        font-weight: 600;
+        margin-left: auto;
+      }
+
+      /* Right: 2x2 clip grid */
+      .v2-clips-panel {
+        flex: 1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .v2-clip-card {
+        background: #161616;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        aspect-ratio: 9/16;
+        max-height: 180px;
+        position: relative;
+        overflow: hidden;
+        animation: v2-card-in 0.6s ease both;
+      }
+      .v2-clip-card:nth-child(1) {
+        animation-delay: 0.2s;
+      }
+      .v2-clip-card:nth-child(2) {
+        animation-delay: 0.5s;
+      }
+      .v2-clip-card:nth-child(3) {
+        animation-delay: 0.8s;
+      }
+      .v2-clip-card:nth-child(4) {
+        animation-delay: 1.1s;
+      }
+      @keyframes v2-card-in {
+        from {
+          opacity: 0;
+          transform: scale(0.85);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .v2-clip-card:hover {
+        border-color: rgba(255, 77, 28, 0.4);
+        box-shadow: 0 0 20px rgba(255, 77, 28, 0.12);
+      }
+
+      /* Each clip: centered speaker */
+      .v2-clip-figure {
+        position: absolute;
+        bottom: 20%;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+      }
+      .v2-fig-head {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #555, #2a2a2a);
+        border: 1.5px solid rgba(255, 255, 255, 0.2);
+      }
+      .v2-fig-body {
+        width: 32px;
+        height: 18px;
+        border-radius: 8px 8px 0 0;
+        background: linear-gradient(135deg, #444, #1a1a1a);
+      }
+
+      /* Tracking corners on first clip (active) */
+      .v2-track-tl,
+      .v2-track-br {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        border-color: #ff4d1c;
+        border-style: solid;
+        animation: v2-track-pulse 2s ease-in-out infinite;
+      }
+      .v2-track-tl {
+        top: 20%;
+        left: 20%;
+        border-width: 2px 0 0 2px;
+      }
+      .v2-track-br {
+        bottom: 30%;
+        right: 20%;
+        border-width: 0 2px 2px 0;
+      }
+      @keyframes v2-track-pulse {
+        0%,
+        100% {
+          opacity: 0.5;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1.05);
+        }
+      }
+
+      /* Bottom platform pill */
+      .v2-platform-pill {
+        position: absolute;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        background: rgba(0, 0, 0, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 100px;
+        padding: 3px 8px;
+        white-space: nowrap;
+      }
+      .v2-platform-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+      }
+      .v2-platform-name {
+        font-size: 8px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.6);
+        letter-spacing: 0.05em;
+      }
+
+      /* Processing bar */
+      .v2-proc-bar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #ff4d1c, #ff7a3c);
+        border-radius: 0 2px 2px 0;
+        animation: v2-proc 3s ease-in-out infinite;
+      }
+      .v2-clip-card:nth-child(1) .v2-proc-bar {
+        animation-delay: 0s;
+      }
+      .v2-clip-card:nth-child(2) .v2-proc-bar {
+        animation-delay: 0.4s;
+      }
+      .v2-clip-card:nth-child(3) .v2-proc-bar {
+        animation-delay: 0.8s;
+      }
+      .v2-clip-card:nth-child(4) .v2-proc-bar {
+        animation-delay: 1.2s;
+      }
+      @keyframes v2-proc {
+        0% {
+          width: 0%;
+        }
+        70% {
+          width: 100%;
+        }
+        100% {
+          width: 100%;
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ==================== NAVIGATION ==================== -->
+    <nav class="nav" id="mainNav">
+      <div class="nav-inner">
+        <a href="#" class="nav-logo">
+          <div class="nav-logo-icon">
+            <img src="./echostream.png" alt="" />
+          </div>
+          <span>EchoStream</span>
+        </a>
+
+        <ul class="nav-links">
+          <li><a href="#features">Features</a></li>
+          <li><a href="#solutions">Solutions</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#resources">Resources</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <button
+            class="theme-toggle"
+            onclick="toggleTheme()"
+            title="Toggle theme"
+          >
+            ☀️
+          </button>
+          <a href="#" class="nav-signin">Sign In</a>
+          <a href="#" class="btn-primary">Start for Free</a>
+          <div class="nav-mobile-toggle" onclick="toggleMobileMenu()">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ==================== HERO ==================== -->
+    <section class="hero" id="hero">
+      <div class="hero-inner">
+        <div class="hero-left">
+          <div class="hero-badge">
+            <span class="dot"></span>
+            AI-Powered Content Repurposing
+          </div>
+          <h1 class="hero-headline">
+            Turn One Video into
+            <span class="accent-word">20+ Viral Clips</span><br />
+            in Seconds.
+          </h1>
+          <p class="hero-sub">
+            Stop wasting hours in Premiere Pro. EchoStream uses AI to identify
+            high-engagement moments and converts your long-form content into
+            captioned, platform-ready shorts for TikTok, Reels, and Shorts.
+          </p>
+          <div class="hero-cta-group">
+            <a href="#" class="btn-hero">Get Started</a>
+            <a href="#how-it-works" class="btn-hero-outline">How It Works</a>
+          </div>
+          <p class="hero-friction">
+            <span>No credit card required.</span> Setup in 2 minutes.
+          </p>
+        </div>
+
+        <div class="hero-visual">
+          <!-- Floating stat chips — like Domins floating elements -->
+          <div class="hero-stat-chip chip-top-left">
+            <div class="chip-num">20+</div>
+            <div class="chip-label">Clips generated<br />per upload</div>
+          </div>
+
+          <div class="hero-img-wrap">
+            <!-- IMAGE PLACEHOLDER: Hero dashboard UI mockup -->
+            <!-- <div class="img-placeholder">
+              <div class="placeholder-icon">🎬</div>
+              <strong style="color: var(--text-secondary); font-size: 0.9rem"
+                >App Dashboard UI Mockup</strong
+              >
+              <div class="placeholder-label">
+                Split-screen: YouTube video left → 9:16 clip grid right
+              </div>
+            </div> -->
+
+            <img
+              src="./hero_image.png"
+              alt=""
+              class=""
+              style="height: stretch; width: stretch"
+            />
+          </div>
+
+          <div class="hero-stat-chip chip-bottom-right">
+            <div class="chip-num">400%</div>
+            <div class="chip-label">Average TikTok<br />reach increase</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TRUST BAR ==================== -->
+    <section class="trust-bar">
+      <div class="trust-bar-inner">
+        <p class="trust-text">
+          Trusted by 5,000+ Creators and Agencies worldwide
+        </p>
+        <div class="trust-logos">
+          <span class="trust-logo-item">YOUTUBE</span>
+          <span class="trust-logo-item">TIKTOK</span>
+          <span class="trust-logo-item">SHOPIFY</span>
+          <span class="trust-logo-item">MEDIUM</span>
+          <span class="trust-logo-item">SPOTIFY</span>
+          <span class="trust-logo-item">KAJABI</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== HOW IT WORKS ==================== -->
+    <section class="section section-light section-center" id="how-it-works">
+      <div class="container">
+        <div class="label-tag reveal">How It Works</div>
+        <h2 class="section-heading reveal reveal-delay-1">
+          Three steps to <span class="italic-word">viral</span>
+        </h2>
+        <p class="section-sub reveal reveal-delay-2">
+          Drop your link, let our AI do the heavy lifting, and download clips
+          ready to post.
+        </p>
+
+        <div class="steps-grid">
+          <div class="step-card reveal">
+            <div class="step-num">01</div>
+            <h3 class="step-title">Drop Your Link</h3>
+            <p class="step-desc">
+              Paste your YouTube, Zoom, or podcast URL. We support 40+ languages
+              out of the box.
+            </p>
+          </div>
+          <div class="step-card reveal reveal-delay-1">
+            <div class="step-num">02</div>
+            <h3 class="step-title">AI Analysis</h3>
+            <p class="step-desc">
+              EchoStream scans for hooks, punchlines, and high-energy shifts —
+              identifying what makes viewers stop scrolling.
+            </p>
+          </div>
+          <div class="step-card reveal reveal-delay-2">
+            <div class="step-num">03</div>
+            <h3 class="step-title">One-Click Export</h3>
+            <p class="step-desc">
+              Download viral clips with burned-in captions and dynamic zoom. Or
+              publish directly to all platforms.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== FEATURES — Alternating rows ==================== -->
+    <div class="features-wrapper" id="features">
+      <div class="features-intro">
+        <div class="label-tag reveal">Features</div>
+        <h2 class="section-heading reveal reveal-delay-1">
+          Built for creators<br />who
+          <span class="italic-word">refuse to slow down</span>
+        </h2>
+      </div>
+
+      <!-- Feature 1 — text left, image right -->
+      <div class="feature-row reveal">
+        <div class="feature-text">
+          <div class="feat-num">01 — AI Face Tracking</div>
+          <h3>Always <em>Center Stage.</em></h3>
+          <p>
+            Our AI automatically crops and reframes every clip to keep the
+            speaker perfectly centered in the 9:16 frame — no manual editing
+            required.
+          </p>
+          <ul class="feature-checklist">
+            <li>Tracks multiple speakers automatically</li>
+            <li>Smooth, cinematic reframing transitions</li>
+            <li>Works on all camera angles and setups</li>
+          </ul>
+        </div>
+        <div class="feat-img-wrap">
+          <!-- IMAGE PLACEHOLDER: AI face tracking demo -->
+          <!-- <div class="img-placeholder">
+            <div class="placeholder-icon">👤</div>
+            <strong style="color: var(--text-secondary); font-size: 0.9rem"
+              >AI Face Tracking Demo</strong
+            >
+            <div class="placeholder-label">
+              Before/after reframe showing speaker centered in 9:16
+            </div>
+          </div> -->
+
+          <div class="frame" id="v2">
+            <div class="v2-layout">
+              <!-- Source panel -->
+              <div class="v2-source-panel">
+                <div class="v2-source-screen">
+                  <div class="v2-src-left">
+                    <div class="v2-src-head"></div>
+                    <div class="v2-src-body"></div>
+                  </div>
+                  <div class="v2-src-right">
+                    <div
+                      class="v2-src-head"
+                      style="width: 26px; height: 26px"
+                    ></div>
+                    <div
+                      class="v2-src-body"
+                      style="width: 40px; height: 20px"
+                    ></div>
+                  </div>
+                  <div class="v2-scanline"></div>
+                  <div class="v2-playhead"></div>
+                </div>
+                <div class="v2-source-info">
+                  <span class="v2-src-badge">Source</span>
+                  <span class="v2-src-dur">54:32</span>
+                </div>
+              </div>
+
+              <!-- 2x2 clips -->
+              <div class="v2-clips-panel">
+                <!-- clip 1 -->
+                <div class="v2-clip-card">
+                  <div class="v2-clip-figure">
+                    <div class="v2-fig-head"></div>
+                    <div class="v2-fig-body"></div>
+                  </div>
+                  <div class="v2-track-tl"></div>
+                  <div class="v2-track-br"></div>
+                  <div class="v2-platform-pill">
+                    <div
+                      class="v2-platform-dot"
+                      style="background: #010101; border: 1px solid #555"
+                    ></div>
+                    <span class="v2-platform-name">TikTok</span>
+                  </div>
+                  <div class="v2-proc-bar"></div>
+                </div>
+                <!-- clip 2 -->
+                <div class="v2-clip-card">
+                  <div class="v2-clip-figure">
+                    <div
+                      class="v2-fig-head"
+                      style="width: 20px; height: 20px"
+                    ></div>
+                    <div
+                      class="v2-fig-body"
+                      style="width: 28px; height: 15px"
+                    ></div>
+                  </div>
+                  <div class="v2-platform-pill">
+                    <div
+                      class="v2-platform-dot"
+                      style="background: rgba(255, 0, 0, 0.7)"
+                    ></div>
+                    <span class="v2-platform-name">Shorts</span>
+                  </div>
+                  <div class="v2-proc-bar"></div>
+                </div>
+                <!-- clip 3 -->
+                <div class="v2-clip-card">
+                  <div class="v2-clip-figure">
+                    <div class="v2-fig-head"></div>
+                    <div class="v2-fig-body"></div>
+                  </div>
+                  <div class="v2-platform-pill">
+                    <div
+                      class="v2-platform-dot"
+                      style="background: rgba(228, 64, 95, 0.7)"
+                    ></div>
+                    <span class="v2-platform-name">Reels</span>
+                  </div>
+                  <div class="v2-proc-bar"></div>
+                </div>
+                <!-- clip 4 -->
+                <div class="v2-clip-card" style="opacity: 0.5">
+                  <div
+                    style="
+                      position: absolute;
+                      inset: 0;
+                      display: flex;
+                      flex-direction: column;
+                      align-items: center;
+                      justify-content: center;
+                      gap: 6px;
+                    "
+                  >
+                    <div
+                      style="
+                        width: 20px;
+                        height: 2px;
+                        background: rgba(255, 255, 255, 0.2);
+                        border-radius: 1px;
+                      "
+                    ></div>
+                    <div
+                      style="
+                        width: 14px;
+                        height: 2px;
+                        background: rgba(255, 255, 255, 0.2);
+                        border-radius: 1px;
+                      "
+                    ></div>
+                    <div
+                      style="
+                        font-size: 9px;
+                        color: rgba(255, 255, 255, 0.3);
+                        font-weight: 600;
+                        letter-spacing: 0.06em;
+                        text-transform: uppercase;
+                        margin-top: 4px;
+                      "
+                    >
+                      +17 more
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="feature-divider" />
+
+      <!-- Feature 2 — reversed: image left, text right -->
+      <div class="feature-row reverse reveal">
+        <div class="feature-text">
+          <div class="feat-num">02 — Smart Captions</div>
+          <h3>Read Without <em>Sound.</em></h3>
+          <p>
+            95% of mobile users watch on mute. We generate frame-accurate,
+            stylish captions automatically — choose from 15+ presets or build
+            your own brand kit.
+          </p>
+          <ul class="feature-checklist">
+            <li>99% caption accuracy across 40+ languages</li>
+            <li>Animated word-highlight on beat</li>
+            <li>Custom font, color, and style presets</li>
+          </ul>
+        </div>
+        <div class="feat-img-wrap">
+          <!-- IMAGE PLACEHOLDER: Caption style showcase -->
+          <!-- <div class="img-placeholder">
+            <div class="placeholder-icon">💬</div>
+            <strong style="color: var(--text-secondary); font-size: 0.9rem"
+              >Caption Style Gallery</strong
+            >
+            <div class="placeholder-label">
+              Showcase of 3-4 caption style presets on a vertical clip
+            </div>
+          </div> -->
+
+          <div class="frame" id="v3">
+            <div class="v3-layout">
+              <!-- Left: no captions -->
+              <div class="v3-side">
+                <div class="v3-phone v3-phone-left">
+                  <div class="v3-muted-content">
+                    <div class="v3-blur-line" style="width: 80px"></div>
+                    <div class="v3-blur-line" style="width: 60px"></div>
+                  </div>
+                  <div class="v3-sound-off">
+                    <!-- mute lines -->
+                    <div style="display: flex; gap: 2px; align-items: center">
+                      <div
+                        style="
+                          width: 6px;
+                          height: 8px;
+                          background: rgba(255, 255, 255, 0.4);
+                          border-radius: 1px;
+                          border-radius: 1px 1px 0 0;
+                        "
+                      ></div>
+                      <div
+                        style="
+                          display: flex;
+                          flex-direction: column;
+                          gap: 1.5px;
+                        "
+                      >
+                        <div
+                          style="
+                            width: 4px;
+                            height: 1.5px;
+                            background: rgba(255, 255, 255, 0.3);
+                            border-radius: 1px;
+                          "
+                        ></div>
+                        <div
+                          style="
+                            width: 6px;
+                            height: 1.5px;
+                            background: rgba(255, 255, 255, 0.3);
+                            border-radius: 1px;
+                          "
+                        ></div>
+                        <div
+                          style="
+                            width: 4px;
+                            height: 1.5px;
+                            background: rgba(255, 255, 255, 0.3);
+                            border-radius: 1px;
+                          "
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="v3-side-label">
+                  <div
+                    class="v3-label-dot"
+                    style="background: rgba(255, 255, 255, 0.2)"
+                  ></div>
+                  <span style="color: rgba(255, 255, 255, 0.35)"
+                    >No Captions</span
+                  >
+                </div>
+                <div class="v3-stat">
+                  <span
+                    class="v3-stat-num"
+                    style="color: rgba(255, 255, 255, 0.3)"
+                    >2.1K</span
+                  >
+                  <span class="v3-stat-label">avg views</span>
+                </div>
+              </div>
+
+              <!-- Divider -->
+              <div class="v3-divider"></div>
+
+              <!-- Right: with captions -->
+              <div class="v3-side">
+                <div class="v3-phone v3-phone-right">
+                  <div class="v3-captioned-content">
+                    <!-- animated caption lines -->
+                    <div
+                      class="v3-cap-row"
+                      style="
+                        animation: v3-cr 3s ease-in-out infinite;
+                        opacity: 1;
+                      "
+                    >
+                      <span class="v3-cap-word">You</span>
+                      <span class="v3-cap-word hot">Won't</span>
+                      <span class="v3-cap-word">Believe</span>
+                    </div>
+                    <div
+                      class="v3-cap-row"
+                      style="
+                        animation: v3-cr2 3s ease-in-out infinite;
+                        opacity: 0;
+                        position: absolute;
+                        bottom: 22px;
+                      "
+                    >
+                      <span class="v3-cap-word hot">This</span>
+                      <span class="v3-cap-word">Actually</span>
+                      <span class="v3-cap-word">Works</span>
+                    </div>
+                    <style>
+                      @keyframes v3-cr {
+                        0%,
+                        45% {
+                          opacity: 1;
+                        }
+                        55%,
+                        100% {
+                          opacity: 0;
+                        }
+                      }
+                      @keyframes v3-cr2 {
+                        0%,
+                        45% {
+                          opacity: 0;
+                        }
+                        55%,
+                        100% {
+                          opacity: 1;
+                        }
+                      }
+                    </style>
+                  </div>
+                  <div class="v3-progress"></div>
+                </div>
+                <div class="v3-side-label">
+                  <div class="v3-label-dot" style="background: #ff4d1c"></div>
+                  <span style="color: rgba(255, 255, 255, 0.85)"
+                    >With Captions</span
+                  >
+                </div>
+                <div class="v3-stat">
+                  <span class="v3-stat-num" style="color: #ff4d1c">847K</span>
+                  <span class="v3-stat-label">avg views</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="feature-divider" />
+
+      <!-- Feature 3 — text left, image right -->
+      <div class="feature-row reveal">
+        <div class="feature-text">
+          <div class="feat-num">03 — Multi-Platform Sync</div>
+          <h3>Publish <em>Everywhere.</em></h3>
+          <p>
+            One-click scheduling directly to TikTok, Instagram Reels, and
+            YouTube Shorts. Never open a third-party scheduler again.
+          </p>
+          <ul class="feature-checklist">
+            <li>Direct API connections — no tokens expire</li>
+            <li>Schedule for optimal posting times by platform</li>
+            <li>Per-platform aspect ratio optimization</li>
+          </ul>
+        </div>
+        <div class="feat-img-wrap">
+          <!-- IMAGE PLACEHOLDER: Multi-platform scheduler UI -->
+          <!-- <div class="img-placeholder">
+            <div class="placeholder-icon">📱</div>
+            <strong style="color: var(--text-secondary); font-size: 0.9rem"
+              >Platform Scheduler UI</strong
+            >
+            <div class="placeholder-label">
+              Scheduling interface with TikTok, Instagram, YouTube icons and
+              timeline
+            </div>
+          </div> -->
+
+          <div class="varB">
+            <div class="varB-bg"></div>
+            <div class="varB-dots"></div>
+            <div class="varB-inner">
+              <div class="vb-grid">
+                <div class="platform-card">
+                  <div class="pc-icon pc-tt">TT</div>
+                  <div class="pc-name">TikTok</div>
+                  <div class="pc-count">7 clips</div>
+                  <div class="pc-status"></div>
+                </div>
+                <div class="platform-card">
+                  <div class="pc-icon pc-ig">IG</div>
+                  <div class="pc-name">Instagram</div>
+                  <div class="pc-count">7 clips</div>
+                  <div class="pc-status"></div>
+                </div>
+                <div class="platform-card">
+                  <div class="pc-icon pc-yt">▶</div>
+                  <div class="pc-name">YT Shorts</div>
+                  <div class="pc-count">7 clips</div>
+                  <div class="pc-status"></div>
+                </div>
+                <div class="platform-card">
+                  <div class="pc-icon pc-li">in</div>
+                  <div class="pc-name">LinkedIn</div>
+                  <div class="pc-count">3 clips</div>
+                  <div class="pc-status"></div>
+                </div>
+              </div>
+              <div class="vb-bottom">
+                <div class="vb-bottom-left">
+                  <div class="vb-publish-ring">
+                    <span
+                      style="font-size: 12px; color: #ff4d1c; font-weight: 900"
+                      >→</span
+                    >
+                  </div>
+                  <div class="vb-plat-dots">
+                    <div class="vb-plat-dot"></div>
+                    <div class="vb-plat-dot"></div>
+                    <div class="vb-plat-dot"></div>
+                    <div class="vb-plat-dot"></div>
+                  </div>
+                  <div class="vb-text">
+                    Publish <strong>24 clips</strong> to all platforms
+                  </div>
+                </div>
+                <div class="vb-cta">Publish Now</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="feature-divider" />
+
+      <!-- Feature 4 — reversed: image left, text right -->
+      <div class="feature-row reverse reveal">
+        <div class="feature-text">
+          <div class="feat-num">04 — Keyword Magic</div>
+          <h3>SEO-Ready <em>Descriptions.</em></h3>
+          <p>
+            AI generates your titles, descriptions, and hashtags based on the
+            actual video context — not generic templates. Rank higher from day
+            one.
+          </p>
+          <ul class="feature-checklist">
+            <li>Context-aware title generation</li>
+            <li>Platform-specific hashtag suggestions</li>
+            <li>SEO keyword density optimization</li>
+          </ul>
+        </div>
+        <div class="feat-img-wrap">
+          <!-- IMAGE PLACEHOLDER: Keyword generation panel -->
+          <!-- <div class="img-placeholder">
+        <div class="placeholder-icon">🔍</div>
+        <strong style="color: var(--text-secondary); font-size: 0.9rem;">Keyword Generation Panel</strong>
+        <div class="placeholder-label">AI-generated titles and hashtag cloud UI panel</div>
+      </div> -->
+
+          <div class="seoD">
+            <div class="seoD-grid"></div>
+            <div class="seoD-orb"></div>
+            <div class="seoD-panel">
+              <div class="sdp-header">
+                <div class="sdp-dots">
+                  <div class="sdp-dot" style="background: #ff5f57"></div>
+                  <div class="sdp-dot" style="background: #ffbd2e"></div>
+                  <div class="sdp-dot" style="background: #28ca41"></div>
+                </div>
+                <div class="sdp-input-bar">
+                  <div class="sdp-url">youtube.com/watch?v=dQw4w9WgXcQ</div>
+                  <div class="sdp-go">Generate →</div>
+                </div>
+              </div>
+              <div class="sdp-body">
+                <div class="sdp-row">
+                  <div class="sdp-label">Generated Title</div>
+                  <div class="sdp-content">
+                    <span class="typed-word kw">How</span>&nbsp;
+                    <span class="typed-word kw">to</span>&nbsp;
+                    <span class="typed-word kw">Go Viral</span>&nbsp;
+                    <span class="typed-word">in 2026 —</span>&nbsp;
+                    <span class="typed-word kw">AI</span>&nbsp;
+                    <span class="typed-word">Content</span>&nbsp;
+                    <span class="typed-word">Strategy</span>
+                  </div>
+                </div>
+                <div class="sdp-divider"></div>
+                <div class="sdp-row">
+                  <div class="sdp-label">Description</div>
+                  <div class="sdp-content">
+                    <span class="typed-word">Turn your</span>&nbsp;
+                    <span class="typed-word kw">podcast</span>&nbsp;
+                    <span class="typed-word">into</span>&nbsp;
+                    <span class="typed-word kw">20+ clips</span>&nbsp;
+                    <span class="typed-word">that reach</span>&nbsp;
+                    <span class="typed-word kw">millions</span>&nbsp;
+                    <span class="typed-word">automatically.</span>
+                  </div>
+                </div>
+                <div class="sdp-divider"></div>
+                <div class="sdp-row">
+                  <div class="sdp-label">Hashtags</div>
+                  <div class="sdp-hashtag-row">
+                    <div class="sdp-hashtag">#TikTok</div>
+                    <div class="sdp-hashtag">#AIVideo</div>
+                    <div class="sdp-hashtag">#Viral</div>
+                    <div class="sdp-hashtag">#Reels</div>
+                    <div class="sdp-hashtag">#YTShorts</div>
+                  </div>
+                </div>
+              </div>
+              <div class="sdp-footer">
+                <div class="sdp-stats">
+                  <div class="sdp-stat">
+                    <div class="sdp-stat-lbl">Score</div>
+                    <div class="sdp-stat-val" style="color: #28ca41">92</div>
+                  </div>
+                  <div class="sdp-stat">
+                    <div class="sdp-stat-lbl">Keywords</div>
+                    <div class="sdp-stat-val">8</div>
+                  </div>
+                  <div class="sdp-stat">
+                    <div class="sdp-stat-lbl">Platforms</div>
+                    <div class="sdp-stat-val">4</div>
+                  </div>
+                </div>
+                <div class="sdp-copy-btn">Copy All</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== STATS BAND ==================== -->
+    <div class="stats-band">
+      <div class="stats-grid">
+        <div class="stat-item reveal">
+          <div class="stat-num">5,000+</div>
+          <div class="stat-label">Active Creators</div>
+        </div>
+        <div class="stat-item reveal reveal-delay-1">
+          <div class="stat-num">2M+</div>
+          <div class="stat-label">Clips Generated</div>
+        </div>
+        <div class="stat-item reveal reveal-delay-2">
+          <div class="stat-num">40+</div>
+          <div class="stat-label">Languages Supported</div>
+        </div>
+        <div class="stat-item reveal reveal-delay-3">
+          <div class="stat-num">99%</div>
+          <div class="stat-label">Caption Accuracy</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TESTIMONIAL ==================== -->
+    <section class="testimonial-section">
+      <div class="testimonial-inner">
+        <div style="text-align: center; margin-bottom: var(--sp-48)">
+          <div class="label-tag reveal" style="margin: 0 auto var(--sp-16)">
+            Testimonials
+          </div>
+          <h2 class="section-heading reveal reveal-delay-1">
+            What creators are saying
+          </h2>
+        </div>
+
+        <div class="testimonial-main reveal">
+          <div>
+            <p class="testimonial-quote">
+              "EchoStream turned my 60-minute podcast into two weeks of social
+              content in under ten minutes. My reach on TikTok grew by 400% in
+              the first month."
+            </p>
+            <div class="testimonial-attr">
+              <div class="testimonial-avatar">
+                <!-- IMAGE PLACEHOLDER: Author headshot -->
+                <!-- <div class="img-placeholder" style="border-radius: 50%">
+                  <span style="font-size: 1.5rem">👤</span>
+                </div> -->
+
+                <img
+                  src="https://images.unsplash.com/photo-1556157382-97eda2d62296?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                  alt=""
+                  class=""
+                  style="object-fit: cover; height: 100%; width: 100%"
+                />
+              </div>
+              <div>
+                <div class="testimonial-name">Alex Rivera</div>
+                <div class="testimonial-role">Founder, The Growth Lab</div>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-result">
+            <!-- IMAGE PLACEHOLDER: Growth chart / result graphic -->
+            <!-- <div
+              class="img-placeholder"
+              style="
+                border-radius: var(--radius-lg);
+                aspect-ratio: unset;
+                height: 120px;
+                margin-bottom: var(--sp-24);
+              "
+            >
+              <div class="placeholder-icon">📈</div>
+              <div class="placeholder-label">TikTok analytics growth chart</div>
+            </div> -->
+
+            <div class="growth-chart">
+              <div
+                class="gc-bg"
+                style="background: linear-gradient(135deg, #1a1a1a, #141414)"
+              ></div>
+              <div class="gc-grid"></div>
+              <div class="gc-inner">
+                <div class="gc-header">
+                  <div class="gc-title">TikTok Reach Growth</div>
+                  <div class="gc-badge">+400%</div>
+                </div>
+                <div class="gc-chart">
+                  <svg
+                    class="gc-svg"
+                    viewBox="0 0 400 70"
+                    preserveAspectRatio="none"
+                  >
+                    <defs>
+                      <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop
+                          offset="0%"
+                          stop-color="#FF4D1C"
+                          stop-opacity="0.3"
+                        />
+                        <stop
+                          offset="100%"
+                          stop-color="#FF4D1C"
+                          stop-opacity="0.0"
+                        />
+                      </linearGradient>
+                      <filter id="glow">
+                        <feGaussianBlur stdDeviation="2" result="blur" />
+                        <feMerge>
+                          <feMergeNode in="blur" />
+                          <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                      </filter>
+                    </defs>
+                    <!-- Area fill -->
+                    <path
+                      class="gc-area"
+                      d="M0,65 C40,63 80,60 120,58 C160,56 190,52 220,48 C250,44 270,35 290,20 C310,10 330,6 360,4 L360,70 L0,70 Z"
+                      fill="url(#areaGrad)"
+                    />
+                    <!-- Main line -->
+                    <path
+                      class="gc-line"
+                      d="M0,65 C40,63 80,60 120,58 C160,56 190,52 220,48 C250,44 270,35 290,20 C310,10 330,6 360,4"
+                      stroke="#FF4D1C"
+                      stroke-width="2.5"
+                      fill="none"
+                      stroke-linecap="round"
+                      filter="url(#glow)"
+                    />
+                    <!-- Peak dot -->
+                    <circle
+                      class="gc-peak-dot"
+                      cx="360"
+                      cy="4"
+                      r="4"
+                      fill="#FF4D1C"
+                    />
+                    <circle cx="360" cy="4" r="8" fill="rgba(255,77,28,0.2)" />
+                    <!-- Baseline dot -->
+                    <circle cx="0" cy="65" r="3" fill="rgba(255,77,28,0.4)" />
+                    <!-- Month markers -->
+                    <line
+                      x1="120"
+                      y1="0"
+                      x2="120"
+                      y2="70"
+                      stroke="rgba(255,255,255,0.04)"
+                      stroke-width="1"
+                    />
+                    <line
+                      x1="240"
+                      y1="0"
+                      x2="240"
+                      y2="70"
+                      stroke="rgba(255,255,255,0.04)"
+                      stroke-width="1"
+                    />
+                    <line
+                      x1="360"
+                      y1="0"
+                      x2="360"
+                      y2="70"
+                      stroke="rgba(255,255,255,0.04)"
+                      stroke-width="1"
+                    />
+                  </svg>
+                </div>
+                <div class="gc-axis-labels">
+                  <div class="gc-axis-lbl">Jan</div>
+                  <div class="gc-axis-lbl">Feb</div>
+                  <div class="gc-axis-lbl">Mar</div>
+                  <div class="gc-axis-lbl">Apr</div>
+                </div>
+              </div>
+            </div>
+            <div class="result-num">400%</div>
+            <div class="result-label">
+              TikTok reach increase<br />in the first month
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== PRICING ==================== -->
+    <section class="pricing-section" id="pricing">
+      <div
+        class="container"
+        style="text-align: center; margin-bottom: var(--sp-64)"
+      >
+        <div class="label-tag reveal" style="margin: 0 auto var(--sp-16)">
+          Pricing
+        </div>
+        <h2 class="section-heading reveal reveal-delay-1">
+          Simple, transparent pricing
+        </h2>
+        <p class="section-sub reveal reveal-delay-2" style="margin-bottom: 0">
+          Start free. Scale as your content grows.
+        </p>
+      </div>
+      <div class="pricing-grid">
+        <!-- Starter -->
+        <div class="pricing-card reveal">
+          <div class="pricing-tier">Starter</div>
+          <div class="pricing-price">
+            <span class="price-num">$0</span>
+            <span class="price-denom">/mo</span>
+          </div>
+          <p class="pricing-desc">
+            Perfect for individual creators just getting started.
+          </p>
+          <ul class="pricing-features">
+            <li>2 hours of video per month</li>
+            <li>Watermarked clips</li>
+            <li>Standard captions</li>
+            <li>3 platform exports</li>
+          </ul>
+          <a href="#" class="btn-pricing btn-pricing-outline"
+            >Get Started Free</a
+          >
+        </div>
+
+        <!-- Pro (featured) -->
+        <div class="pricing-card featured reveal reveal-delay-1">
+          <div class="pricing-tier">Pro</div>
+          <div class="pricing-price">
+            <span class="price-num">$29</span>
+            <span class="price-denom">/mo</span>
+          </div>
+          <p class="pricing-desc">
+            For serious creators who publish consistently across platforms.
+          </p>
+          <ul class="pricing-features">
+            <li>15 hours of video per month</li>
+            <li>No watermarks</li>
+            <li>Custom branding & brand kit</li>
+            <li>AI Keyword Generation</li>
+            <li>Priority processing</li>
+            <li>All platform exports</li>
+          </ul>
+          <a href="#" class="btn-pricing btn-pricing-fill">Start Pro Trial</a>
+        </div>
+
+        <!-- Agency -->
+        <div class="pricing-card reveal reveal-delay-2">
+          <div class="pricing-tier">Agency</div>
+          <div class="pricing-price">
+            <span class="price-num">$99</span>
+            <span class="price-denom">/mo</span>
+          </div>
+          <p class="pricing-desc">
+            Full-scale repurposing for teams and content agencies.
+          </p>
+          <ul class="pricing-features">
+            <li>Unlimited video hours</li>
+            <li>Team collaboration (10 seats)</li>
+            <li>API access</li>
+            <li>White-label exports</li>
+            <li>Dedicated account manager</li>
+          </ul>
+          <a href="#" class="btn-pricing btn-pricing-outline">Talk to Sales</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== FAQ ==================== -->
+    <section class="faq-section">
+      <div class="faq-inner">
+        <div style="text-align: center; margin-bottom: var(--sp-48)">
+          <div class="label-tag reveal" style="margin: 0 auto var(--sp-16)">
+            FAQ
+          </div>
+          <h2 class="section-heading reveal reveal-delay-1">
+            Common questions
+          </h2>
+        </div>
+
+        <div class="faq-list reveal reveal-delay-2">
+          <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+              Which languages do you support?
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                We currently support 40+ languages with 99% caption accuracy,
+                including English, Spanish, French, German, Portuguese,
+                Mandarin, Japanese, and many more.
+              </div>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+              Can I customize the caption styles?
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                Yes! Choose from 15+ professionally designed presets or build
+                your own brand kit with custom fonts, colors, animations, and
+                positioning.
+              </div>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+              What video platforms do you support as input?
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                We accept YouTube links, Zoom recordings, direct file uploads
+                (MP4, MOV), Google Drive links, and Dropbox URLs. Podcast
+                platforms coming soon.
+              </div>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+              How long does processing take?
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                Most 60-minute videos are fully processed in 8–12 minutes. Pro
+                users get priority queue access, typically 2–4 minutes faster.
+              </div>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+              Can I cancel anytime?
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                Absolutely. No lock-in contracts. Cancel from your account
+                dashboard at any time — your access continues until the end of
+                your billing period.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== FINAL CTA ==================== -->
+    <section class="cta-section">
+      <div class="cta-inner">
+        <div class="label-tag reveal" style="margin: 0 auto var(--sp-16)">
+          Get Started
+        </div>
+        <h2 class="cta-heading reveal reveal-delay-1">
+          Ready to go <span class="accent-word">viral?</span>
+        </h2>
+        <p class="cta-sub reveal reveal-delay-2">
+          Join the future of content repurposing.
+        </p>
+        <div class="cta-actions reveal reveal-delay-3">
+          <a href="#" class="btn-hero">Get Started for Free →</a>
+          <a
+            href="#"
+            class="btn-hero-outline"
+            style="color: #aaa; border-color: rgba(255, 255, 255, 0.15)"
+            >View Pricing</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="footer">
+      <div class="footer-inner">
+        <div class="footer-top">
+          <div class="footer-brand">
+            <a href="#" class="nav-logo" style="justify-content: left">
+              <div class="nav-logo-icon">
+                <img src="./echostream.png" alt="" />
+              </div>
+              <span>EchoStream</span>
+            </a>
+            <p>
+              Turn long-form video into viral short clips with the power of AI.
+              Built for creators, agencies, and everyone in between.
+            </p>
+            <p
+              style="
+                font-size: var(--t-xs);
+                color: var(--text-muted);
+                margin-top: var(--sp-12);
+                font-weight: 600;
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
+              "
+            >
+              Get viral content tips in your inbox
+            </p>
+            <div class="newsletter-wrap">
+              <input
+                type="email"
+                class="newsletter-input"
+                placeholder="your@email.com"
+              />
+              <button class="newsletter-btn">Join</button>
+            </div>
+          </div>
+
+          <div class="footer-col">
+            <p class="footer-col-title">Product</p>
+            <ul>
+              <li><a href="#">Features</a></li>
+              <li><a href="#">Pricing</a></li>
+              <li><a href="#">Roadmap</a></li>
+              <li><a href="#">Changelog</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <p class="footer-col-title">Company</p>
+            <ul>
+              <li><a href="#">About</a></li>
+              <li><a href="#">Careers</a></li>
+              <li><a href="#">Contact</a></li>
+              <li><a href="#">Blog</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <p class="footer-col-title">Legal</p>
+            <ul>
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Terms of Service</a></li>
+              <li><a href="#">Cookie Settings</a></li>
+              <li><a href="#">GDPR</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p class="footer-copy">
+            © 2025 EchoStream, Inc. All rights reserved.
+          </p>
+          <div class="footer-socials">
+            <a href="#" class="social-icon">𝕏</a>
+            <a href="#" class="social-icon">in</a>
+            <a href="#" class="social-icon">▶</a>
+            <a href="#" class="social-icon">📷</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ==================== SCRIPTS ==================== -->
+    <script>
+      // Hero entrance animation
+      window.addEventListener("load", () => {
+        setTimeout(() => {
+          document.getElementById("hero").classList.add("hero-animate");
+        }, 100);
+      });
+
+      // Scroll-based nav styling
+      const nav = document.getElementById("mainNav");
+      window.addEventListener(
+        "scroll",
+        () => {
+          if (window.scrollY > 60) {
+            nav.classList.add("scrolled");
+          } else {
+            nav.classList.remove("scrolled");
+          }
+        },
+        { passive: true },
+      );
+
+      // Scroll reveal (IntersectionObserver)
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+            }
+          });
+        },
+        { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
+      );
+
+      document
+        .querySelectorAll(".reveal")
+        .forEach((el) => observer.observe(el));
+
+      // Theme toggle
+      function toggleTheme() {
+        const html = document.documentElement;
+        const isDark = html.getAttribute("data-theme") === "dark";
+        html.setAttribute("data-theme", isDark ? "light" : "dark");
+        document.querySelector(".theme-toggle").textContent = isDark
+          ? "🌙"
+          : "☀️";
+      }
+
+      // FAQ accordion
+      function toggleFaq(btn) {
+        const item = btn.closest(".faq-item");
+        const isOpen = item.classList.contains("open");
+        // close all
+        document
+          .querySelectorAll(".faq-item")
+          .forEach((i) => i.classList.remove("open"));
+        // open clicked if was closed
+        if (!isOpen) item.classList.add("open");
+      }
+
+      // Mobile menu
+      function toggleMobileMenu() {
+        const existing = document.getElementById("mobileMenu");
+        if (existing) {
+          existing.remove();
+          return;
+        }
+        const menu = document.createElement("div");
+        menu.id = "mobileMenu";
+        menu.style.cssText =
+          "position:fixed;top:68px;left:0;right:0;background:var(--bg-hero);padding:24px;gap:0;border-bottom:1px solid var(--border);z-index:99;display:flex;flex-direction:column;";
+        const currentTheme =
+          document.documentElement.getAttribute("data-theme");
+        const themeIcon = currentTheme === "dark" ? "☀️" : "🌙";
+        menu.innerHTML = `
+          <a href="#features" style="padding:14px 0;border-bottom:1px solid var(--border);color:var(--text-secondary);font-weight:500;font-size:0.95rem;" onclick="document.getElementById('mobileMenu').remove()">Features</a>
+          <a href="#solutions" style="padding:14px 0;border-bottom:1px solid var(--border);color:var(--text-secondary);font-weight:500;font-size:0.95rem;" onclick="document.getElementById('mobileMenu').remove()">Solutions</a>
+          <a href="#pricing" style="padding:14px 0;border-bottom:1px solid var(--border);color:var(--text-secondary);font-weight:500;font-size:0.95rem;" onclick="document.getElementById('mobileMenu').remove()">Pricing</a>
+          <a href="#resources" style="padding:14px 0;border-bottom:1px solid var(--border);color:var(--text-secondary);font-weight:500;font-size:0.95rem;" onclick="document.getElementById('mobileMenu').remove()">Resources</a>
+          <div style="padding:14px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+            <span style="color:var(--text-secondary);font-weight:500;font-size:0.95rem;">Switch Theme</span>
+            <button onclick="toggleTheme();this.textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙'" style="width:36px;height:36px;border-radius:50%;background:var(--bg-card);border:1px solid var(--border-strong);color:var(--text-secondary);display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;">${themeIcon}</button>
+          </div>
+          <a href="#" style="padding:14px 0;border-bottom:1px solid var(--border);color:var(--text-secondary);font-weight:500;font-size:0.95rem;">Sign In</a>
+          <a href="#" style="display:block;margin-top:16px;background:var(--accent);color:#fff;font-size:0.9rem;font-weight:600;padding:13px 22px;border-radius:100px;text-align:center;">Start for Free</a>
+        `;
+        document.body.appendChild(menu);
+      }
+    </script>
+  </body>
+</html>
